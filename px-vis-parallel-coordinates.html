@@ -1,0 +1,236 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="../px-vis/px-vis-behavior-d3.html" />
+<link rel="import" href="../px-vis/px-vis-svg.html"/>
+<link rel="import" href="../px-vis/px-vis-line.html"/>
+<link rel="import" href="../px-vis/px-vis-axis.html"/>
+<link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
+
+
+<!--
+Element providing solution to no problem in particular. As a simple example, increments a counter when clicked.
+
+##### Usage
+
+    <px-vis-parallel-coordinates counter-value="1">Hi</px-vis-parallel-coordinates>
+
+@element px-vis-parallel-coordinates
+@blurb Element providing solution to no problem in particular.
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-parallel-coordinates">
+  <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
+  <template>
+    <px-vis-multi-scale
+      x-axis-type="ordinal"
+      y-axis-type="linear"
+      parallel-coordinates
+      width="[[width]]"
+      height="[[height]]"
+      margin="[[margin]]"
+      dimensions="[[dimensions]]"
+      chart-data="[[chartData]]"
+      complete-series-config="[[completeSeriesConfig]]"
+      chart-extents="[[chartExtents]]"
+      x="{{x}}"
+      y="{{y}}"
+      current-domain-x="{{currentDomainX}}"
+      current-domain-y="{{currentDomainY}}">
+    </px-vis-multi-scale>
+    <px-vis-svg
+      svg="{{svg}}"
+      width="[[width]]"
+      height="[[height]]"
+      margin="[[margin]]">
+    </px-vis-svg>
+    <px-vis-line
+      svg="[[svg]]"
+      parallel-coordinates
+      series-id="*"
+      chart-data="[[chartData]]"
+      complete-series-config="[[completeSeriesConfig]]"
+      x="[[x]]"
+      y="[[y]]"
+      current-domain-x="[[currentDomainX]]"
+      current-domain-y="[[currentDomainY]]"
+      muted-series="[[mutedSeries]]">
+    </px-vis-line>
+    <!-- <px-vis-axis
+      svg="[[axisGroups]]"
+      axis="[[y]]"
+      margin="[[margin]]"
+      orientation="left"
+      current-domain="[[currentDomainY]]">
+    </px-vis-axis> -->
+    <template is="dom-repeat" items="[[dimensions]]">
+      <px-vis-axis
+        svg="[[_returnGroup(index,axisGroups)]]"
+        axis="[[_returnY(item)]]"
+        margin="[[margin]]"
+        orientation="left"
+        title="[[item]]"
+        current-domain="[[currentDomainY]]">
+      </px-vis-axis>
+    </template>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-vis-parallel-coordinates',
+
+    behaviors: [
+      PxVisBehavior.sizing,
+      PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.axes,
+      PxVisBehaviorD3.axis,
+      PxVisBehavior.dataset,
+      PxVisBehavior.commonMethods,
+      PxVisBehavior.chartExtents,
+      PxVisBehavior.completeSeriesConfig,
+      commonColors
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'notify'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+
+      axes: {
+        type: Array,
+        notify: true,
+        value: function(){ return []; }
+      },
+
+      skipKeys: {
+        type: Object,
+        notify: true,
+        value: function() { return {}; }
+      },
+
+      dimensions: {
+        type: Array,
+        notify: true,
+        computed: '_computeDimensions(chartData.*, axes, skipKeys.*)'
+      },
+
+      axisGroups: {
+        typoe: Object,
+        notify: true,
+        value: function(){ return {}; }
+      },
+
+      _dragging: {
+        typoe: Object,
+        value: function(){ return {}; }
+      }
+    },
+
+    observers: [
+      '_generateChartExtents(dimensions,chartData)',
+      '_generateSeriesConfig(dimensions,chartData)',
+      '_generateGs(dimensions,svg,currentDomainX)'
+    ],
+
+    ready:function(){
+      this.set('margin', { "top": 10, "right": 0, "left": 0, "bottom": 20})
+    },
+
+    _computeDimensions: function(cD, axes, sK){
+      if(this._doesObjHaveValues(this.chartData)){
+        if(axes.length > 0) {
+          return axes;
+        }
+        return Object.keys(this.chartData[0]).filter(function(d) {
+          return typeof(this.skipKeys[d]) === 'undefined'
+        }.bind(this));
+      }
+    },
+
+    _generateGs: function(dimensions,svg,currentDomainX){
+      if(this._doesObjHaveValues(this.svg) && this._doesObjHaveValues(this.currentDomainX) && this._doesObjHaveValues(this.dimensions) && this._isObjEmpty(this.axisGroups)){
+        var _this = this;
+        var g = svg.selectAll(".dimension")
+          .data(dimensions)
+          .enter()
+          .append("g")
+          .attr("class", "dimension")
+          .attr("transform", function(d) { return "translate(" + this.x(d) + ",0)"; }.bind(this))
+          .call(d3.behavior.drag()
+            .origin(function(d) { return { x: this.x(d)}; }.bind(this))
+            .on("dragstart", function(d) {
+              this._dragging[d] = this.x(d);
+            }.bind(this))
+            .on("drag", function(d) {
+              this._dragging[d] = Math.min(this.width, Math.max(0, d3.event.x));
+              // foreground.attr("d", path);
+              dimensions.sort(function(a, b) { return this.position(a) - this.position(b); }.bind(this));
+              this.x.domain(dimensions);
+              g.attr("transform", function(d) { return "translate(" + this.position(d) + ")"; }.bind(this))
+            }.bind(this))
+            .on("dragend", function(d) {
+              delete _this._dragging[d];
+              console.log(this);
+              // make the axis snap into place
+              _this.transition(d3.select(this)).attr("transform", "translate(" + _this.x(d) + ")");
+              // transition(foreground).attr("d", path);
+            })
+          );
+        this.set('axisGroups', g);
+      }
+    },
+
+    _generateSeriesConfig: function(dimensions){
+      var config = {};
+      config['*'] = {
+        "color": "rgb(93,165,218)",
+        "name": 'All',
+        "x": dimensions,
+        "y": dimensions
+      }
+
+      this.set('completeSeriesConfig',config);
+    },
+
+    _generateChartExtents: function(dimensions){
+      var ext = {
+        "x": dimensions,
+        "y": {}
+      };
+
+      for(var i = 0; i < dimensions.length; i++){
+        // ext.y[dimensions[i]] = [Infinity,-Infinity];
+        ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
+          return Number(d[dimensions[i]]);
+        });
+      }
+      this.set('chartExtents',ext);
+    },
+
+    position: function(d) {
+      var v = this._dragging[d];
+      return v == null ? this.x(d) : v;
+    },
+
+    transition: function(g) {
+      return g.transition().duration(500);
+    },
+
+    _returnGroup: function(i){
+      return d3.select(this.axisGroups[0][i])
+    },
+
+    _returnY: function(item){
+      return this.y[item]
+    },
+
+    _returnKeys: function(obj){
+      return Object.keys(obj);
+    }
+  });
+</script>

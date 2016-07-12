@@ -20,10 +20,11 @@
     <h3>Parallel Coordinates</h3>
     <template is="dom-bind">
       <px-vis-parallel-coordinates
-        width="1000"
+        width="1300"
         height="500"
         chart-data="[[chartData]]"
         skip-keys='{"TimeStamp":true}'
+        series-key="TimeStamp"
       ></px-vis-parallel-coordinates>
       <px-vis-data
         id = "seriesAjax"

@@ -73,7 +73,9 @@ Element providing solution to no problem in particular. As a simple example, inc
       chart-data="[[chartData]]"
       dimensions="[[dimensions]]"
       muted-series="{{mutedSeries}}"
-      redraw-elems="[[_lineRedrawFun()]]">
+      redraw-elems="[[_lineRedrawFun()]]"
+      stroke-width="2"
+      outer-tick-size="6">
     </px-vis-multi-axis>
     <px-vis-gridlines
       svg="[[svg]]"
@@ -101,7 +103,7 @@ Element providing solution to no problem in particular. As a simple example, inc
       PxVisBehavior.commonMethods,
       PxVisBehavior.chartExtents,
       PxVisBehavior.completeSeriesConfig,
-      PxVisBehavior.axisConfig,
+      PxVisBehaviorD3.axisConfig,
       PxVisBehavior.mutedSeries,
       commonColors
     ],

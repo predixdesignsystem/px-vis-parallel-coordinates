@@ -3,9 +3,9 @@
 <link rel="import" href="../px-vis/px-vis-behavior-d3.html" />
 <link rel="import" href="../px-vis/px-vis-svg.html"/>
 <link rel="import" href="../px-vis/px-vis-line.html"/>
-<link rel="import" href="../px-vis/px-vis-axis.html"/>
+<link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
-<link rel="import" href="../px-vis/px-vis-axis-brush.html"/>
+<link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 
 
 <!--
@@ -59,26 +59,30 @@ Element providing solution to no problem in particular. As a simple example, inc
       current-domain-y="[[currentDomainY]]"
       muted-series="[[mutedSeries]]">
     </px-vis-line>
-    <template is="dom-repeat" items="[[dimensions]]">
-      <px-vis-axis
-        svg="[[_returnGroup(index,axisGroups)]]"
-        axis="[[_returnY(item)]]"
-        margin="[[margin]]"
-        orientation="left"
-        title="[[item]]"
-        title-location='[[titleLocation]]'
-        title-type-size="12"
-        label-type-size="10"
-        current-domain="[[currentDomainY]]">
-      </px-vis-axis>
-    </template>
-    <px-vis-axis-brush
-      svg="[[axisGroups]]"
-      axis="[[y]]"
+    <px-vis-multi-axis
+      svg="[[svg]]"
+      width="[[width]]"
+      margin="[[margin]]"
+      title-location='[[titleLocation]]'
+      x="[[x]]"
+      y="[[y]]"
+      current-domain-x="[[currentDomainX]]"
+      current-domain-y="[[currentDomainY]]"
+      complete-series-config="{{completeSeriesConfig}}"
+      series-key="[[seriesKey]]"
       chart-data="[[chartData]]"
       dimensions="[[dimensions]]"
-      muted-series="{{mutedSeries}}">
-    </px-vis-axis-brush>
+      muted-series="{{mutedSeries}}"
+      redraw-elems="[[_lineRedrawFun()]]">
+    </px-vis-multi-axis>
+    <px-vis-gridlines
+      svg="[[svg]]"
+      axis="[[_returnFirstY(y,dimensions)]]"
+      margin="[[margin]]"
+      length="[[width]]"
+      orientation="left"
+      current-domain="[[currentDomainY]]">
+    </px-vis-gridlines>
   </template>
 </dom-module>
 
@@ -93,9 +97,12 @@ Element providing solution to no problem in particular. As a simple example, inc
       PxVisBehaviorD3.axes,
       PxVisBehaviorD3.axis,
       PxVisBehavior.dataset,
+      PxVisBehavior.dimensions,
       PxVisBehavior.commonMethods,
       PxVisBehavior.chartExtents,
       PxVisBehavior.completeSeriesConfig,
+      PxVisBehavior.axisConfig,
+      PxVisBehavior.mutedSeries,
       commonColors
     ],
 
@@ -128,29 +135,12 @@ Element providing solution to no problem in particular. As a simple example, inc
         type: Array,
         notify: true,
         computed: '_computeDimensions(chartData.*, axes, skipKeys.*)'
-      },
-
-      axisGroups: {
-        typoe: Object,
-        notify: true,
-        value: function(){ return {}; }
-      },
-
-      _dragging: {
-        typoe: Object,
-        value: function(){ return {}; }
-      },
-
-      _dragBehavior: {
-        typoe: Object,
-        value: function(){ return {}; }
       }
     },
 
     observers: [
       '_generateChartExtents(dimensions,chartData)',
-      '_generateSeriesConfig(dimensions,chartData)',
-      '_generateGs(dimensions,svg,currentDomainX)'
+      '_generateSeriesConfig(dimensions,chartData)'
     ],
 
     ready:function(){
@@ -161,21 +151,6 @@ Element providing solution to no problem in particular. As a simple example, inc
         "r":"-20",
         "anchor":"end"
       });
-
-      var _this = this;
-      this._dragBehavior = d3.behavior.drag()
-        .origin(function(d) { return { x: this.x(d)}; }.bind(this))
-        .on("dragstart", this._onDragStart.bind(this))
-        .on("drag", this._onDrag.bind(this))
-        .on("dragend", function(d) {
-          delete _this._dragging[d];
-          // make the axis snap into place
-          _this.transition(d3.select(this)).attr("transform", "translate(" + _this.x(d) + ")");
-
-          // redraw the lines
-          _this.set('completeSeriesConfig.*.x',_this.dimensions);
-          _this.$.line.drawElement();
-        });
     },
 
     _computeDimensions: function(cD, axes, sK){
@@ -186,22 +161,6 @@ Element providing solution to no problem in particular. As a simple example, inc
         return Object.keys(this.chartData[0]).filter(function(d) {
           return typeof(this.skipKeys[d]) === 'undefined'
         }.bind(this));
-      }
-    },
-
-    _generateGs: function(dimensions,svg,currentDomainX){
-      if(this._doesObjHaveValues(this.svg) && this._doesObjHaveValues(this.currentDomainX) && this._doesObjHaveValues(this.dimensions) && this._isObjEmpty(this.axisGroups)){
-
-        var g = svg.selectAll(".dimension")
-          .data(dimensions)
-          .enter()
-          .append("g")
-          .attr("class", "dimension")
-          .attr("transform", function(d) { return "translate(" + this.x(d) + ",0)"; }.bind(this))
-          .style("cursor","move")
-          .call(this._dragBehavior);
-
-        this.set('axisGroups', g);
       }
     },
 
@@ -234,49 +193,12 @@ Element providing solution to no problem in particular. As a simple example, inc
       this.set('chartExtents',ext);
     },
 
-    _onDragStart: function(d) {
-      this._dragging[d] = this.x(d);
+    _lineRedrawFun: function(){
+      return [this.$.line]
     },
 
-    _onDrag: function(d) {
-      this._dragging[d] = Math.min(this.width, Math.max(0, d3.event.x));
-      // TODO investigate how to make line dynamic
-      // foreground.attr("d", path);
-      this.dimensions.sort(function(a, b) { return this._position(a) - this._position(b); }.bind(this));
-      this.x.domain(this.dimensions);
-      this.axisGroups.attr("transform", function(d) { return "translate(" + this._position(d) + ")"; }.bind(this))
-    },
-
-    // _onDragEnd: function(d,a) {
-    //   console.log(this);
-    //   console.log(d);
-    //   console.log(a);
-    //   var target = d3.event.target;
-    //
-    //   console.log(d);
-    //
-    //   delete this._dragging[d];
-    //
-    //   // make the axis snap into place
-    //   this.transition(d3.select(target)).attr("transform", "translate(" + this.x(d) + ")");
-    //   // transition(foreground).attr("d", path);
-    // },
-
-    _position: function(d) {
-      var v = this._dragging[d];
-      return v == null ? this.x(d) : v;
-    },
-
-    transition: function(g) {
-      return g.transition().duration(500);
-    },
-
-    _returnGroup: function(i){
-      return d3.select(this.axisGroups[0][i])
-    },
-
-    _returnY: function(item){
-      return this.y[item]
+    _returnFirstY: function(y,dimensions){
+      return y[dimensions[0]]
     },
 
     _returnKeys: function(obj){

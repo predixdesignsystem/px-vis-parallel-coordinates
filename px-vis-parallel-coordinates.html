@@ -73,8 +73,11 @@ Element providing solution to no problem in particular. As a simple example, inc
       chart-data="[[chartData]]"
       dimensions="[[dimensions]]"
       muted-series="{{mutedSeries}}"
+      redraw-series="true"
       redraw-elems="[[_lineRedrawFun()]]"
+      dynamic-axis-redraw="[[dynamicAxisRedraw]]"
       stroke-width="2"
+      match-ticks="false"
       outer-tick-size="6">
     </px-vis-multi-axis>
     <px-vis-gridlines
@@ -105,6 +108,7 @@ Element providing solution to no problem in particular. As a simple example, inc
       PxVisBehavior.completeSeriesConfig,
       PxVisBehaviorD3.axisConfig,
       PxVisBehavior.mutedSeries,
+      PxVisBehaviorD3.dynamicRedraw,
       commonColors
     ],
 
@@ -142,7 +146,8 @@ Element providing solution to no problem in particular. As a simple example, inc
 
     observers: [
       '_generateChartExtents(dimensions,chartData)',
-      '_generateSeriesConfig(dimensions,chartData)'
+      '_generateSeriesConfig(dimensions,chartData)',
+      '_calcAxisRedraw(chartData)'
     ],
 
     ready:function(){
@@ -153,6 +158,10 @@ Element providing solution to no problem in particular. As a simple example, inc
         "r":"-20",
         "anchor":"end"
       });
+    },
+
+    _calcAxisRedraw: function(){
+      this.set('dynamicAxisRedraw', this.chartData.length < 8000 );
     },
 
     _computeDimensions: function(cD, axes, sK){

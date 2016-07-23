@@ -49,6 +49,7 @@ Element providing solution to no problem in particular. As a simple example, inc
     <px-vis-line
       id="line"
       render-to-canvas
+      gradient-line
       canvas-context="[[canvasContext]]"
       svg="[[svg]]"
       parallel-coordinates
@@ -80,7 +81,7 @@ Element providing solution to no problem in particular. As a simple example, inc
       redraw-elems="[[_lineRedrawFun()]]"
       dynamic-axis-redraw="[[dynamicAxisRedraw]]"
       stroke-width="2"
-      match-ticks="false"
+      match-ticks
       outer-tick-size="6">
     </px-vis-multi-axis>
     <px-vis-gridlines
@@ -155,6 +156,7 @@ Element providing solution to no problem in particular. As a simple example, inc
     ],
 
     ready:function(){
+      console.time('draw');
       this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": 50});
       this.set('titleLocation',{
         "x":"0",
@@ -183,13 +185,29 @@ Element providing solution to no problem in particular. As a simple example, inc
       // TODO make work with multiple series
       var config = {};
       config[this.seriesKey] = {
-        "color": "rgb(93,165,218)",
+        "color": this._getColor(18),
         "name": 'All',
         "x": dimensions,
         "y": dimensions
       }
 
       this.set('completeSeriesConfig',config);
+    },
+
+    // * These are in behavior chart. Should make it so we can import them from there */
+    /**
+     * Helper function to return the correct color for a particular index.
+     **/
+    _getColor: function(i){
+      var l = this.seriesColorOrder.length,
+          index = this._calcIndex(i,l);
+      return this.dataVisColors[this.seriesColorOrder[ index ]];
+    },
+    /**
+     * Helper function to calculate the index. When we run out of indcies, it loops back over valid indicies.
+     **/
+    _calcIndex: function(i,l){
+      return i < l ? i : this._calcIndex(i - l,l);
     },
 
     _generateChartExtents: function(dimensions){

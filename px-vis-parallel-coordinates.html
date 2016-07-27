@@ -79,7 +79,6 @@ Element providing solution to no problem in particular. As a simple example, inc
       muted-series="{{mutedSeries}}"
       redraw-series="true"
       redraw-elems="[[_lineRedrawFun()]]"
-      dynamic-axis-redraw="[[dynamicAxisRedraw]]"
       stroke-width="2"
       match-ticks
       outer-tick-size="6">
@@ -152,7 +151,7 @@ Element providing solution to no problem in particular. As a simple example, inc
     observers: [
       '_generateChartExtents(dimensions,chartData)',
       '_generateSeriesConfig(dimensions,chartData)',
-      '_calcAxisRedraw(chartData)'
+      '_calcRenderTarget(chartData)'
     ],
 
     ready:function(){
@@ -166,8 +165,8 @@ Element providing solution to no problem in particular. As a simple example, inc
       });
     },
 
-    _calcAxisRedraw: function(){
-      this.set('dynamicAxisRedraw', this.chartData.length < 8000 );
+    _calcRenderTarget: function(){
+      this.set('renderToCanvas', this.chartData.length < 8000 );
     },
 
     _computeDimensions: function(cD, axes, sK){

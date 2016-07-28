@@ -9,14 +9,20 @@
 
 
 <!--
-Element providing solution to no problem in particular. As a simple example, increments a counter when clicked.
+PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
 ##### Usage
 
-    <px-vis-parallel-coordinates counter-value="1">Hi</px-vis-parallel-coordinates>
+    <px-vis-parallel-coordinates
+        width="1300"
+        height="500"
+        chart-data="[[chartData]]"
+        skip-keys='{"TimeStamp":true}'
+        series-key="TimeStamp"
+    ></px-vis-parallel-coordinates>
 
 @element px-vis-parallel-coordinates
-@blurb Element providing solution to no problem in particular.
+@blurb PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 @homepage index.html
 @demo demo.html
 -->
@@ -66,6 +72,7 @@ Element providing solution to no problem in particular. As a simple example, inc
     <px-vis-multi-axis
       svg="[[svg]]"
       width="[[width]]"
+      height="[[height]]"
       margin="[[margin]]"
       title-location='[[titleLocation]]'
       x="[[x]]"
@@ -81,11 +88,13 @@ Element providing solution to no problem in particular. As a simple example, inc
       redraw-elems="[[_lineRedrawFun()]]"
       stroke-width="2"
       match-ticks
+      grid-axis="{{gridAxis}}"
       outer-tick-size="6">
     </px-vis-multi-axis>
     <px-vis-gridlines
       svg="[[svg]]"
-      axis="[[_returnFirstY(y,dimensions)]]"
+      tick-values="[[gridTicks]]"
+      axis="[[gridAxis]]"
       margin="[[margin]]"
       length="[[width]]"
       orientation="left"
@@ -123,28 +132,48 @@ Element providing solution to no problem in particular. As a simple example, inc
      * @type Object
      */
     properties: {
-
+      /**
+       * An optional dev set array to specify which dimensions to plot
+       *
+       */
       axes: {
         type: Array,
         notify: true,
-        value: function(){ return []; }
+        value: function(){ return []; } //must!!!! have default value
       },
-
+      /**
+       * A dev set array of which keys in the chart data are not dimension axes. At a minimum, it must include the series-key. Required if axes is not specified.
+       *
+       */
       skipKeys: {
         type: Object,
         notify: true,
         value: function() { return {}; }
       },
-
+      /**
+       * A required dev set string which defines which data key to use for the series lines
+       *
+       */
       seriesKey: {
         type: String,
         notify: true
       },
-
+      /**
+       * A computed array of dimensions which the chart uses. If axes are specified, they are used for the dimensions. If not, it will use all the keys in the data except those specified in skipKeys
+       *
+       */
       dimensions: {
         type: Array,
         notify: true,
-        computed: '_computeDimensions(chartData.*, axes, skipKeys.*)'
+        computed: 'computeDimensions(chartData.*, axes, skipKeys.*)'
+      },
+      /**
+       * A dev set array of objects defining which data keys should receive the same color.
+       *
+       */
+      colorGroups: {
+        type: Array,
+        notify: true
       }
     },
 
@@ -153,7 +182,10 @@ Element providing solution to no problem in particular. As a simple example, inc
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)'
     ],
-
+    /**
+     * At ready, set the margin and titleLocation objects
+     *
+     */
     ready:function(){
       console.time('draw');
       this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": 50});
@@ -165,22 +197,36 @@ Element providing solution to no problem in particular. As a simple example, inc
       });
     },
 
+    /**
+     * FIXME: This should be called declaratively in renderToCanvas. But if we do this, first it triggers a draw rendering to svg and takes forever. Need to figure out where to put this and/or chain it so it works
+     *
+     */
     _calcRenderTarget: function(){
       this.set('renderToCanvas', this.chartData.length < 8000 );
     },
-
-    _computeDimensions: function(cD, axes, sK){
+    /**
+     * Method to compute the dimensions to use. If axes are specified, they are used for the dimensions. If not, it will use all the keys in the data except those specified in skipKeys
+     *
+     */
+    computeDimensions: function(cD, axes, sK){
       if(this._doesObjHaveValues(this.chartData)){
+        // if the dev specified which axes to use, set them as dimensions
         if(axes.length > 0) {
           return axes;
         }
+        // else get them from the data.
+        // TODO what if the first object doesnt have all the dimensions?
         return Object.keys(this.chartData[0]).filter(function(d) {
           return typeof(this.skipKeys[d]) === 'undefined'
         }.bind(this));
       }
     },
 
-    _generateSeriesConfig: function(dimensions){
+    /**
+     * Creates the series configuration file
+     *
+     */
+      _generateSeriesConfig: function(dimensions){
       // TODO make work with multiple series
       var config = {};
       config[this.seriesKey] = {
@@ -193,7 +239,7 @@ Element providing solution to no problem in particular. As a simple example, inc
       this.set('completeSeriesConfig',config);
     },
 
-    // * These are in behavior chart. Should make it so we can import them from there */
+    // * TODO These are in behavior chart. Should make it so we can import them from there */
     /**
      * Helper function to return the correct color for a particular index.
      **/
@@ -208,33 +254,43 @@ Element providing solution to no problem in particular. As a simple example, inc
     _calcIndex: function(i,l){
       return i < l ? i : this._calcIndex(i - l,l);
     },
-
+    /**
+     * Creates the chartExtents for each dimension
+     *
+     */
     _generateChartExtents: function(dimensions){
       var ext = {
         "x": dimensions,
         "y": {}
       };
 
+      // TODO Is there a smarter way of doing this?
       for(var i = 0; i < dimensions.length; i++){
-        // TODO Make dynamic option
-        // ext.y[dimensions[i]] = [Infinity,-Infinity];
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
         });
       }
+
+      // TODO we will need to support a common axis:
+      /*
+        if(common axis){
+          if(dev set extents){
+            use em!
+          } else {
+            cycle through our found extents
+            pick out the largest min and max
+          }
+        }
+      */
       this.set('chartExtents',ext);
     },
 
+    /**
+     * An array of the line elements.
+     *
+     */
     _lineRedrawFun: function(){
       return [this.$.line]
-    },
-
-    _returnFirstY: function(y,dimensions){
-      return y[dimensions[0]]
-    },
-
-    _returnKeys: function(obj){
-      return Object.keys(obj);
     }
   });
 </script>

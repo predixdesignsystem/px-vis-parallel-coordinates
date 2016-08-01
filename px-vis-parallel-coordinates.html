@@ -6,6 +6,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
 <!--
@@ -29,77 +30,79 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 <dom-module id="px-vis-parallel-coordinates">
   <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
   <template>
-    <px-vis-multi-scale
-      x-axis-type="ordinal"
-      y-axis-type="linear"
-      parallel-coordinates
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]"
-      dimensions="[[dimensions]]"
-      chart-data="[[chartData]]"
-      complete-series-config="[[completeSeriesConfig]]"
-      chart-extents="[[chartExtents]]"
-      x="{{x}}"
-      y="{{y}}"
-      current-domain-x="{{currentDomainX}}"
-      current-domain-y="{{currentDomainY}}">
-    </px-vis-multi-scale>
-    <px-vis-svg-canvas
-      canvas-context="{{canvasContext}}"
-      svg="{{svg}}"
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]">
-    </px-vis-svg-canvas>
-    <px-vis-line
-      id="line"
-      render-to-canvas
-      gradient-line
-      canvas-context="[[canvasContext]]"
-      svg="[[svg]]"
-      parallel-coordinates
-      multi-path
-      series-id="[[seriesKey]]"
-      chart-data="[[chartData]]"
-      complete-series-config="[[completeSeriesConfig]]"
-      x="[[x]]"
-      y="[[y]]"
-      current-domain-x="[[currentDomainX]]"
-      current-domain-y="[[currentDomainY]]"
-      muted-series="[[mutedSeries]]">
-    </px-vis-line>
-    <px-vis-multi-axis
-      svg="[[svg]]"
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]"
-      title-location='[[titleLocation]]'
-      x="[[x]]"
-      y="[[y]]"
-      current-domain-x="[[currentDomainX]]"
-      current-domain-y="[[currentDomainY]]"
-      complete-series-config="{{completeSeriesConfig}}"
-      series-key="[[seriesKey]]"
-      chart-data="[[chartData]]"
-      dimensions="[[dimensions]]"
-      muted-series="{{mutedSeries}}"
-      redraw-series="true"
-      redraw-elems="[[_lineRedrawFun()]]"
-      stroke-width="2"
-      match-ticks
-      grid-ticks="{{gridTicks}}"
-      outer-tick-size="6">
-    </px-vis-multi-axis>
-    <px-vis-gridlines
-      svg="[[svg]]"
-      tick-values="[[gridTicks]]"
-      axis="[[_calcGridAxis(dimensions,y)]]"
-      margin="[[margin]]"
-      length="[[width]]"
-      orientation="left"
-      current-domain="[[currentDomainY]]">
-    </px-vis-gridlines>
+    <div id="wrapper" class="wrapper">
+      <px-vis-multi-scale
+        x-axis-type="ordinal"
+        y-axis-type="linear"
+        parallel-coordinates
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]"
+        dimensions="[[dimensions]]"
+        chart-data="[[chartData]]"
+        complete-series-config="[[completeSeriesConfig]]"
+        chart-extents="[[chartExtents]]"
+        x="{{x}}"
+        y="{{y}}"
+        current-domain-x="{{currentDomainX}}"
+        current-domain-y="{{currentDomainY}}">
+      </px-vis-multi-scale>
+      <px-vis-svg-canvas
+        canvas-context="{{canvasContext}}"
+        svg="{{svg}}"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]">
+      </px-vis-svg-canvas>
+      <px-vis-line
+        id="line"
+        render-to-canvas
+        gradient-line
+        canvas-context="[[canvasContext]]"
+        svg="[[svg]]"
+        parallel-coordinates
+        multi-path
+        series-id="[[seriesKey]]"
+        chart-data="[[chartData]]"
+        complete-series-config="[[completeSeriesConfig]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        muted-series="[[mutedSeries]]">
+      </px-vis-line>
+      <px-vis-multi-axis
+        svg="[[svg]]"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]"
+        title-location='[[titleLocation]]'
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        complete-series-config="{{completeSeriesConfig}}"
+        series-key="[[seriesKey]]"
+        chart-data="[[chartData]]"
+        dimensions="[[dimensions]]"
+        muted-series="{{mutedSeries}}"
+        redraw-series="true"
+        redraw-elems="[[_lineRedrawFun()]]"
+        stroke-width="2"
+        match-ticks
+        grid-ticks="{{gridTicks}}"
+        outer-tick-size="6">
+      </px-vis-multi-axis>
+      <px-vis-gridlines
+        svg="[[svg]]"
+        tick-values="[[gridTicks]]"
+        axis="[[_calcGridAxis(dimensions,y)]]"
+        margin="[[margin]]"
+        length="[[width]]"
+        orientation="left"
+        current-domain="[[currentDomainY]]">
+      </px-vis-gridlines>
+    </div>
   </template>
 </dom-module>
 
@@ -122,6 +125,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorD3.axisConfig,
       PxVisBehavior.mutedSeries,
       PxVisBehaviorD3.dynamicRedraw,
+      Polymer.IronResizableBehavior,
       commonColors
     ],
 
@@ -182,6 +186,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)'
     ],
+    listeners: {
+     'iron-resize': '_onIronResize'
+    },
     /**
      * At ready, set the margin and titleLocation objects
      *
@@ -295,6 +302,14 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _lineRedrawFun: function(){
       return [this.$.line]
+    },
+    _onIronResize: function() {
+      this.debounce('ironresize', function() {
+        var wrapperRect = this.$.wrapper.getBoundingClientRect();
+
+        this.set('width', wrapperRect.width);
+        this.set('height', wrapperRect.height);
+      },100);
     }
   });
 </script>

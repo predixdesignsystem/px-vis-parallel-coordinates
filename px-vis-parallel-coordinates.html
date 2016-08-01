@@ -89,12 +89,13 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       stroke-width="2"
       match-ticks
       grid-ticks="{{gridTicks}}"
+      grid-axis="{{gridAxis}}"
       outer-tick-size="6">
     </px-vis-multi-axis>
     <px-vis-gridlines
       svg="[[svg]]"
       tick-values="[[gridTicks]]"
-      axis="[[_calcGridAxis(dimensions,y)]]"
+      axis="[[gridAxis]]"
       margin="[[margin]]"
       length="[[width]]"
       orientation="left"
@@ -283,10 +284,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         }
       */
       this.set('chartExtents',ext);
-    },
-
-    _calcGridAxis: function(dim,y){
-      return y[dim[0]];
     },
 
     /**

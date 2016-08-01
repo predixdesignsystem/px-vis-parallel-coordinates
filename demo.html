@@ -23,8 +23,17 @@
         width="1300"
         height="500"
         chart-data="[[chartData]]"
-        skip-keys='{"TimeStamp":true}'
+        skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
+      ></px-vis-parallel-coordinates>
+      <px-vis-parallel-coordinates
+        width="1300"
+        height="500"
+        chart-data="[[chartData]]"
+        skip-keys='{"UnitNumber":true}'
+        series-key="TimeStamp"
+        category-key="DLN_MODE"
+        categories='[1,2,3,4]'
       ></px-vis-parallel-coordinates>
       <px-vis-data
         id = "seriesAjax"

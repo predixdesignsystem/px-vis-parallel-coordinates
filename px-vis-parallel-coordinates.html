@@ -74,6 +74,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         muted-series="[[mutedSeries]]">
       </px-vis-line>
       <px-vis-multi-axis
+        id="multiAxis"
         svg="[[svg]]"
         width="[[width]]"
         height="[[height]]"
@@ -181,7 +182,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_generateChartExtents(dimensions,chartData)',
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)',
-      '_calcTitleLocation(svg,dimensions)'
+      '_calcTitleLocation(svg,dimensions, width, height)'
     ],
     listeners: {
      'iron-resize': '_onIronResize'
@@ -191,7 +192,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     ready:function(){
-      console.time('draw');
+
       // this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": 50});
       // 90
       // this.set('titleLocation',{
@@ -217,53 +218,57 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     },
 
     _calcTitleLocation: function(svg,dim){
-      var textWidth = 0,
-          _this = this;
+      //FIXME: debounce
+     // this.debounce('calcTitleLocation', function() {
 
-      // append and remove the dimensions text so we can measure how long
-      svg.selectAll('.dummyText')
-        .data(dim)
-        .enter()
-        .append("text")
-        .attr('class',"dummyText")
-        .attr('font-size', this.labelTypeSize + 'px')
-        .attr('font-style','GE Inspira Sans')
-        .text(function(d) { return d})
-        .each(function(d,i) {
-          var w = this.getComputedTextLength();
-          textWidth = Math.max(w,textWidth);
-          this.remove(); // remove them just after displaying them
-        });
+        var textWidth = 0,
+            _this = this;
 
-      // add a bit for a margin between text labels
-      textWidth += 10;
-      //do we have enough space for the largest text label?
-      if(this.width / dim.length < textWidth) {
-        this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": textWidth});
-        // vertical
-        this.set('titleLocation',{
-          "x":"3",
-          "y":this.height - this.margin.bottom,
-          "r":"-90",
-          "anchor":"end"
-        });
-      } else {
-        this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": (this.labelTypeSize + 8)});
-        // horizontal
-        this.set('titleLocation',{
-          "x":"0",
-          "y":this.height + 10 - this.margin.bottom,
-          "r":"0",
-          "anchor":"middle"
-        });
-        // angle
-        // this.set('titleLocation',{
-        //   "x":"0",
-        //   "y":this.height - this.margin.bottom,
-        //   "r":"-20",
-        //   "anchor":"end"
-        // });
-      }
+        // append and remove the dimensions text so we can measure how long
+        var labels = svg.selectAll('.dummyText')
+          .data(dim);
+          labels.enter()
+          .append("text")
+          .attr('class',"dummyText")
+          .attr('font-size', this.labelTypeSize + 'px')
+          .attr('font-style','GE Inspira Sans')
+          .text(function(d) { return d})
+          .each(function(d,i) {
+            var w = this.getComputedTextLength();
+            textWidth = Math.max(w,textWidth);
+            this.remove(); // remove them just after displaying them
+          });
+
+        // add a bit for a margin between text labels
+        textWidth += 10;
+        //do we have enough space for the largest text label?
+        if(this.width / dim.length < textWidth) {
+          this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": textWidth});
+          // vertical
+          this.set('titleLocation',{
+            "x":"3",
+            "y":this.height - this.margin.bottom,
+            "r":"-90",
+            "anchor":"end"
+          });
+        } else {
+          this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": (this.labelTypeSize + 8)});
+          // horizontal
+          this.set('titleLocation',{
+            "x":"0",
+            "y":this.height + 10 - this.margin.bottom,
+            "r":"0",
+            "anchor":"middle"
+          });
+          // angle
+          // this.set('titleLocation',{
+          //   "x":"0",
+          //   "y":this.height - this.margin.bottom,
+          //   "r":"-20",
+          //   "anchor":"end"
+          // });
+        }
+  // }.bind(this), 1);
     },
 
     /**
@@ -279,6 +284,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     computeDimensions: function(cD, axes, sK){
       if(this._doesObjHaveValues(this.chartData)){
+
         // if the dev specified which axes to use, set them as dimensions
         if(axes.length > 0) {
           return axes;

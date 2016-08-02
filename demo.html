@@ -19,6 +19,7 @@
 
     <h3>Parallel Coordinates</h3>
     <template is="dom-bind">
+      <div style="resize: both; overflow: auto">
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -26,6 +27,7 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
       ></px-vis-parallel-coordinates>
+      </div>
       <!-- <br />
       <br />
       <br />
@@ -40,7 +42,7 @@
       <br />
       <br />
       <br />
-      <px-vis-parallel-coordinates
+      <!--<px-vis-parallel-coordinates
         width="1300"
         height="500"
         chart-data="[[chartData]]"
@@ -48,17 +50,17 @@
         series-key="TimeStamp"
         category-key="DLN_MODE"
         categories='[1,2,3,4]'
-      ></px-vis-parallel-coordinates>
+      ></px-vis-parallel-coordinates>-->
       <br />
       <br />
       <br />
-      <px-vis-parallel-coordinates
+      <!--<px-vis-parallel-coordinates
         width="1300"
         height="500"
         chart-data="[[chartData]]"
         skip-keys='{"UnitNumber":true,"DLN_MODE":true,"DWATT":true,"TTXD1_31":true,"TTXD1_30":true,"TTXD1_29":true,"TTXD1_28":true,"TTXD1_27":true,"TTXD1_26":true,"TTXD1_25":true,"TTXD1_24":true,"TTXD1_23":true,"TTXD1_22":true,"TTXD1_21":true}'
         series-key="TimeStamp"
-      ></px-vis-parallel-coordinates>
+      ></px-vis-parallel-coordinates>-->
 
 
       <px-vis-data

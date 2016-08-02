@@ -30,9 +30,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
   <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
   <template>
     <px-vis-multi-scale
-      x-axis-type="ordinal"
-      y-axis-type="linear"
-      parallel-coordinates
       width="[[width]]"
       height="[[height]]"
       margin="[[margin]]"
@@ -89,20 +86,23 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       redraw-series="true"
       redraw-elems="[[_lineRedrawFun()]]"
       stroke-width="2"
-      match-ticks
+      match-ticks="[[matchTicks]]"
       grid-ticks="{{gridTicks}}"
       grid-axis="{{gridAxis}}"
+      common-axis="[[commonAxis]]"
       outer-tick-size="6">
     </px-vis-multi-axis>
-    <px-vis-gridlines
-      svg="[[svg]]"
-      tick-values="[[gridTicks]]"
-      axis="[[gridAxis]]"
-      margin="[[margin]]"
-      length="[[width]]"
-      orientation="left"
-      current-domain="[[currentDomainY]]">
-    </px-vis-gridlines>
+    <template is="dom-if" if="[[matchTicks]]">
+      <px-vis-gridlines
+        svg="[[svg]]"
+        tick-values="[[gridTicks]]"
+        axis="[[gridAxis]]"
+        margin="[[margin]]"
+        length="[[width]]"
+        orientation="left"
+        current-domain="[[currentDomainY]]">
+      </px-vis-gridlines>
+    </template>
   </template>
 </dom-module>
 
@@ -126,6 +126,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.mutedSeries,
       PxVisBehaviorD3.dynamicRedraw,
       PxVisBehavior.categories,
+      PxVisBehavior.commonAxis,
       commonColors
     ],
 
@@ -170,11 +171,19 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         type: Array,
         notify: true,
         computed: 'computeDimensions(chartData.*, axes, skipKeys.*)'
+      },
+      /**
+       * A boolean to specify if the axis ticks should align or each have their own ranges
+       *
+       */
+      matchTicks: {
+        type: Boolean,
+        value: false
       }
     },
 
     observers: [
-      '_generateChartExtents(dimensions,chartData)',
+      '_generateChartExtents(dimensions,chartData,commonAxis)',
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)',
       '_calcTitleLocation(svg,dimensions)'
@@ -183,30 +192,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * At ready, set the margin and titleLocation objects
      *
      */
-    ready:function(){
+    created:function(){
       console.time('draw');
-      // this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": 50});
-      // 90
-      // this.set('titleLocation',{
-      //   "x":"0",
-      //   "y":this.height - this.margin.bottom,
-      //   "r":"-90",
-      //   "anchor":"end"
-      // });
-      // horizontal
-      // this.set('titleLocation',{
-      //   "x":"0",
-      //   "y":this.height + 10 - this.margin.bottom,
-      //   "r":"0",
-      //   "anchor":"middle"
-      // });
-      // angle
-      // this.set('titleLocation',{
-      //   "x":"0",
-      //   "y":this.height - this.margin.bottom,
-      //   "r":"-20",
-      //   "anchor":"end"
-      // });
     },
 
     _calcTitleLocation: function(svg,dim){
@@ -348,6 +335,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
         });
+      }
+      // if we want a common axis, find overall extents
+      if(this.commonAxis){
+        var maxMin = d3.extent(d3.merge(d3.values(ext.y)));
+        for(var i = 0; i < dimensions.length; i++){
+          // set each axis extent to max & min
+          // TODO this is not the most efficient strategy, but certainly is the easiest, especially to keep it dynamic. Better would be to use only a single scale instead of calculating a scale multiple times.
+          ext.y[dimensions[i]] = maxMin;
+        }
       }
 
       // TODO we will need to support a common axis:

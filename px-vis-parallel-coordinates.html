@@ -94,11 +94,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     </px-vis-multi-axis>
     <template is="dom-if" if="[[matchTicks]]">
       <px-vis-gridlines
-        svg="[[svg]]"
+        svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
         tick-values="[[gridTicks]]"
         axis="[[gridAxis]]"
         margin="[[margin]]"
-        length="[[width]]"
+        length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
         orientation="left"
         current-domain="[[currentDomainY]]">
       </px-vis-gridlines>
@@ -366,6 +366,25 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _lineRedrawFun: function(){
       return [this.$.line]
+    },
+    /**
+     * Returns the width for the gridlines
+     *
+     */
+    _calcGridWidth: function(w,x,dim){
+      // overall width minus the inset for the axes
+      return w - x(dim[0]) * 2;
+    },
+    /**
+     * Retruns a g elem for the grid to draw to
+     *
+     */
+    _calcGridSvg: function(svg,x,dim){
+      // create a g and move it so it lines up with the first axis
+      var g = svg.append('g')
+        .attr("class", "grid")
+        .attr("transform", "translate(" + x(dim[0]) + ",0)");
+      return g;
     }
   });
 </script>

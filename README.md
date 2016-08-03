@@ -19,13 +19,13 @@ Node, npm and bower are necessary to install the component and dependencies. web
 First, install the component via bower on the command line.
 
 ```
-bower install Px-Vis-Parallel-Coordinates --save
+bower install px-vis-parallel-coordinates --save
 ```
 
 Second, import the component to your application with the following tag in your head.
 
 ```
-<link rel="import" href="/bower_components/Px-Vis-Parallel-Coordinates/Px-Vis-Parallel-Coordinates.html"/>
+<link rel="import" href="/bower_components/Px-Vis-Parallel-Coordinates/px-vis-parallel-coordinates.html"/>
 ```
 
 Finally, use the component in your application:
@@ -39,7 +39,7 @@ Insert Your demo code here.
 
 ## documentation
 
-Read the full API and view the demo [here](https://predixdev.github.io/Px-Vis-Parallel-Coordinates).
+Read the full API and view the demo [here](https://predixdev.github.io/px-vis-parallel-coordinates).
 
 The documentation in this repository is supplemental to the official Predix documentation, which is continuously updated and maintained by the Predix documentation team. Go to [http://predix.io](http://predix.io)  to see the official Predix documentation.
 
@@ -79,4 +79,4 @@ $ grunt devmode
 
 ## Known Issues
 
-Please use [Github Issues](https://github.com/PredixDev/Px-Vis-Parallel-Coordinates/issues) to submit any bugs you might find.
+Please use [Github Issues](https://github.com/PredixDev/px-vis-parallel-coordinates/issues) to submit any bugs you might find.

@@ -11,6 +11,7 @@
     <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
     <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
     <link rel="import" href="../px-vis/px-vis-data.html" />
+    <link rel="import" href="../px-vis/px-vis-chart-navigator.html" />
     <link rel="import" href="px-vis-parallel-coordinates.html" />
     <link rel="import" href="../px-theme/px-theme.html" />
   </head>
@@ -26,15 +27,38 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         match-ticks
+        selected-domain="{{selectedDomain}}"
       ></px-vis-parallel-coordinates>
-      <!-- <br />
+      <px-vis-chart-navigator
+          x-axis-type="time"
+          y-axis-type="linear"
+          width="1300"
+          height="100"
+          margin='{
+            "top": 5,
+            "right": 10,
+            "bottom": 20,
+            "left": 10
+          }'
+          chart-data="[[chartData]]"
+          series-config='{
+            "TTXD1_1":{
+              "type": "line",
+              "name": "TTXD1_1",
+              "x":"TimeStamp",
+              "y":"TTXD1_1"
+            }
+          }'
+          selected-domain="{{selectedDomain}}"
+          gradient-overlay>
+        </px-vis-chart-navigator>
       <br />
       <br />
-      <px-vis-parallel-coordinates
+      <br />
+      <!-- <px-vis-parallel-coordinates
         width="1300"
         height="500"
         chart-data="[[chartData]]"
-        skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         axes='["DWATT", "TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5", "TTXD1_6", "TTXD1_7", "TTXD1_8", "TTXD1_9", "TTXD1_10", "TTXD1_11", "TTXD1_12", "TTXD1_13",  "TTXD1_14", "TTXD1_15", "TTXD1_16", "TTXD1_17", "TTXD1_18", "TTXD1_19", "TTXD1_20", "TTXD1_21", "TTXD1_22", "TTXD1_23", "TTXD1_24", "TTXD1_25", "TTXD1_26",  "TTXD1_27", "TTXD1_28", "TTXD1_29", "TTXD1_30", "TTXD1_31"]'
         match-ticks
@@ -59,11 +83,18 @@
         width="1300"
         height="500"
         chart-data="[[chartData]]"
-        skip-keys='{"UnitNumber":true,"DLN_MODE":true,"DWATT":true,"TTXD1_31":true,"TTXD1_30":true,"TTXD1_29":true,"TTXD1_28":true,"TTXD1_27":true,"TTXD1_26":true,"TTXD1_25":true,"TTXD1_24":true,"TTXD1_23":true,"TTXD1_22":true,"TTXD1_21":true,"TTXD1_20":true,"TTXD1_19":true,"TTXD1_18":true,"TTXD1_17":true,"TTXD1_16":true,"TTXD1_15":true,"TTXD1_14":true,"TTXD1_13":true,"TTXD1_12":true,"TTXD1_11":true,"TTXD1_10":true,"TTXD1_9":true,"TTXD1_8":true,"TTXD1_7":true,"TTXD1_6":true,"TTXD1_5":true,"TTXD1_4":true}'
+        skip-keys='{"UnitNumber":true,"DLN_MODE":true,"DWATT":true,"TTXD1_31":true,"TTXD1_30":true,"TTXD1_29":true,"TTXD1_28":true,"TTXD1_27":true,"TTXD1_26":true,"TTXD1_25":true,"TTXD1_24":true,"TTXD1_23":true,"TTXD1_22":true,"TTXD1_21":true}'
         series-key="TimeStamp"
         match-ticks
       ></px-vis-parallel-coordinates> -->
-      <!-- skip-keys='{"UnitNumber":true,"DLN_MODE":true,"DWATT":true,"TTXD1_31":true,"TTXD1_30":true,"TTXD1_29":true,"TTXD1_28":true,"TTXD1_27":true,"TTXD1_26":true,"TTXD1_25":true,"TTXD1_24":true,"TTXD1_23":true,"TTXD1_22":true,"TTXD1_21":true,"TTXD1_20":true,"TTXD1_19":true,"TTXD1_18":true,"TTXD1_17":true,"TTXD1_16":true,"TTXD1_15":true,"TTXD1_14":true,"TTXD1_13":true,"TTXD1_12":true,"TTXD1_11":true,"TTXD1_10":true,"TTXD1_9":true,"TTXD1_8":true,"TTXD1_7":true,"TTXD1_6":true,"TTXD1_5":true,"TTXD1_4":true,"TTXD1_3":true}' -->
+      <!-- <px-vis-parallel-coordinates
+        width="1300"
+        height="500"
+        chart-data="[[chartData]]"
+        axes='["TTXD1_1","TTXD1_2"]'
+        series-key="TimeStamp"
+        match-ticks
+      ></px-vis-parallel-coordinates> -->
       <!-- <br />
       <br />
       <br />

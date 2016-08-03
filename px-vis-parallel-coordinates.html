@@ -66,7 +66,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       y="[[y]]"
       current-domain-x="[[currentDomainX]]"
       current-domain-y="[[currentDomainY]]"
-      muted-series="[[mutedSeries]]">
+      selected-domain="[[selectedDomain]]"
+      muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
     </px-vis-line>
     <px-vis-multi-axis
       svg="[[svg]]"
@@ -82,7 +83,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       series-key="[[seriesKey]]"
       chart-data="[[chartData]]"
       dimensions="[[dimensions]]"
-      muted-series="{{mutedSeries}}"
+      muted-series="{{mutedSeriesBrush}}"
       redraw-series="true"
       redraw-elems="[[_lineRedrawFun()]]"
       stroke-width="2"
@@ -127,6 +128,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorD3.dynamicRedraw,
       PxVisBehavior.categories,
       PxVisBehavior.commonAxis,
+      PxVisBehaviorD3.selectedDomain,
       commonColors
     ],
 
@@ -179,6 +181,14 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       matchTicks: {
         type: Boolean,
         value: false
+      },
+      mutedSeriesDomain: {
+        type:Object,
+        notify: true
+      },
+      mutedSeriesBrush: {
+        type:Object,
+        notify: true
       }
     },
 
@@ -186,8 +196,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_generateChartExtents(dimensions,chartData,commonAxis)',
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)',
-      '_calcTitleLocation(svg,dimensions)'
+      '_calcTitleLocation(svg,dimensions)',
+      '_selectedDomain(selectedDomain.x)'
     ],
+
     /**
      * At ready, set the margin and titleLocation objects
      *
@@ -336,6 +348,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           return Number(d[dimensions[i]]);
         });
       }
+
+      // TODO dev set common extents?
       // if we want a common axis, find overall extents
       if(this.commonAxis){
         var maxMin = d3.extent(d3.merge(d3.values(ext.y)));
@@ -346,18 +360,37 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         }
       }
 
-      // TODO we will need to support a common axis:
-      /*
-        if(common axis){
-          if(dev set extents){
-            use em!
-          } else {
-            cycle through our found extents
-            pick out the largest min and max
+      this.set('chartExtents',ext);
+    },
+    /**
+     * Adds data to a muted series based on the selected domain
+     *
+     */
+    _selectedDomain: function(sd){
+      this.debounce('selected_domain',function(){
+        var muted = {};
+        for(var i = 0; i < this.chartData.length; i++){
+          if(this.chartData[i][this.seriesKey] < sd[0] || this.chartData[i][this.seriesKey] > sd[1]){
+            muted[this.chartData[i][this.seriesKey]] = true;
           }
         }
-      */
-      this.set('chartExtents',ext);
+        this.set('mutedSeriesDomain',muted);
+      },200);
+    },
+    /**
+     * Takes the muted series from the axis brush and the selected domain and returns a merged copy of them
+     *
+     */
+    _combineMutes: function(m1,m2){
+      var muted = {};
+      // for these, we assume that "false" items will just have been removed
+      for(var k in m1){
+        muted[k] = m1[k];
+      }
+      for(var k in m2){
+        muted[k] = m2[k];
+      }
+      return muted;
     },
 
     /**

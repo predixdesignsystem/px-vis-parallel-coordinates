@@ -30,12 +30,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 <dom-module id="px-vis-parallel-coordinates">
   <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
   <template>
-<<<<<<< HEAD
     <div id="wrapper" class="wrapper">
       <px-vis-multi-scale
-        x-axis-type="ordinal"
-        y-axis-type="linear"
-        parallel-coordinates
         width="[[width]]"
         height="[[height]]"
         margin="[[margin]]"
@@ -72,10 +68,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         y="[[y]]"
         current-domain-x="[[currentDomainX]]"
         current-domain-y="[[currentDomainY]]"
-        muted-series="[[mutedSeries]]">
+        selected-domain="[[selectedDomain]]"
+        muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
       </px-vis-line>
       <px-vis-multi-axis
-        id="multiAxis"
         svg="[[svg]]"
         width="[[width]]"
         height="[[height]]"
@@ -89,102 +85,28 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         series-key="[[seriesKey]]"
         chart-data="[[chartData]]"
         dimensions="[[dimensions]]"
-        muted-series="{{mutedSeries}}"
+        muted-series="{{mutedSeriesBrush}}"
         redraw-series="true"
         redraw-elems="[[_lineRedrawFun()]]"
         stroke-width="2"
-        match-ticks
+        match-ticks="[[matchTicks]]"
         grid-ticks="{{gridTicks}}"
         grid-axis="{{gridAxis}}"
+        common-axis="[[commonAxis]]"
         outer-tick-size="6">
       </px-vis-multi-axis>
-      <px-vis-gridlines
-        svg="[[svg]]"
-        tick-values="[[gridTicks]]"
-        axis="[[gridAxis]]"
-        margin="[[margin]]"
-        length="[[width]]"
-        orientation="left"
-        current-domain="[[currentDomainY]]">
-      </px-vis-gridlines>
+      <template is="dom-if" if="[[matchTicks]]">
+        <px-vis-gridlines
+          svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
+          tick-values="[[gridTicks]]"
+          axis="[[gridAxis]]"
+          margin="[[margin]]"
+          length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
+          orientation="left"
+          current-domain="[[currentDomainY]]">
+        </px-vis-gridlines>
+      </template>
     </div>
-=======
-    <px-vis-multi-scale
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]"
-      dimensions="[[dimensions]]"
-      chart-data="[[chartData]]"
-      complete-series-config="[[completeSeriesConfig]]"
-      chart-extents="[[chartExtents]]"
-      x="{{x}}"
-      y="{{y}}"
-      current-domain-x="{{currentDomainX}}"
-      current-domain-y="{{currentDomainY}}">
-    </px-vis-multi-scale>
-    <px-vis-svg-canvas
-      canvas-context="{{canvasContext}}"
-      svg="{{svg}}"
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]">
-    </px-vis-svg-canvas>
-    <px-vis-line
-      id="line"
-      render-to-canvas
-      gradient-line
-      canvas-context="[[canvasContext]]"
-      svg="[[svg]]"
-      parallel-coordinates
-      multi-path
-      series-id="[[seriesKey]]"
-      category-key="[[categoryKey]]"
-      categories="[[categories]]"
-      chart-data="[[chartData]]"
-      complete-series-config="[[completeSeriesConfig]]"
-      x="[[x]]"
-      y="[[y]]"
-      current-domain-x="[[currentDomainX]]"
-      current-domain-y="[[currentDomainY]]"
-      selected-domain="[[selectedDomain]]"
-      muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
-    </px-vis-line>
-    <px-vis-multi-axis
-      svg="[[svg]]"
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]"
-      title-location='[[titleLocation]]'
-      x="[[x]]"
-      y="[[y]]"
-      current-domain-x="[[currentDomainX]]"
-      current-domain-y="[[currentDomainY]]"
-      complete-series-config="{{completeSeriesConfig}}"
-      series-key="[[seriesKey]]"
-      chart-data="[[chartData]]"
-      dimensions="[[dimensions]]"
-      muted-series="{{mutedSeriesBrush}}"
-      redraw-series="true"
-      redraw-elems="[[_lineRedrawFun()]]"
-      stroke-width="2"
-      match-ticks="[[matchTicks]]"
-      grid-ticks="{{gridTicks}}"
-      grid-axis="{{gridAxis}}"
-      common-axis="[[commonAxis]]"
-      outer-tick-size="6">
-    </px-vis-multi-axis>
-    <template is="dom-if" if="[[matchTicks]]">
-      <px-vis-gridlines
-        svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
-        tick-values="[[gridTicks]]"
-        axis="[[gridAxis]]"
-        margin="[[margin]]"
-        length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
-        orientation="left"
-        current-domain="[[currentDomainY]]">
-      </px-vis-gridlines>
-    </template>
->>>>>>> fdbf8166fcd3a31e401c8181ff7e3d46bcd7c4b6
   </template>
 </dom-module>
 
@@ -278,7 +200,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_generateChartExtents(dimensions,chartData,commonAxis)',
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)',
-      '_selectedDomain(selectedDomain.x)'
+      '_selectedDomain(selectedDomain.x)',
       '_calcTitleLocation(svg,dimensions, height, width)'
     ],
     listeners: {
@@ -496,6 +418,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         this.set('width', wrapperRect.width);
         this.set('height', wrapperRect.height);
       },100);
+    },
     /**
      * Returns the width for the gridlines
      *

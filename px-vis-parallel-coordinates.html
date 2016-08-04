@@ -6,6 +6,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
 <!--
@@ -29,81 +30,83 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 <dom-module id="px-vis-parallel-coordinates">
   <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
   <template>
-    <px-vis-multi-scale
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]"
-      dimensions="[[dimensions]]"
-      chart-data="[[chartData]]"
-      complete-series-config="[[completeSeriesConfig]]"
-      chart-extents="[[chartExtents]]"
-      x="{{x}}"
-      y="{{y}}"
-      current-domain-x="{{currentDomainX}}"
-      current-domain-y="{{currentDomainY}}">
-    </px-vis-multi-scale>
-    <px-vis-svg-canvas
-      canvas-context="{{canvasContext}}"
-      svg="{{svg}}"
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]">
-    </px-vis-svg-canvas>
-    <px-vis-line
-      id="line"
-      render-to-canvas
-      gradient-line
-      canvas-context="[[canvasContext]]"
-      svg="[[svg]]"
-      parallel-coordinates
-      multi-path
-      series-id="[[seriesKey]]"
-      category-key="[[categoryKey]]"
-      categories="[[categories]]"
-      chart-data="[[chartData]]"
-      complete-series-config="[[completeSeriesConfig]]"
-      x="[[x]]"
-      y="[[y]]"
-      current-domain-x="[[currentDomainX]]"
-      current-domain-y="[[currentDomainY]]"
-      selected-domain="[[selectedDomain]]"
-      muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
-    </px-vis-line>
-    <px-vis-multi-axis
-      svg="[[svg]]"
-      width="[[width]]"
-      height="[[height]]"
-      margin="[[margin]]"
-      title-location='[[titleLocation]]'
-      x="[[x]]"
-      y="[[y]]"
-      current-domain-x="[[currentDomainX]]"
-      current-domain-y="[[currentDomainY]]"
-      complete-series-config="{{completeSeriesConfig}}"
-      series-key="[[seriesKey]]"
-      chart-data="[[chartData]]"
-      dimensions="[[dimensions]]"
-      muted-series="{{mutedSeriesBrush}}"
-      redraw-series="true"
-      redraw-elems="[[_lineRedrawFun()]]"
-      stroke-width="2"
-      match-ticks="[[matchTicks]]"
-      grid-ticks="{{gridTicks}}"
-      grid-axis="{{gridAxis}}"
-      common-axis="[[commonAxis]]"
-      outer-tick-size="6">
-    </px-vis-multi-axis>
-    <template is="dom-if" if="[[matchTicks]]">
-      <px-vis-gridlines
-        svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
-        tick-values="[[gridTicks]]"
-        axis="[[gridAxis]]"
+    <div id="wrapper" class="wrapper">
+      <px-vis-multi-scale
+        width="[[width]]"
+        height="[[height]]"
         margin="[[margin]]"
-        length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
-        orientation="left"
-        current-domain="[[currentDomainY]]">
-      </px-vis-gridlines>
-    </template>
+        dimensions="[[dimensions]]"
+        chart-data="[[chartData]]"
+        complete-series-config="[[completeSeriesConfig]]"
+        chart-extents="[[chartExtents]]"
+        x="{{x}}"
+        y="{{y}}"
+        current-domain-x="{{currentDomainX}}"
+        current-domain-y="{{currentDomainY}}">
+      </px-vis-multi-scale>
+      <px-vis-svg-canvas
+        canvas-context="{{canvasContext}}"
+        svg="{{svg}}"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]">
+      </px-vis-svg-canvas>
+      <px-vis-line
+        id="line"
+        render-to-canvas
+        gradient-line
+        canvas-context="[[canvasContext]]"
+        svg="[[svg]]"
+        parallel-coordinates
+        multi-path
+        series-id="[[seriesKey]]"
+        category-key="[[categoryKey]]"
+        categories="[[categories]]"
+        chart-data="[[chartData]]"
+        complete-series-config="[[completeSeriesConfig]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        selected-domain="[[selectedDomain]]"
+        muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
+      </px-vis-line>
+      <px-vis-multi-axis
+        svg="[[svg]]"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]"
+        title-location='[[titleLocation]]'
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        complete-series-config="{{completeSeriesConfig}}"
+        series-key="[[seriesKey]]"
+        chart-data="[[chartData]]"
+        dimensions="[[dimensions]]"
+        muted-series="{{mutedSeriesBrush}}"
+        redraw-series="true"
+        redraw-elems="[[_lineRedrawFun()]]"
+        stroke-width="2"
+        match-ticks="[[matchTicks]]"
+        grid-ticks="{{gridTicks}}"
+        grid-axis="{{gridAxis}}"
+        common-axis="[[commonAxis]]"
+        outer-tick-size="6">
+      </px-vis-multi-axis>
+      <template is="dom-if" if="[[matchTicks]]">
+        <px-vis-gridlines
+          svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
+          tick-values="[[gridTicks]]"
+          axis="[[gridAxis]]"
+          margin="[[margin]]"
+          length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
+          orientation="left"
+          current-domain="[[currentDomainY]]">
+        </px-vis-gridlines>
+      </template>
+    </div>
   </template>
 </dom-module>
 
@@ -126,6 +129,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorD3.axisConfig,
       PxVisBehavior.mutedSeries,
       PxVisBehaviorD3.dynamicRedraw,
+      Polymer.IronResizableBehavior,
       PxVisBehavior.categories,
       PxVisBehavior.commonAxis,
       PxVisBehaviorD3.selectedDomain,
@@ -196,10 +200,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_generateChartExtents(dimensions,chartData,commonAxis)',
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)',
-      '_calcTitleLocation(svg,dimensions)',
-      '_selectedDomain(selectedDomain.x)'
+      '_selectedDomain(selectedDomain.x)',
+      '_calcTitleLocation(svg,dimensions, height, width)'
     ],
-
+    listeners: {
+     'iron-resize': '_onIronResize'
+    },
     /**
      * At ready, set the margin and titleLocation objects
      *
@@ -209,53 +215,57 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     },
 
     _calcTitleLocation: function(svg,dim){
-      var textWidth = 0,
-          _this = this;
 
-      // append and remove the dimensions text so we can measure how long
-      svg.selectAll('.dummyText')
-        .data(dim)
-        .enter()
-        .append("text")
-        .attr('class',"dummyText")
-        .attr('font-size', this.labelTypeSize + 'px')
-        .attr('font-style','GE Inspira Sans')
-        .text(function(d) { return d})
-        .each(function(d,i) {
-          var w = this.getComputedTextLength();
-          textWidth = Math.max(w,textWidth);
-          this.remove(); // remove them just after displaying them
-        });
+      this.debounce('calcTitleLocation', function() {
 
-      // add a bit for a margin between text labels
-      textWidth += 10;
-      //do we have enough space for the largest text label?
-      if(this.width / dim.length < textWidth) {
-        this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": textWidth});
-        // vertical
-        this.set('titleLocation',{
-          "x":"3",
-          "y":this.height - this.margin.bottom,
-          "r":"-90",
-          "anchor":"end"
-        });
-      } else {
-        this.set('margin', { "top": 10, "right": 15, "left": 30, "bottom": (this.labelTypeSize + 8)});
-        // horizontal
-        this.set('titleLocation',{
-          "x":"0",
-          "y":this.height + 10 - this.margin.bottom,
-          "r":"0",
-          "anchor":"middle"
-        });
-        // angle
-        // this.set('titleLocation',{
-        //   "x":"0",
-        //   "y":this.height - this.margin.bottom,
-        //   "r":"-20",
-        //   "anchor":"end"
-        // });
-      }
+        var textWidth = 0,
+            _this = this;
+
+        // append and remove the dimensions text so we can measure how long
+        var labels = svg.selectAll('.dummyText')
+          .data(dim);
+          labels.enter()
+          .append("text")
+          .attr('class',"dummyText")
+          .attr('font-size', this.labelTypeSize + 'px')
+          .attr('font-style','GE Inspira Sans')
+          .text(function(d) { return d})
+          .each(function(d,i) {
+            var w = this.getComputedTextLength();
+            textWidth = Math.max(w,textWidth);
+            this.remove(); // remove them just after displaying them
+          });
+
+        // add a bit for a margin between text labels
+        textWidth += 10;
+        //do we have enough space for the largest text label?
+        if(this.width / dim.length < textWidth) {
+          this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": textWidth});
+          // vertical
+          this.set('titleLocation',{
+            "x":"3",
+            "y":this.height - this.margin.bottom,
+            "r":"-90",
+            "anchor":"end"
+          });
+        } else {
+          this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": (this.labelTypeSize + 8)});
+          // horizontal
+          this.set('titleLocation',{
+            "x":"0",
+            "y":this.height + 10 - this.margin.bottom,
+            "r":"0",
+            "anchor":"middle"
+          });
+          // angle
+          // this.set('titleLocation',{
+          //   "x":"0",
+          //   "y":this.height - this.margin.bottom,
+          //   "r":"-20",
+          //   "anchor":"end"
+          // });
+        }
+      }.bind(this), 1);
     },
 
     /**
@@ -271,6 +281,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     computeDimensions: function(cD, axes, sK){
       if(this._doesObjHaveValues(this.chartData)){
+
         // if the dev specified which axes to use, set them as dimensions
         if(axes.length > 0) {
           return axes;
@@ -399,6 +410,14 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _lineRedrawFun: function(){
       return [this.$.line]
+    },
+    _onIronResize: function() {
+      this.debounce('ironresize', function() {
+        var wrapperRect = this.$.wrapper.getBoundingClientRect();
+
+        this.set('width', wrapperRect.width);
+        this.set('height', wrapperRect.height);
+      },100);
     },
     /**
      * Returns the width for the gridlines

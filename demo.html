@@ -52,6 +52,20 @@
           selected-domain="{{selectedDomain}}"
           gradient-overlay>
         </px-vis-chart-navigator>
+
+        <button id="btnInc">Increase wrapper width</button>
+        <button id="btnDec">Decrease wrapper width</button>
+        <button id="btnIH">Increase wrapper height</button>
+        <button id="btnDH">Decrease wrapper height</button>
+        <div id="wrap" style="height:300px">
+          <px-vis-parallel-coordinates
+            id="chart"
+            chart-data="[[chartData]]"
+            skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
+            series-key="TimeStamp"
+            match-ticks
+          ></px-vis-parallel-coordinates>
+        </div>
       <br />
       <br />
       <br />
@@ -87,6 +101,9 @@
         series-key="TimeStamp"
         match-ticks
       ></px-vis-parallel-coordinates>
+      <br />
+      <br />
+      <br />
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -107,7 +124,17 @@
         match-ticks
         common-axis
       ></px-vis-parallel-coordinates>
-
+      <br />
+      <br />
+      <br />
+      <px-vis-parallel-coordinates
+        width="1300"
+        height="500"
+        chart-data="[[chartData]]"
+        skip-keys='{"TimeStamp":true}'
+        series-key="TimeStamp"
+        axes='["TTXD1_11", "TTXD1_10", "TTXD1_17"]'
+      ></px-vis-parallel-coordinates>
 
       <px-vis-data
         id = "seriesAjax"
@@ -119,15 +146,46 @@
         response-data="{{chartData}}">
       </px-vis-data>
 
-      <!-- <px-vis-parallel-coordinates
-        width="1300"
-        height="500"
-        chart-data="[[chartData]]"
-        skip-keys='{"TimeStamp":true}'
-        series-key="TimeStamp"
-        axes='["TTXD1_11", "TTXD1_10", "TTXD1_17"]'
-      ></px-vis-parallel-coordinates> -->
     </template>
   </body>
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+      var btnInc = document.getElementById('btnInc'),
+          btnDec = document.getElementById('btnDec'),
+          btnIH = document.getElementById('btnIH'),
+          btnDH = document.getElementById('btnDH'),
+          wrap = document.getElementById('wrap'),
+          chart = document.getElementById('chart');
+
+      btnInc.addEventListener('click', function() {
+        var width = window.getComputedStyle(wrap).getPropertyValue("width");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['width'] = Number(cur) + 150 + 'px';
+        chart.notifyResize();
+      });
+
+      btnDec.addEventListener('click', function() {
+        var width = window.getComputedStyle(wrap).getPropertyValue("width");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['width'] = Number(cur) - 150 + 'px';
+        chart.notifyResize();
+      });
+
+      btnIH.addEventListener('click', function() {
+
+        var width = window.getComputedStyle(wrap).getPropertyValue("height");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['height'] = Number(cur) + 150 + 'px';
+        chart.notifyResize();
+      });
+
+      btnDH.addEventListener('click', function() {
+        var width = window.getComputedStyle(wrap).getPropertyValue("height");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['height'] = Number(cur) - 150 + 'px';
+        chart.notifyResize();
+      });
+    });
+  </script>
 
 </html>

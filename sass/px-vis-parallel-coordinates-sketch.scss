@@ -31,6 +31,10 @@ Predix branding rules go in px-vis-parallel-coordinates-predix.scss, not in this
 @import "px-viewport-design/_base.viewport.scss";
 
 // Component
+.wrapper {
+    height:100%;
+    width: 100%;
+}
 
 // Trumps
 @import "inuit-clearfix/_trumps.clearfix.scss";

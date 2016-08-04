@@ -1,5 +1,9 @@
 v0.0.3
 ==================
+* Fix path for demo data
+
+v0.0.3
+==================
 * added auto github pages build
 
 v0.0.2

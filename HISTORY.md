@@ -1,4 +1,8 @@
-v0.0.3
+v0.0.5
+==================
+* Fix demo navigator
+
+v0.0.4
 ==================
 * Fix path for demo data
 

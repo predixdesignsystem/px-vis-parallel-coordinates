@@ -1,3 +1,7 @@
+v0.0.6
+==================
+* Rangepicker compatibility
+
 v0.0.5
 ==================
 * Fix demo navigator

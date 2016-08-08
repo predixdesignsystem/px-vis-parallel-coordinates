@@ -12,6 +12,7 @@
     <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
     <link rel="import" href="../px-vis/px-vis-data.html" />
     <link rel="import" href="../px-vis/px-vis-chart-navigator.html" />
+    <link rel="import" href="../px-rangepicker/px-rangepicker.html" />
     <link rel="import" href="px-vis-parallel-coordinates.html" />
     <link rel="import" href="../px-theme/px-theme.html" />
   </head>
@@ -20,6 +21,13 @@
 
     <h3>Parallel Coordinates</h3>
     <template is="dom-bind">
+      <px-rangepicker 
+        range="{{range}}"
+        date-format="YYYY/MM/DD" 
+        time-format="hh:mm:ss A" 
+        show-buttons="true" 
+        show-time-zone="text">
+      </px-rangepicker>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -27,6 +35,7 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         match-ticks
+        range="{{range}}"
         selected-domain="{{selectedDomain}}"
       ></px-vis-parallel-coordinates>
       <div style="height:100px">

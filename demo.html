@@ -22,27 +22,31 @@
     <h3>Parallel Coordinates</h3>
     <template is="dom-bind">
       <px-rangepicker 
+        id="rangepicker"
         range="{{range}}"
         date-format="YYYY/MM/DD" 
         time-format="hh:mm:ss A" 
         show-buttons="true" 
         show-time-zone="text">
       </px-rangepicker>
+      <span>Open new tab with snapshot of parallel chart with its navigator</span>
+      <button id="btnSnap">Smile!</button>
       <px-vis-parallel-coordinates
+        id="parall"
         width="1300"
         height="500"
         chart-data="[[chartData]]"
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         match-ticks
-        range="{{range}}"
         selected-domain="{{selectedDomain}}"
       ></px-vis-parallel-coordinates>
       <div style="height:100px">
         <px-vis-chart-navigator
+            id="navigator"
             x-axis-type="time"
             y-axis-type="linear"
-
+            range="[[range]]"
             margin='{
               "top": 5,
               "right": 10,
@@ -147,7 +151,7 @@
         chart-data="[[chartData]]"
         skip-keys='{"TimeStamp":true}'
         series-key="TimeStamp"
-        axes='["TTXD1_11", "TTXD1_10", "TTXD1_17"]'
+        axes='["TTXD1_10", "TTXD1_11", "TTXD1_17"]'
       ></px-vis-parallel-coordinates>
 
       <px-vis-data
@@ -169,7 +173,32 @@
           btnIH = document.getElementById('btnIH'),
           btnDH = document.getElementById('btnDH'),
           wrap = document.getElementById('wrap'),
-          chart = document.getElementById('chart');
+          chart = document.getElementById('chart'),
+          rangepicker = document.getElementById('rangepicker'),
+          btnSnap = document.getElementById('btnSnap'),
+          parall = document.getElementById('parall'),
+          navigator = document.getElementById('navigator');
+
+      rangepicker.range = {"from":"1970-01-17T22:55:57.000Z","to":"1970-01-18T00:08:57.000Z"};
+      
+      btnSnap.addEventListener('click', function() {
+        parall.getImage(function(chartSnap) {
+          navigator.getImage(function(navigatorSnap) {
+            var canvas = document.createElement('canvas'),
+                context,
+                result,
+                svgData;
+            canvas.width = chartSnap.canvas.width + navigatorSnap.canvas.width;
+            canvas.height = chartSnap.canvas.height + navigatorSnap.canvas.height;
+            context = canvas.getContext('2d');
+
+            context.drawImage(chartSnap.canvas, 0, 0);
+            context.drawImage(navigatorSnap.canvas, 0, chartSnap.canvas.height);
+
+            window.open().location = canvas.toDataURL("image/png");
+          }.bind(this));
+        }.bind(this));
+      });
 
       btnInc.addEventListener('click', function() {
         var width = window.getComputedStyle(wrap).getPropertyValue("width");
@@ -199,6 +228,8 @@
         wrap.style['height'] = Number(cur) - 150 + 'px';
         chart.notifyResize();
       });
+
+      
     });
   </script>
 

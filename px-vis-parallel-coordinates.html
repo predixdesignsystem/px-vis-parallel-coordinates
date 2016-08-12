@@ -47,6 +47,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       <px-vis-svg-canvas
         canvas-context="{{canvasContext}}"
         svg="{{svg}}"
+        px-svg-elem="{{pxSvgElem}}"
         width="[[width]]"
         height="[[height]]"
         margin="[[margin]]">
@@ -133,6 +134,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.categories,
       PxVisBehavior.commonAxis,
       PxVisBehaviorD3.selectedTimeDomain,
+      PxVisBehaviorChart.saveImage,
       commonColors
     ],
 
@@ -210,10 +212,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * At ready, set the margin and titleLocation objects
      *
      */
-    created:function(){
-      console.time('draw');
-    },
-
     _calcTitleLocation: function(svg,dim){
 
       this.debounce('calcTitleLocation', function() {

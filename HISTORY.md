@@ -1,3 +1,7 @@
+v0.0.7
+==================
+* adding support for exporting chart to image
+
 v0.0.6
 ==================
 * Rangepicker compatibility

@@ -97,17 +97,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         common-axis="[[commonAxis]]"
         outer-tick-size="6">
       </px-vis-multi-axis>
-      <template is="dom-if" if="[[matchTicks]]">
+      <!--<template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
-          svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
+          svg="[[_calcGridSvg(svg,x,y,currentDomainX)]]"
           tick-values="[[gridTicks]]"
           axis="[[gridAxis]]"
           margin="[[margin]]"
-          length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
+          length="[[_calcGridWidth(width,x,y,currentDomainX)]]"
           orientation="left"
           current-domain="[[currentDomainY]]">
         </px-vis-gridlines>
-      </template>
+      </template>-->
     </div>
   </template>
 </dom-module>
@@ -179,7 +179,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       dimensions: {
         type: Array,
         notify: true,
-        computed: 'computeDimensions(chartData.*, axes, skipKeys.*)'
+        computed: 'computeDimensions(chartData.*, axes, skipKeys.*, mutedSeries.*)'
       },
       /**
        * A boolean to specify if the axis ticks should align or each have their own ranges
@@ -200,7 +200,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     },
 
     observers: [
-      '_generateChartExtents(dimensions,chartData,commonAxis)',
+      '_generateChartExtents(y,chartData,commonAxis)',
       '_generateSeriesConfig(dimensions,chartData)',
       '_calcRenderTarget(chartData)',
       '_selectedDomain(selectedDomain.x)',
@@ -278,23 +278,32 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Method to compute the dimensions to use. If axes are specified, they are used for the dimensions. If not, it will use all the keys in the data except those specified in skipKeys
      *
      */
-    computeDimensions: function(cD, axes, sK){
+    computeDimensions: function(cD, axes, sK, mutedSeries){
       if(this._doesObjHaveValues(this.chartData)){
 
         // if the dev specified which axes to use, set them as dimensions
+        var result = [];
         if(axes.length > 0) {
-          return axes;
+          for(var i=0; i<axes.length; i++) {
+            //add only if not muted (= not in muted array or in there but false)
+            if(!this.mutedSeries.hasOwnProperty(axes[i]) || !this.mutedSeries[axes[i]]) {
+              result.push(axes[i]);
+            }
+          }
+          return result;
+        } else {
+          // else get them from the data.
+          // add series and category key
+          this.skipKeys[this.seriesKey] = true;
+          if(this.categoryKey){
+            this.skipKeys[this.categoryKey] = true;
+          }
+          // TODO what if the first object doesnt have all the dimensions?
+          return Object.keys(this.chartData[0]).filter(function(d) {
+            return typeof(this.skipKeys[d]) === 'undefined' || !mutedSeries.hasOwnProperty(axes[i]) || !mutedSeries[axes[i]];
+          }.bind(this));
+         // return this.axes;
         }
-        // else get them from the data.
-        // add series and category key
-        this.skipKeys[this.seriesKey] = true;
-        if(this.categoryKey){
-          this.skipKeys[this.categoryKey] = true;
-        }
-        // TODO what if the first object doesnt have all the dimensions?
-        return Object.keys(this.chartData[0]).filter(function(d) {
-          return typeof(this.skipKeys[d]) === 'undefined'
-        }.bind(this));
       }
     },
 
@@ -346,31 +355,34 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Creates the chartExtents for each dimension
      *
      */
-    _generateChartExtents: function(dimensions){
-      var ext = {
-        "x": dimensions,
-        "y": {}
-      };
+    _generateChartExtents: function(){
+    
 
-      // TODO Is there a smarter way of doing this?
-      for(var i = 0; i < dimensions.length; i++){
-        ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
-          return Number(d[dimensions[i]]);
-        });
-      }
+        var ext = {
+          "x": this.dimensions,
+          "y": {}
+        };
 
-      // TODO dev set common extents?
-      // if we want a common axis, find overall extents
-      if(this.commonAxis){
-        var maxMin = d3.extent(d3.merge(d3.values(ext.y)));
-        for(var i = 0; i < dimensions.length; i++){
-          // set each axis extent to max & min
-          // TODO this is not the most efficient strategy, but certainly is the easiest, especially to keep it dynamic. Better would be to use only a single scale instead of calculating a scale multiple times.
-          ext.y[dimensions[i]] = maxMin;
+        // TODO Is there a smarter way of doing this?
+        for(var i = 0; i < this.dimensions.length; i++){
+          ext.y[this.dimensions[i]] = d3.extent(this.chartData, function(d) {
+            return Number(d[this.dimensions[i]]);
+          }.bind(this));
         }
-      }
 
-      this.set('chartExtents',ext);
+        // TODO dev set common extents?
+        // if we want a common axis, find overall extents
+        if(this.commonAxis){
+          var maxMin = d3.extent(d3.merge(d3.values(ext.y)));
+          for(var i = 0; i < this.dimensions.length; i++){
+            // set each axis extent to max & min
+            // TODO this is not the most efficient strategy, but certainly is the easiest, especially to keep it dynamic. Better would be to use only a single scale instead of calculating a scale multiple times.
+            ext.y[this.dimensions[i]] = maxMin;
+          }
+        }
+
+        this.set('chartExtents',ext);
+
     },
     /**
      * Adds data to a muted series based on the selected domain
@@ -430,11 +442,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Retruns a g elem for the grid to draw to
      *
      */
-    _calcGridSvg: function(svg,x,dim){
+    _calcGridSvg: function(svg,x){
       // create a g and move it so it lines up with the first axis
       var g = svg.append('g')
         .attr("class", "grid")
-        .attr("transform", "translate(" + x(dim[0]) + ",0)");
+        .attr("transform", "translate(" + x(this.dimensions[0]) + ",0)");
       return g;
     }
   });

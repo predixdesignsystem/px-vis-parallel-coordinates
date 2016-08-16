@@ -35,10 +35,12 @@
         id="parall"
         width="1300"
         height="500"
+        axes='["TTXD1_30", "TTXD1_13", "TTXD1_12", "TTXD1_11", "TTXD1_10", "TTXD1_17", "TTXD1_16", "TTXD1_15", "TTXD1_14", "TTXD1_18", "TTXD1_26", "TTXD1_9", "TTXD1_8", "TTXD1_7", "TTXD1_6", "TTXD1_5", "TTXD1_4", "TTXD1_19", "TTXD1_3", "TTXD1_2", "DWATT", "TTXD1_27", "TTXD1_24", "TTXD1_25", "TTXD1_22", "TTXD1_23", "TTXD1_1", "TTXD1_20", "TTXD1_21", "TTXD1_28", "TTXD1_29", "TTXD1_31"]'
         chart-data="[[chartData]]"
+        muted-series='{"TTXD1_30": true}'
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
-        match-ticks
+
         selected-domain="{{selectedDomain}}"
       ></px-vis-parallel-coordinates>
       <div style="height:100px">
@@ -70,7 +72,7 @@
         <br />
         <br />
         <br />
-
+<!--
         <button id="btnInc">Increase wrapper width</button>
         <button id="btnDec">Decrease wrapper width</button>
         <button id="btnIH">Increase wrapper height</button>
@@ -152,7 +154,7 @@
         skip-keys='{"TimeStamp":true}'
         series-key="TimeStamp"
         axes='["TTXD1_10", "TTXD1_11", "TTXD1_17"]'
-      ></px-vis-parallel-coordinates>
+      ></px-vis-parallel-coordinates>-->
 
       <px-vis-data
         id = "seriesAjax"

@@ -39,33 +39,37 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         match-ticks
+        prevent-resize
+        no-canvas-progressive-rendering
         selected-domain="{{selectedDomain}}"
       ></px-vis-parallel-coordinates>
-      <div style="height:100px">
-        <px-vis-chart-navigator
-            id="navigator"
-            x-axis-type="time"
-            y-axis-type="linear"
-            range="[[range]]"
-            margin='{
-              "top": 5,
-              "right": 10,
-              "bottom": 20,
-              "left": 10
-            }'
-            chart-data="[[chartData]]"
-            series-config='{
-              "TTXD1_1":{
-                "type": "line",
-                "name": "TTXD1_1",
-                "x":"TimeStamp",
-                "y":"TTXD1_1"
-              }
-            }'
-            selected-domain="{{selectedDomain}}"
-            gradient-overlay>
-          </px-vis-chart-navigator>
-        </div>
+      <px-vis-chart-navigator
+          id="navigator"
+          x-axis-type="time"
+          y-axis-type="linear"
+          range="[[range]]"
+          margin='{
+            "top": 5,
+            "right": 10,
+            "bottom": 20,
+            "left": 10
+          }'
+          width="1280"
+          height="100"
+          prevent-resize
+          chart-data="[[chartData]]"
+          series-config='{
+            "TTXD1_1":{
+              "type": "line",
+              "name": "TTXD1_1",
+              "x":"TimeStamp",
+              "y":"TTXD1_1"
+            }
+          }'
+          selected-domain="{{selectedDomain}}"
+          gradient-overlay>
+        </px-vis-chart-navigator>
+
 
         <br />
         <br />
@@ -182,22 +186,38 @@
       rangepicker.range = {"from":"1970-01-17T22:55:57.000Z","to":"1970-01-18T00:08:57.000Z"};
       
       btnSnap.addEventListener('click', function() {
-        parall.getImage(function(chartSnap) {
-          navigator.getImage(function(navigatorSnap) {
-            var canvas = document.createElement('canvas'),
+
+        //fetch svg+canvas from chart and svg 
+        //from navigator and render them on a canvas
+        var canvas = document.createElement('canvas'),
                 context,
-                result,
-                svgData;
-            canvas.width = chartSnap.canvas.width + navigatorSnap.canvas.width;
-            canvas.height = chartSnap.canvas.height + navigatorSnap.canvas.height;
-            context = canvas.getContext('2d');
+                chartCanvasContext = parall.canvasContext,
+                svgChart = parall.pxSvgElem,
+                svgNavigator = navigator.pxSvgElem,
+                count = 0;
 
-            context.drawImage(chartSnap.canvas, 0, 0);
-            context.drawImage(navigatorSnap.canvas, 0, chartSnap.canvas.height);
+        canvas.width = Math.max(chartCanvasContext.canvas.width, navigator.width);
+        canvas.height = chartCanvasContext.canvas.height + navigator.height;
+        context = canvas.getContext('2d');
 
-            window.open().location = canvas.toDataURL("image/png");
-          }.bind(this));
-        }.bind(this));
+        //render chart canvas
+        context.drawImage(chartCanvasContext.canvas, 0, 0);
+
+        //to be called when svg is done drawing
+        var callback = function(res) {
+          if(count === 0) {
+            //first svg has rendered, wait for second one
+            count++;
+          } else {
+
+            //everything done
+            window.open().location = res.toDataURL("image/png");
+          }
+        }
+
+        //render chart svg and navigator svg
+        parall._drawSVGOnCanvas(canvas, callback);
+        navigator._drawSVGOnCanvas(canvas, callback, 0, parall.height);
       });
 
       btnInc.addEventListener('click', function() {

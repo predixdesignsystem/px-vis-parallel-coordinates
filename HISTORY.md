@@ -1,3 +1,7 @@
+v0.0.9
+==================
+* Updated demo dataset timerange
+
 v0.0.8
 ==================
 * import chart behavior

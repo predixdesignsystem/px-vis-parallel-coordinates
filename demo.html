@@ -21,12 +21,12 @@
 
     <h3>Parallel Coordinates</h3>
     <template is="dom-bind">
-      <px-rangepicker 
+      <px-rangepicker
         id="rangepicker"
         range="{{range}}"
-        date-format="YYYY/MM/DD" 
-        time-format="hh:mm:ss A" 
-        show-buttons="true" 
+        date-format="YYYY/MM/DD"
+        time-format="hh:mm:ss A"
+        show-buttons="true"
         show-time-zone="text">
       </px-rangepicker>
       <span>Open new tab with snapshot of parallel chart with its navigator</span>
@@ -183,8 +183,8 @@
           parall = document.getElementById('parall'),
           navigator = document.getElementById('navigator');
 
-      rangepicker.range = {"from":"1970-01-17T22:55:57.000Z","to":"1970-01-18T00:08:57.000Z"};
-      
+      rangepicker.range = {"from":"2016-06-08T20:08:00.000Z","to":"2016-06-22T20:08:00.000Z"};
+
       btnSnap.addEventListener('click', function() {
 
         //fetch svg+canvas from chart and svg 
@@ -249,7 +249,7 @@
         chart.notifyResize();
       });
 
-      
+
     });
   </script>
 

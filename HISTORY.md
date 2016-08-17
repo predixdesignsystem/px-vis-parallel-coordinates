@@ -1,3 +1,7 @@
+v0.0.10
+==================
+* Added preventResize and preventCanvasProgressiveRendering
+
 v0.0.9
 ==================
 * Updated demo dataset timerange

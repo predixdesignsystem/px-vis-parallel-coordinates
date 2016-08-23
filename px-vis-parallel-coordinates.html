@@ -96,7 +96,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         grid-ticks="{{gridTicks}}"
         grid-axis="{{gridAxis}}"
         common-axis="[[commonAxis]]"
-        outer-tick-size="6">
+        outer-tick-size="6"
+        truncation-length="[[truncationLength]]">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
@@ -139,6 +140,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.saveImage,
       PxVisBehavior.progressiveRendering,
       PxVisBehaviorChart.chartAutoResize,
+      PxVisBehavior.truncating,
       commonColors
     ],
 

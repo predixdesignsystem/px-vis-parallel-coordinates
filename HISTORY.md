@@ -1,3 +1,7 @@
+v0.0.12
+==================
+* Added support for units in axis labels
+
 v0.0.11
 ==================
 * Adding truncation for labels

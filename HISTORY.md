@@ -1,3 +1,7 @@
+v0.1.0
+==================
+* Added ability to mute / unmute axes
+
 v0.0.10
 ==================
 * Added preventResize and preventCanvasProgressiveRendering

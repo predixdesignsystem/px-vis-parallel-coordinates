@@ -40,8 +40,8 @@
         series-key="TimeStamp"
         match-ticks
         prevent-resize
-        no-canvas-progressive-rendering
         selected-domain="{{selectedDomain}}"
+        generate-axes-from-data
       ></px-vis-parallel-coordinates>
       <px-vis-chart-navigator
           id="navigator"
@@ -86,6 +86,7 @@
             skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
             series-key="TimeStamp"
             match-ticks
+            generate-axes-from-data
           ></px-vis-parallel-coordinates>
         </div>
       <br />
@@ -111,6 +112,7 @@
         category-key="DLN_MODE"
         categories='[1,2,3,4]'
         match-ticks
+        generate-axes-from-data
       ></px-vis-parallel-coordinates>
       <br />
       <br />
@@ -122,6 +124,7 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true,"DWATT":true,"TTXD1_31":true,"TTXD1_30":true,"TTXD1_29":true,"TTXD1_28":true,"TTXD1_27":true,"TTXD1_26":true,"TTXD1_25":true,"TTXD1_24":true,"TTXD1_23":true,"TTXD1_22":true,"TTXD1_21":true}'
         series-key="TimeStamp"
         match-ticks
+        generate-axes-from-data
       ></px-vis-parallel-coordinates>
       <br />
       <br />
@@ -145,6 +148,7 @@
         series-key="TimeStamp"
         match-ticks
         common-axis
+        generate-axes-from-data
       ></px-vis-parallel-coordinates>
       <br />
       <br />
@@ -187,7 +191,7 @@
 
       btnSnap.addEventListener('click', function() {
 
-        //fetch svg+canvas from chart and svg 
+        //fetch svg+canvas from chart and svg
         //from navigator and render them on a canvas
         var canvas = document.createElement('canvas'),
                 context,
@@ -220,34 +224,34 @@
         navigator._drawSVGOnCanvas(canvas, callback, 0, parall.height);
       });
 
-      btnInc.addEventListener('click', function() {
-        var width = window.getComputedStyle(wrap).getPropertyValue("width");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['width'] = Number(cur) + 150 + 'px';
-        chart.notifyResize();
-      });
-
-      btnDec.addEventListener('click', function() {
-        var width = window.getComputedStyle(wrap).getPropertyValue("width");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['width'] = Number(cur) - 150 + 'px';
-        chart.notifyResize();
-      });
-
-      btnIH.addEventListener('click', function() {
-
-        var width = window.getComputedStyle(wrap).getPropertyValue("height");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['height'] = Number(cur) + 150 + 'px';
-        chart.notifyResize();
-      });
-
-      btnDH.addEventListener('click', function() {
-        var width = window.getComputedStyle(wrap).getPropertyValue("height");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['height'] = Number(cur) - 150 + 'px';
-        chart.notifyResize();
-      });
+      // btnInc.addEventListener('click', function() {
+      //   var width = window.getComputedStyle(wrap).getPropertyValue("width");
+      //   var cur = width.substr(0, width.length-2);
+      //   wrap.style['width'] = Number(cur) + 150 + 'px';
+      //   chart.notifyResize();
+      // });
+      //
+      // btnDec.addEventListener('click', function() {
+      //   var width = window.getComputedStyle(wrap).getPropertyValue("width");
+      //   var cur = width.substr(0, width.length-2);
+      //   wrap.style['width'] = Number(cur) - 150 + 'px';
+      //   chart.notifyResize();
+      // });
+      //
+      // btnIH.addEventListener('click', function() {
+      //
+      //   var width = window.getComputedStyle(wrap).getPropertyValue("height");
+      //   var cur = width.substr(0, width.length-2);
+      //   wrap.style['height'] = Number(cur) + 150 + 'px';
+      //   chart.notifyResize();
+      // });
+      //
+      // btnDH.addEventListener('click', function() {
+      //   var width = window.getComputedStyle(wrap).getPropertyValue("height");
+      //   var cur = width.substr(0, width.length-2);
+      //   wrap.style['height'] = Number(cur) - 150 + 'px';
+      //   chart.notifyResize();
+      // });
 
 
     });

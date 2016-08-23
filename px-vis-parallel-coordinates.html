@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html"/>
 <link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="../px-vis/px-vis-behavior-common.html" />
 <link rel="import" href="../px-vis/px-vis-behavior-d3.html" />
 <link rel="import" href="../px-vis/px-vis-behavior-chart.html"/>
 <link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
@@ -36,6 +37,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         width="[[width]]"
         height="[[height]]"
         margin="[[margin]]"
+        axes="[[axes]]"
         dimensions="[[dimensions]]"
         chart-data="[[chartData]]"
         complete-series-config="[[completeSeriesConfig]]"
@@ -88,6 +90,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         series-key="[[seriesKey]]"
         chart-data="[[chartData]]"
         dimensions="[[dimensions]]"
+        axes="[[axes]]"
         muted-series="{{mutedSeriesBrush}}"
         redraw-series="true"
         redraw-elems="[[_lineRedrawFun()]]"
@@ -122,7 +125,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.sizing,
       PxVisBehaviorD3.svg,
       PxVisBehaviorD3.canvas,
-      PxVisBehaviorD3.axes,
       PxVisBehaviorD3.axis,
       PxVisBehavior.dataset,
       PxVisBehavior.dimensions,
@@ -150,15 +152,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     properties: {
       /**
-       * An optional dev set array to specify which dimensions to plot
-       *
-       */
-      axes: {
-        type: Array,
-        notify: true,
-        value: function(){ return []; } //must!!!! have default value
-      },
-      /**
        * A dev set array of which keys in the chart data are not dimension axes. At a minimum, it must include the series-key. Required if axes is not specified.
        *
        */
@@ -176,15 +169,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         notify: true
       },
       /**
-       * A computed array of dimensions which the chart uses. If axes are specified, they are used for the dimensions. If not, it will use all the keys in the data except those specified in skipKeys
-       *
-       */
-      dimensions: {
-        type: Array,
-        notify: true,
-        computed: 'computeDimensions(chartData.*, axes, skipKeys.*)'
-      },
-      /**
        * A boolean to specify if the axis ticks should align or each have their own ranges
        *
        */
@@ -192,26 +176,55 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         type: Boolean,
         value: false
       },
+      /**
+       * An object to hold which series lines should be muted based on the selected domain
+       *
+       */
       mutedSeriesDomain: {
         type:Object,
         notify: true
       },
+      /**
+       * An object to hold which series lines should be muted based on the selected brushes
+       *
+       */
       mutedSeriesBrush: {
         type:Object,
         notify: true
+      },
+      /**
+       * An object to hold which axes should be muted
+       *
+       */
+      mutedAxes: {
+        type: Object,
+        notify: true,
+        value: function() { return {}; }
+      },
+      /**
+       * A boolean to specify if axes are developer set or should be generated from the chart data
+       *
+       */
+      generateAxesFromData: {
+        type: Boolean,
+        value: false
       }
     },
 
     observers: [
       '_generateChartExtents(dimensions,chartData,commonAxis)',
       '_generateSeriesConfig(dimensions,chartData)',
-      '_calcRenderTarget(chartData)',
+      '_computeAxes(chartData.*,skipKeys.*)',
+      '_computeDimensions(axes.*, mutedAxes.*)',
+      // '_calcRenderTarget(chartData)',
       '_selectedDomain(selectedDomain.x)',
       '_calcTitleLocation(svg,dimensions, height, width)'
     ],
+
     listeners: {
      'iron-resize': '_onIronResize'
     },
+
     /**
      * At ready, set the margin and titleLocation objects
      *
@@ -278,27 +291,54 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       this.set('renderToCanvas', this.chartData.length < 8000 );
     },
     /**
-     * Method to compute the dimensions to use. If axes are specified, they are used for the dimensions. If not, it will use all the keys in the data except those specified in skipKeys
+     * Method to compute the axes to use. It will use all the keys in the data except those specified in skipKeys
      *
      */
-    computeDimensions: function(cD, axes, sK){
+    _computeAxes: function(cD, sK){
       if(this._doesObjHaveValues(this.chartData)){
-
-        // if the dev specified which axes to use, set them as dimensions
-        if(axes.length === 0) {
-        
-          // else get them from the data.
-          // add series and category key
-          this.skipKeys[this.seriesKey] = true;
-          if(this.categoryKey){
-            this.skipKeys[this.categoryKey] = true;
-          }
-          // TODO what if the first object doesnt have all the dimensions?
-          return Object.keys(this.chartData[0]).filter(function(d) {
-            return typeof(this.skipKeys[d]) === 'undefined'
-          }.bind(this));
+        var axes;
+        // add series and category key to skipKeys
+        this.skipKeys[this.seriesKey] = true;
+        if(this.categoryKey){
+          this.skipKeys[this.categoryKey] = true;
         }
-        return this.axes;
+
+        if(this.generateAxesFromData){
+          if(typeof(this.axes) === 'undefined'){
+            // TODO what if the first object doesnt have all the dimensions?
+            axes = Object.keys(this.chartData[0]).filter(function(d) {
+              return !this.skipKeys[d];
+            }.bind(this));
+          } else {
+            var newAxes = Object.keys(this.chartData[0]).filter(function(d) {
+              // what if they add data but dont want all axes, only the ones previously specified?
+              return !this.skipKeys[d] && this.axes.indexOf(d) === -1;
+            }.bind(this));
+            axes = this.axes.concat(newAxes);
+          }
+
+          this.set('axes',axes);
+        }
+      }
+    },
+
+    /**
+     * Method to compute the dimensions to use by using axes and mutedAxes.
+     *
+     */
+    _computeDimensions: function(axes, muted){
+      if(this._doesObjHaveValues(this.axes)){
+        var dims;
+        if(this._doesObjHaveValues(this.mutedAxes)){
+          dims = this.axes.filter(function(d) {
+            //only get dims that are not in dims, not supposed to be skiped, and not muted
+            return !this.mutedAxes[d];
+          }.bind(this));
+        } else {
+          dims = this.axes;
+        }
+
+        this.set('dimensions',dims);
       }
     },
 

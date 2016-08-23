@@ -1,3 +1,7 @@
+v0.0.11
+==================
+* Adding truncation for labels
+
 v0.0.10
 ==================
 * Added preventResize and preventCanvasProgressiveRendering

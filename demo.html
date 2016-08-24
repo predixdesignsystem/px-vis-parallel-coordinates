@@ -42,33 +42,43 @@
         prevent-resize
         selected-domain="{{selectedDomain}}"
         generate-axes-from-data
-      ></px-vis-parallel-coordinates>
-      <px-vis-chart-navigator
-          id="navigator"
-          x-axis-type="time"
-          y-axis-type="linear"
-          range="[[range]]"
-          margin='{
-            "top": 5,
-            "right": 10,
-            "bottom": 20,
-            "left": 10
-          }'
-          width="1280"
-          height="100"
-          prevent-resize
-          chart-data="[[chartData]]"
-          series-config='{
+        series-config='{
             "TTXD1_1":{
-              "type": "line",
-              "name": "TTXD1_1",
-              "x":"TimeStamp",
-              "y":"TTXD1_1"
+              "yAxisUnit": "Hz"
+            },
+            "TTXD1_12":{
+              "yAxisUnit": "F"
             }
           }'
-          selected-domain="{{selectedDomain}}"
-          gradient-overlay>
-        </px-vis-chart-navigator>
+      ></px-vis-parallel-coordinates>
+      <div style="height:100px">
+        <px-vis-chart-navigator
+            id="navigator"
+            prevent-resize
+            width="1280"
+            height="100"
+            x-axis-type="time"
+            y-axis-type="linear"
+            range="[[range]]"
+            margin='{
+              "top": 5,
+              "right": 10,
+              "bottom": 20,
+              "left": 10
+            }'
+            chart-data="[[chartData]]"
+            series-config='{
+              "TTXD1_1":{
+                "type": "line",
+                "name": "TTXD1_1",
+                "x":"TimeStamp",
+                "y":"TTXD1_1"
+              }
+            }'
+            selected-domain="{{selectedDomain}}"
+            gradient-overlay>
+          </px-vis-chart-navigator>
+        </div>
 
 
         <br />
@@ -224,35 +234,34 @@
         navigator._drawSVGOnCanvas(canvas, callback, 0, parall.height);
       });
 
-      // btnInc.addEventListener('click', function() {
-      //   var width = window.getComputedStyle(wrap).getPropertyValue("width");
-      //   var cur = width.substr(0, width.length-2);
-      //   wrap.style['width'] = Number(cur) + 150 + 'px';
-      //   chart.notifyResize();
-      // });
-      //
-      // btnDec.addEventListener('click', function() {
-      //   var width = window.getComputedStyle(wrap).getPropertyValue("width");
-      //   var cur = width.substr(0, width.length-2);
-      //   wrap.style['width'] = Number(cur) - 150 + 'px';
-      //   chart.notifyResize();
-      // });
-      //
-      // btnIH.addEventListener('click', function() {
-      //
-      //   var width = window.getComputedStyle(wrap).getPropertyValue("height");
-      //   var cur = width.substr(0, width.length-2);
-      //   wrap.style['height'] = Number(cur) + 150 + 'px';
-      //   chart.notifyResize();
-      // });
-      //
-      // btnDH.addEventListener('click', function() {
-      //   var width = window.getComputedStyle(wrap).getPropertyValue("height");
-      //   var cur = width.substr(0, width.length-2);
-      //   wrap.style['height'] = Number(cur) - 150 + 'px';
-      //   chart.notifyResize();
-      // });
+      btnInc.addEventListener('click', function() {
+        var width = window.getComputedStyle(wrap).getPropertyValue("width");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['width'] = Number(cur) + 150 + 'px';
+        chart.notifyResize();
+      });
 
+      btnDec.addEventListener('click', function() {
+        var width = window.getComputedStyle(wrap).getPropertyValue("width");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['width'] = Number(cur) - 150 + 'px';
+        chart.notifyResize();
+      });
+
+      btnIH.addEventListener('click', function() {
+
+        var width = window.getComputedStyle(wrap).getPropertyValue("height");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['height'] = Number(cur) + 150 + 'px';
+        chart.notifyResize();
+      });
+
+      btnDH.addEventListener('click', function() {
+        var width = window.getComputedStyle(wrap).getPropertyValue("height");
+        var cur = width.substr(0, width.length-2);
+        wrap.style['height'] = Number(cur) - 150 + 'px';
+        chart.notifyResize();
+      });
 
     });
   </script>

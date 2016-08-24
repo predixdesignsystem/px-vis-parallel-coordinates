@@ -99,7 +99,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         grid-ticks="{{gridTicks}}"
         grid-axis="{{gridAxis}}"
         common-axis="[[commonAxis]]"
-        outer-tick-size="6">
+        outer-tick-size="6"
+        truncation-length="[[truncationLength]]"
+        displayed-values="{{displayedValues}}"
+        append-unit-in-title>
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
@@ -141,6 +144,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.saveImage,
       PxVisBehavior.progressiveRendering,
       PxVisBehaviorChart.chartAutoResize,
+      PxVisBehavior.truncating,
       commonColors
     ],
 
@@ -193,6 +197,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         notify: true
       },
       /**
+<<<<<<< HEAD
        * An object to hold which axes should be muted
        *
        */
@@ -208,17 +213,44 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       generateAxesFromData: {
         type: Boolean,
         value: false
+      },
+      /**
+      * A configuration file to associate series order, name, type, and colors.
+      *
+      * Association of name, type, and seriesNumber should be developer set. Color and axis are optional.
+      *
+      *```
+      *  {
+      *     "seriesKey": {  //seriesKey is a unique identifier for the configuration
+      *         "color": "line",  //color of the line for this axis
+      *         "yAxisUnit": "Oranges" //unit to be used for this axis.
+      *     }
+      *  }
+      *```
+      */
+      seriesConfig: {
+        type: Object,
+        notify: true,
+        value: function(){
+          return {}
+        }
+      },
+      /**
+       * Array representing the actual displayed titles for each axis
+       */
+      displayedValues: {
+        type: Object
       }
     },
 
     observers: [
       '_generateChartExtents(dimensions,chartData,commonAxis)',
-      '_generateSeriesConfig(dimensions,chartData)',
+      '_generateSeriesConfig(dimensions,chartData, seriesConfig)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
       // '_calcRenderTarget(chartData)',
       '_selectedDomain(selectedDomain.x)',
-      '_calcTitleLocation(svg,dimensions, height, width)'
+      '_calcTitleLocation(svg, height, width, dimensions, displayedValues)'
     ],
 
     listeners: {
@@ -229,22 +261,30 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * At ready, set the margin and titleLocation objects
      *
      */
-    _calcTitleLocation: function(svg,dim){
+    _calcTitleLocation: function(svg, height, width, dimensions, displayedValues){
 
       this.debounce('calcTitleLocation', function() {
 
         var textWidth = 0,
-            _this = this;
+            _this = this,
+            keys = Object.keys(this.displayedValues),
+            values = [];
+
+        for(var i=0; i<keys.length; i++) {
+          values.push(this.displayedValues[keys[i]]);
+        }
 
         // append and remove the dimensions text so we can measure how long
         var labels = svg.selectAll('.dummyText')
-          .data(dim);
+          .data(values);
           labels.enter()
           .append("text")
           .attr('class',"dummyText")
           .attr('font-size', this.labelTypeSize + 'px')
           .attr('font-style','GE Inspira Sans')
-          .text(function(d) { return d})
+          .text(function(d) {
+            return d
+          })
           .each(function(d,i) {
             var w = this.getComputedTextLength();
             textWidth = Math.max(w,textWidth);
@@ -254,7 +294,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         // add a bit for a margin between text labels
         textWidth += 10;
         //do we have enough space for the largest text label?
-        if(this.width / dim.length < textWidth) {
+        if(this.width / values.length < textWidth) {
           this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": textWidth});
           // vertical
           this.set('titleLocation',{
@@ -346,29 +386,36 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Creates the series configuration file
      *
      */
-      _generateSeriesConfig: function(dimensions){
-      // TODO make work with multiple series
-      var config = {};
-      // add a seriesConfig with seriesKey as default
-      config[this.seriesKey] = {
-        "color": this._getColor(18),
-        "name": this.seriesKey,
-        "x": dimensions,
-        "y": dimensions
-      }
-      // if categories are specified, use them
-      if(typeof(this.categoryKey) !== 'undefined'){
-        for(var i = 0; i < this.categories.length; i ++){
-          config[this.categories[i]] = {
-            "color": this._getColor(18 + i),
-            "name": this.categories[i],
-            "x": dimensions,
-            "y": dimensions
+      _generateSeriesConfig: function(dimensions, seriesConfig) {
+
+      this.debounce('_generateSeriesConfig', function() {
+        // TODO make work with multiple series
+        var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
+        // add a seriesConfig with seriesKey as default
+        config[this.seriesKey] = {
+          "name": this.seriesKey,
+          "x": dimensions,
+          "y": dimensions
+        }
+
+        if(!config[this.seriesKey]['color']) {
+          config[this.seriesKey]['color'] = this._getColor(18);
+        }
+
+        // if categories are specified, use them
+        if(typeof(this.categoryKey) !== 'undefined'){
+          for(var i = 0; i < this.categories.length; i ++){
+            config[this.categories[i]] = {
+              "color": this._getColor(18 + i),
+              "name": this.categories[i],
+              "x": dimensions,
+              "y": dimensions
+            }
           }
         }
-      }
 
-      this.set('completeSeriesConfig',config);
+        this.set('completeSeriesConfig',config);
+      }.bind(this), 0);
     },
 
     // * TODO These are in behavior chart. Should make it so we can import them from there */

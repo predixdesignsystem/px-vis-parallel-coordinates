@@ -1,3 +1,8 @@
+v0.1.1
+==================
+* documentation updates
+* demo updates
+
 v0.1.0
 ==================
 * Added ability to mute / unmute axes

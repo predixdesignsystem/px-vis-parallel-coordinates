@@ -14,15 +14,37 @@
 <!--
 PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
-##### Usage
+##### Usage - Specifying your axes manually
 
     <px-vis-parallel-coordinates
         width="1300"
         height="500"
         chart-data="[[chartData]]"
-        skip-keys='{"TimeStamp":true}'
+        axes='["Axes_1","Axes_2","Axes_n"]'
         series-key="TimeStamp"
+        match-ticks
+        series-config='{
+            "Axes_1":{
+              "yAxisUnit": "Hz"
+            },
+            "Axes_2":{
+              "yAxisUnit": "F"
+            }
+          }'
     ></px-vis-parallel-coordinates>
+
+##### Usage - Auto-generating your axes from data
+
+    <px-vis-parallel-coordinates
+        width="1300"
+        height="500"
+        chart-data="[[chartData]]"
+        skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
+        series-key="TimeStamp"
+        generate-axes-from-data
+        match-ticks
+    ></px-vis-parallel-coordinates>
+
 
 @element px-vis-parallel-coordinates
 @blurb PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
@@ -156,8 +178,16 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     properties: {
       /**
-       * A dev set array of which keys in the chart data are not dimension axes. At a minimum, it must include the series-key. Required if axes is not specified.
+       * A dev set Object of which keys in the chart data should not be used as axes.
        *
+       * `Required` if axes is not specified.
+       *
+       * ```
+       *    {
+       *        "Axes_to_skip_1":true,
+       *        "Axes_to_skip_2":true
+       *    }
+       * ```
        */
       skipKeys: {
         type: Object,
@@ -165,7 +195,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         value: function() { return {}; }
       },
       /**
-       * A required dev set string which defines which data key to use for the series lines
+       * A `Required` dev set string which defines which data key to use for the series lines
+       *
+       *  This depends on your data and could be *x*, *Timestamp*, ect.
        *
        */
       seriesKey: {
@@ -173,7 +205,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         notify: true
       },
       /**
-       * A boolean to specify if the axis ticks should align or each have their own ranges
+       * A boolean to specify if the axis ticks should align (which affects their individual range). Default (false) is for each have their own ranges and tick marks may not align
        *
        */
       matchTicks: {
@@ -181,25 +213,34 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         value: false
       },
       /**
-       * An object to hold which series lines should be muted based on the selected domain
+       * An object which holds the series lines that have been muted based on the selected domain
        *
+       * @private
        */
       mutedSeriesDomain: {
         type:Object,
         notify: true
       },
       /**
-       * An object to hold which series lines should be muted based on the selected brushes
+       * An object which holds the series lines that have been muted based on the axes brushes
        *
+       * @private
        */
       mutedSeriesBrush: {
         type:Object,
         notify: true
       },
       /**
-<<<<<<< HEAD
-       * An object to hold which axes should be muted
+       * An object to hold which axes should be muted.
        *
+       * *When adding keys to this, be sure to use Polymer set methods or notifyPath*
+       *
+       * ```
+       *    {
+       *        "Axes_to_skip_1":true,
+       *        "Axes_to_skip_2":true
+       *    }
+       * ```
        */
       mutedAxes: {
         type: Object,
@@ -221,9 +262,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       *
       *```
       *  {
-      *     "seriesKey": {  //seriesKey is a unique identifier for the configuration
-      *         "color": "line",  //color of the line for this axis
-      *         "yAxisUnit": "Oranges" //unit to be used for this axis.
+      *     "seriesKey": {              //seriesKey is a unique identifier for the configuration
+      *         "color": "line",        //color of the line for this axis
+      *         "yAxisUnit": "Oranges"  //unit to be used for this axis.
       *     }
       *  }
       *```
@@ -231,12 +272,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       seriesConfig: {
         type: Object,
         notify: true,
-        value: function(){
-          return {}
-        }
+        value: function(){ return {} }
       },
       /**
-       * Array representing the actual displayed titles for each axis
+       * Object representing the actual displayed titles for each axis
        */
       displayedValues: {
         type: Object
@@ -398,6 +437,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           "y": dimensions
         }
 
+        //FIXME Not sure this works....See color on 449
         if(!config[this.seriesKey]['color']) {
           config[this.seriesKey]['color'] = this._getColor(18);
         }

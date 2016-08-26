@@ -21,6 +21,7 @@
 
     <h3>Parallel Coordinates</h3>
     <template is="dom-bind">
+      <h3>Parallel Coordinates linked with a rangepicker and navigator</h3>
       <px-rangepicker
         id="rangepicker"
         range="{{range}}"
@@ -29,8 +30,12 @@
         show-buttons="true"
         show-time-zone="text">
       </px-rangepicker>
+      <br />
       <span>Open new tab with snapshot of parallel chart with its navigator</span>
       <button id="btnSnap">Smile!</button>
+      <br />
+      <br />
+      <br />
       <px-vis-parallel-coordinates
         id="parall"
         width="1300"
@@ -44,10 +49,12 @@
         generate-axes-from-data
         series-config='{
             "TTXD1_1":{
-              "yAxisUnit": "Hz"
+              "yAxisUnit": "Hz",
+              "title": "verylongname"
             },
             "TTXD1_12":{
-              "yAxisUnit": "F"
+              "yAxisUnit": "F",
+              "title": "stout"
             }
           }'
       ></px-vis-parallel-coordinates>
@@ -59,7 +66,7 @@
             height="100"
             x-axis-type="time"
             y-axis-type="linear"
-            range="[[range]]"
+           
             margin='{
               "top": 5,
               "right": 10,
@@ -84,11 +91,14 @@
         <br />
         <br />
         <br />
-
+        <h3>Parallel Coordinates demonstrating responsive behavior</h3>
         <button id="btnInc">Increase wrapper width</button>
         <button id="btnDec">Decrease wrapper width</button>
         <button id="btnIH">Increase wrapper height</button>
         <button id="btnDH">Decrease wrapper height</button>
+        <br />
+        <br />
+        <br />
         <div id="wrap" style="height:300px">
           <px-vis-parallel-coordinates
             id="chart"
@@ -99,9 +109,11 @@
             generate-axes-from-data
           ></px-vis-parallel-coordinates>
         </div>
+
       <br />
       <br />
       <br />
+      <h3>Parallel Coordinates with developer specified axes</h3>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -110,9 +122,11 @@
         axes='["DWATT", "TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5", "TTXD1_6", "TTXD1_7", "TTXD1_8", "TTXD1_9", "TTXD1_10", "TTXD1_11", "TTXD1_12", "TTXD1_13",  "TTXD1_14", "TTXD1_15", "TTXD1_16", "TTXD1_17", "TTXD1_18", "TTXD1_19", "TTXD1_20", "TTXD1_21", "TTXD1_22", "TTXD1_23", "TTXD1_24", "TTXD1_25", "TTXD1_26",  "TTXD1_27", "TTXD1_28", "TTXD1_29", "TTXD1_30", "TTXD1_31"]'
         match-ticks
       ></px-vis-parallel-coordinates>
+
       <br />
       <br />
       <br />
+      <h3>Parallel Coordinates with a category specified to color the lines</h3>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -124,9 +138,11 @@
         match-ticks
         generate-axes-from-data
       ></px-vis-parallel-coordinates>
+
       <br />
       <br />
       <br />
+      <h3>Parallel Coordinates with generated axes and developer specified keys to skip</h3>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -136,9 +152,11 @@
         match-ticks
         generate-axes-from-data
       ></px-vis-parallel-coordinates>
+
       <br />
       <br />
       <br />
+      <h3>Parallel Coordinates with developer specified axes</h3>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -147,9 +165,11 @@
         series-key="TimeStamp"
         match-ticks
       ></px-vis-parallel-coordinates>
+
       <br />
       <br />
       <br />
+      <h3>Parallel Coordinates with a common axes</h3>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
@@ -160,22 +180,24 @@
         common-axis
         generate-axes-from-data
       ></px-vis-parallel-coordinates>
+
       <br />
       <br />
       <br />
+      <h3>Parallel Coordinates with match ticks off</h3>
       <px-vis-parallel-coordinates
         width="1300"
         height="500"
         chart-data="[[chartData]]"
         skip-keys='{"TimeStamp":true}'
         series-key="TimeStamp"
-        axes='["TTXD1_10", "TTXD1_11", "TTXD1_17"]'
+        axes='["TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5"]'
       ></px-vis-parallel-coordinates>
 
       <px-vis-data
         id = "seriesAjax"
         request-data = '[{
-            "url":"../px-demo-data/demo-data/apm/timeseries.json"
+            "url":"../px-demo-data/demo-data/apm/timeseries_demo.json"
           }]'
         data-var="chartData"
         lists="flat"
@@ -197,7 +219,7 @@
           parall = document.getElementById('parall'),
           navigator = document.getElementById('navigator');
 
-      rangepicker.range = {"from":"2016-06-08T20:08:00.000Z","to":"2016-06-22T20:08:00.000Z"};
+      rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
 
       btnSnap.addEventListener('click', function() {
 

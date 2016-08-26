@@ -394,7 +394,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
               // what if they add data but dont want all axes, only the ones previously specified?
               return !this.skipKeys[d] && this.axes.indexOf(d) === -1;
             }.bind(this));
-            axes = this.axes.concat(newAxes);
+            //make sure we remove axis that are not there anymore
+            var oldAxes = this.axes.filter(function (d) {
+              return Object.keys(this.chartData[0]).indexOf(d) !== -1;
+            }.bind(this));
+            axes = oldAxes.concat(newAxes);
           }
 
           this.set('axes',axes);

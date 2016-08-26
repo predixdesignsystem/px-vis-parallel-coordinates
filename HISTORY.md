@@ -1,3 +1,7 @@
+v0.1.3
+==================
+* Fix bug when removing axis through data
+
 v0.1.2
 ==================
 * enforce label update

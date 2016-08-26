@@ -578,6 +578,42 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       else {
         return currentG.attr("transform", "translate(" + x(axes[0]) + ",0)");
       }
-    }
+    },
+    /**
+     * Imperatively mute an axis or group of axes.
+     *
+     * This function both addes the axes to the mutedAxes list and fires a notifyPath
+     *
+     * Can pass a single axis id or an array of axes ids
+     */
+     addToMutedAxes: function(a) {
+       this._changeMutedAxes(a,true);
+     },
+     /**
+      * Imperatively mute an axis or group of axes.
+      *
+      * This function both addes the axes to the mutedAxes list and fires a notifyPath
+      *
+      * Can pass a single axis id or an array of axes ids
+      */
+      removeFromMutedAxes: function(a) {
+        this._changeMutedAxes(a,false);
+      },
+     /**
+      * Helper function to imperatively mute/unmute an axis or group of axes.
+      *
+      */
+     _changeMutedAxes: function(a,bool) {
+       if(typeof(a) === 'string'){
+         this.set('mutedAxes.' + a, bool);
+       } else if(Array.isArray(a)){
+         for(var i = 0; i < a.length; i++) {
+           this.mutedAxes[ a[i] ] = bool;
+         }
+         this.notifyPath('mutedAxes.' + a[0]);
+       } else {
+         console.error("Cannot add/remove axis. Improper axis type")
+       }
+     }
   });
 </script>

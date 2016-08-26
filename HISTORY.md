@@ -1,3 +1,7 @@
+v0.1.3
+==================
+* added imperative mute / unmute of axes
+
 v0.1.2
 ==================
 * enforce label update

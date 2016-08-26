@@ -106,11 +106,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
-          svg="[[_calcGridSvg(svg,x,dimensions,currentDomainX)]]"
+          svg="[[_calcGridSvg(svg,x,axes,currentDomainX)]]"
           tick-values="[[gridTicks]]"
           axis="[[gridAxis]]"
           margin="[[margin]]"
-          length="[[_calcGridWidth(width,x,dimensions,currentDomainX)]]"
+          length="[[_calcGridWidth(width,x,axes,currentDomainX)]]"
           orientation="left"
           current-domain="[[currentDomainY]]">
         </px-vis-gridlines>
@@ -197,7 +197,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         notify: true
       },
       /**
-<<<<<<< HEAD
        * An object to hold which axes should be muted
        *
        */
@@ -250,13 +249,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_computeDimensions(axes.*, mutedAxes.*)',
       // '_calcRenderTarget(chartData)',
       '_selectedDomain(selectedDomain.x)',
-      '_calcTitleLocation(svg, height, width, dimensions, displayedValues)'
+      '_calcTitleLocation(svg, height, width, dimensions, displayedValues.*)'
     ],
 
     listeners: {
      'iron-resize': '_onIronResize'
     },
-
     /**
      * At ready, set the margin and titleLocation objects
      *
@@ -320,7 +318,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           //   "anchor":"end"
           // });
         }
-      }.bind(this), 1);
+      }.bind(this), 5);
     },
 
     /**
@@ -396,7 +394,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           "name": this.seriesKey,
           "x": dimensions,
           "y": dimensions
-        }
+        };
 
         if(!config[this.seriesKey]['color']) {
           config[this.seriesKey]['color'] = this._getColor(18);
@@ -515,20 +513,28 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Returns the width for the gridlines
      *
      */
-    _calcGridWidth: function(w,x,dim){
+    _calcGridWidth: function(w,x,axes){
       // overall width minus the inset for the axes
-      return w - x(dim[0]) * 2;
+      return w - x(axes[0]) * 2;
     },
     /**
      * Retruns a g elem for the grid to draw to
      *
      */
-    _calcGridSvg: function(svg,x,dim){
+    _calcGridSvg: function(svg,x,axes){
+
       // create a g and move it so it lines up with the first axis
-      var g = svg.append('g')
+      var currentG = svg.select('.grid');
+
+      if(!currentG.node()) {
+
+      return svg.append('g')
         .attr("class", "grid")
-        .attr("transform", "translate(" + x(dim[0]) + ",0)");
-      return g;
+        .attr("transform", "translate(" + x(axes[0]) + ",0)");
+      }
+      else {
+        return currentG.attr("transform", "translate(" + x(axes[0]) + ",0)");
+      }
     }
   });
 </script>

@@ -608,13 +608,18 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       *
       */
      _changeMutedAxes: function(a,bool) {
+       var mA = this.mutedAxes;
+
        if(typeof(a) === 'string'){
-         this.set('mutedAxes.' + a, bool);
+         this.mutedAxes = null;
+         mA[a] = bool;
+         this.set('mutedAxes', mA);
        } else if(Array.isArray(a)){
+         this.mutedAxes = null;
          for(var i = 0; i < a.length; i++) {
-           this.mutedAxes[ a[i] ] = bool;
+           mA[ a[i] ] = bool;
          }
-         this.notifyPath('mutedAxes.' + a[0]);
+         this.set('mutedAxes', mA);
        } else {
          console.error("Cannot add/remove axis. Improper axis type")
        }

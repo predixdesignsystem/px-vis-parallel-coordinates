@@ -1,3 +1,7 @@
+v0.1.6
+==================
+* small bug fixes with bottom margin for labels and console error when changing selected domain with no data set
+
 v0.1.5
 ==================
 * fixed muting edge case where axis id has a '.'

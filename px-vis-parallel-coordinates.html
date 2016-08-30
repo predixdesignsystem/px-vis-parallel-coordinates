@@ -290,7 +290,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
       // '_calcRenderTarget(chartData)',
-      '_selectedDomain(selectedDomain.x)',
+      '_selectedDomain(selectedDomain.x, chartData.*)',
       '_calcTitleLocation(svg, height, width, dimensions, displayedValues.*)'
     ],
 
@@ -344,7 +344,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             "anchor":"end"
           });
         } else {
-          this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": (this.labelTypeSize + 8)});
+          this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": (this.labelTypeSize + 10)});
           // horizontal
           this.set('titleLocation',{
             "x":"0",

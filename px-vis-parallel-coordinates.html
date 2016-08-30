@@ -8,6 +8,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
+<link rel="import" href="../px-vis/px-vis-interaction-space.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
@@ -128,7 +129,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         truncation-length="[[truncationLength]]"
         displayed-values="{{displayedValues}}"
         append-unit-in-title
-        domain-changed="[[domainChanged]]">
+        domain-changed="[[domainChanged]]"
+        axis-groups="{{axisGroups}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
@@ -173,6 +175,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.chartAutoResize,
       PxVisBehavior.truncating,
       PxVisBehaviorD3.domainUpdate,
+      PxVisBehavior.tooltipData,
       commonColors
     ],
 
@@ -306,7 +309,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     ],
 
     listeners: {
-     'iron-resize': '_onIronResize'
+     'iron-resize': '_onIronResize',
+     'px-vis-multi-axis-mousemove': '_calcTooltip',
+     'px-vis-multi-axis-mouseleave': '_hideTooltip'
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -601,6 +606,68 @@ console.trace()
       else {
         return currentG.attr("transform", "translate(" + x(axes[0]) + ",0)");
       }
-    }
+    },
+    /**
+     * Imperatively mute an axis or group of axes.
+     *
+     * This function both addes the axes to the mutedAxes list and fires a notifyPath
+     *
+     * Can pass a single axis id or an array of axes ids
+     */
+     addToMutedAxes: function(a) {
+       this._changeMutedAxes(a,true);
+     },
+     /**
+      * Imperatively mute an axis or group of axes.
+      *
+      * This function both addes the axes to the mutedAxes list and fires a notifyPath
+      *
+      * Can pass a single axis id or an array of axes ids
+      */
+      removeFromMutedAxes: function(a) {
+        this._changeMutedAxes(a,false);
+      },
+     /**
+      * Helper function to imperatively mute/unmute an axis or group of axes.
+      *
+      */
+     _changeMutedAxes: function(a,bool) {
+       var mA = this.mutedAxes;
+
+       if(typeof(a) === 'string'){
+         this.mutedAxes = null;
+         mA[a] = bool;
+         this.set('mutedAxes', mA);
+       } else if(Array.isArray(a)){
+         this.mutedAxes = null;
+         for(var i = 0; i < a.length; i++) {
+           mA[ a[i] ] = bool;
+         }
+         this.set('mutedAxes', mA);
+       } else {
+         console.error("Cannot add/remove axis. Improper axis type")
+       }
+     },
+     _calcTooltip: function(evt){
+      var aid = evt.detail.axis,
+          mousePos = evt.detail.mousePos,
+          mouseVal = this.y[aid].invert(mousePos[1]),
+          distance = Number.MAX_VALUE,
+          minDistance = Number.MAX_VALUE,
+          yVal = null;
+
+      for(var i = 0; i < this.chartData.length; i++){
+        distance = Math.abs(this.chartData[i][aid] - mouseVal);
+        if(distance < minDistance){
+          yVal = this.chartData[i][aid];
+          minDistance = distance;
+        }
+      }
+      // console.log(mouseVal);
+      // console.log(yVal);
+     },
+     _hideTooltip: function(evt){
+       // console.log("mouseleave");
+     }
   });
 </script>

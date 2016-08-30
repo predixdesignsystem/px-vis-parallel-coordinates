@@ -1,6 +1,6 @@
 {
   "name": "px-vis-parallel-coordinates",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "main": [
     "px-vis-parallel-coordinates.html"
   ],

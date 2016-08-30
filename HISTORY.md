@@ -1,3 +1,11 @@
+v0.1.5
+==================
+* fixed muting edge case where axis id has a '.'
+
+v0.1.4
+==================
+* added imperative mute / unmute of axes
+
 v0.1.3
 ==================
 * Fix bug when removing axis through data

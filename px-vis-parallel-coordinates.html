@@ -8,6 +8,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
+<link rel="import" href="../px-vis/px-vis-interaction-space.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
@@ -126,7 +127,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         outer-tick-size="6"
         truncation-length="[[truncationLength]]"
         displayed-values="{{displayedValues}}"
-        append-unit-in-title>
+        append-unit-in-title
+        axis-groups="{{axisGroups}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
@@ -169,6 +171,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.progressiveRendering,
       PxVisBehaviorChart.chartAutoResize,
       PxVisBehavior.truncating,
+      PxVisBehavior.tooltipData,
       commonColors
     ],
 
@@ -295,7 +298,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     ],
 
     listeners: {
-     'iron-resize': '_onIronResize'
+     'iron-resize': '_onIronResize',
+     'px-vis-multi-axis-mousemove': '_calcTooltip',
+     'px-vis-multi-axis-mouseleave': '_hideTooltip'
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -623,6 +628,27 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        } else {
          console.error("Cannot add/remove axis. Improper axis type")
        }
+     },
+     _calcTooltip: function(evt){
+      var aid = evt.detail.axis,
+          mousePos = evt.detail.mousePos,
+          mouseVal = this.y[aid].invert(mousePos[1]),
+          distance = Number.MAX_VALUE,
+          minDistance = Number.MAX_VALUE,
+          yVal = null;
+
+      for(var i = 0; i < this.chartData.length; i++){
+        distance = Math.abs(this.chartData[i][aid] - mouseVal);
+        if(distance < minDistance){
+          yVal = this.chartData[i][aid];
+          minDistance = distance;
+        }
+      }
+      // console.log(mouseVal);
+      // console.log(yVal);
+     },
+     _hideTooltip: function(evt){
+       // console.log("mouseleave");
      }
   });
 </script>

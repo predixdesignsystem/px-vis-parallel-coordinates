@@ -295,12 +295,16 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       _currentLabelRotation: {
         type: String,
         value: ''
+      },
+      _haveChartData: {
+        type: Boolean,
+        computed: '_doWeHaveChartData(chartData)'
       }
     },
 
     observers: [
-      '_generateChartExtents(dimensions, commonAxis)',
-      '_generateSeriesConfig(dimensions, seriesConfig)',
+      '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
+      '_generateSeriesConfig(dimensions, seriesConfig, _haveChartData)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
       // '_calcRenderTarget(chartData)',
@@ -312,6 +316,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      'iron-resize': '_onIronResize',
      'px-vis-multi-axis-mousemove': '_calcTooltip',
      'px-vis-multi-axis-mouseleave': '_hideTooltip'
+    },
+    _doWeHaveChartData: function(cD){
+      if(this.chartData.length > 0){
+        return true
+      }
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -391,8 +400,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _computeAxes: function(cD, sK){
       if(this._doesObjHaveValues(this.chartData)){
-        console.log('compute axes')
-        console.trace()
         var axes;
         // add series and category key to skipKeys
         this.skipKeys[this.seriesKey] = true;
@@ -429,8 +436,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _computeDimensions: function(axes, muted){
       if(this._doesObjHaveValues(this.axes)){
-        console.log('compute dims')
-        console.trace()
         var dims;
         if(this._doesObjHaveValues(this.mutedAxes)){
           dims = this.axes.filter(function(d) {
@@ -452,8 +457,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       _generateSeriesConfig: function(dimensions, seriesConfig) {
 
      // this.debounce('_generateSeriesConfig', function() {
-        console.log('generate series config')
-        console.trace()
+        
         // TODO make work with multiple series
         var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
         // add a seriesConfig with seriesKey as default
@@ -504,9 +508,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _generateChartExtents: function(dimensions){
-
-console.log('generate chart extents')
-console.trace()
       var ext = {
               "x": dimensions,
               "y": {}

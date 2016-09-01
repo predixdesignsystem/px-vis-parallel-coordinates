@@ -1,3 +1,7 @@
+v0.1.6
+==================
+* update to px-vis 2.0 which incorporates many timing fixes
+
 v0.1.5
 ==================
 * fixed muting edge case where axis id has a '.'

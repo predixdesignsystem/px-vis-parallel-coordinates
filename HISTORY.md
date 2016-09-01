@@ -1,5 +1,9 @@
 v0.1.8
 ==================
+* added axis brush update on domainchange
+
+v0.1.8
+==================
 * merged
 
 v0.1.7

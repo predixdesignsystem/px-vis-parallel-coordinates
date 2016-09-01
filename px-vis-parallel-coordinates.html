@@ -130,6 +130,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         displayed-values="{{displayedValues}}"
         append-unit-in-title
         domain-changed="[[domainChanged]]"
+        selected-domain="[[selectedDomain]]"
         axis-groups="{{axisGroups}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
@@ -176,6 +177,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.truncating,
       PxVisBehaviorD3.domainUpdate,
       PxVisBehavior.tooltipData,
+      PxVisBehaviorD3.selectedDomain,
       commonColors
     ],
 

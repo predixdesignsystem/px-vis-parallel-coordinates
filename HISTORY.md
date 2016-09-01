@@ -1,4 +1,4 @@
-v0.1.6
+v0.1.7
 ==================
 * update to px-vis 2.0 which incorporates many timing fixes
 

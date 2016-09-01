@@ -70,7 +70,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         x="{{x}}"
         y="{{y}}"
         current-domain-x="{{currentDomainX}}"
-        current-domain-y="{{currentDomainY}}">
+        current-domain-y="{{currentDomainY}}"
+        domain-changed="{{domainChanged}}">
       </px-vis-multi-scale>
       <px-vis-svg-canvas
         canvas-context="{{canvasContext}}"
@@ -128,6 +129,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         truncation-length="[[truncationLength]]"
         displayed-values="{{displayedValues}}"
         append-unit-in-title
+        domain-changed="[[domainChanged]]"
         axis-groups="{{axisGroups}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
@@ -138,7 +140,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           margin="[[margin]]"
           length="[[_calcGridWidth(width,x,axes,currentDomainX)]]"
           orientation="left"
-          current-domain="[[currentDomainY]]">
+          current-domain="[[currentDomainY]]"
+          domain-changed="[[domainChanged]]">
         </px-vis-gridlines>
       </template>
     </div>
@@ -171,6 +174,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.progressiveRendering,
       PxVisBehaviorChart.chartAutoResize,
       PxVisBehavior.truncating,
+      PxVisBehaviorD3.domainUpdate,
       PxVisBehavior.tooltipData,
       commonColors
     ],
@@ -284,17 +288,28 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        */
       displayedValues: {
         type: Object
+      },
+      /**
+       * The current bottom margin used for the label, usually changing when label rotation changes
+       */
+      _currentLabelRotation: {
+        type: String,
+        value: ''
+      },
+      _haveChartData: {
+        type: Boolean,
+        computed: '_doWeHaveChartData(chartData)'
       }
     },
 
     observers: [
-      '_generateChartExtents(dimensions,chartData,commonAxis)',
-      '_generateSeriesConfig(dimensions,chartData, seriesConfig)',
+      '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
+      '_generateSeriesConfig(dimensions, seriesConfig, _haveChartData)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
       // '_calcRenderTarget(chartData)',
-      '_selectedDomain(selectedDomain.x, chartData.*)',
-      '_calcTitleLocation(svg, height, width, dimensions, displayedValues.*)'
+      '_selectedDomain(selectedDomain.x)',
+      '_calcTitleLocation(svg, height, width, displayedValues.*)'
     ],
 
     listeners: {
@@ -302,14 +317,18 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      'px-vis-multi-axis-mousemove': '_calcTooltip',
      'px-vis-multi-axis-mouseleave': '_hideTooltip'
     },
+    _doWeHaveChartData: function(cD){
+      if(this.chartData.length > 0){
+        return true
+      }
+    },
     /**
      * At ready, set the margin and titleLocation objects
      *
      */
-    _calcTitleLocation: function(svg, height, width, dimensions, displayedValues){
+    _calcTitleLocation: function(svg, height, width, displayedValues) {
 
       this.debounce('calcTitleLocation', function() {
-
         var textWidth = 0,
             _this = this,
             keys = Object.keys(this.displayedValues),
@@ -338,33 +357,32 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
         // add a bit for a margin between text labels
         textWidth += 10;
-        //do we have enough space for the largest text label?
-        if(this.width / values.length < textWidth) {
-          this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": textWidth});
-          // vertical
-          this.set('titleLocation',{
-            "x":"3",
-            "y":this.height - this.margin.bottom,
-            "r":"-90",
-            "anchor":"end"
-          });
-        } else {
-          this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": (this.labelTypeSize + 10)});
-          // horizontal
-          this.set('titleLocation',{
-            "x":"0",
-            "y":this.height + 10 - this.margin.bottom,
-            "r":"0",
-            "anchor":"middle"
-          });
-          // angle
-          // this.set('titleLocation',{
-          //   "x":"0",
-          //   "y":this.height - this.margin.bottom,
-          //   "r":"-20",
-          //   "anchor":"end"
-          // });
-        }
+
+        var isVertical = this.width / values.length < textWidth,
+            newRotation = isVertical ? 'vertical' : 'horizontal';
+            newBottomMargin = isVertical ? textWidth : (this.labelTypeSize + 10),
+            rotation = isVertical ? '-90' : '0',
+            yPos = isVertical ? (this.height - newBottomMargin) : this.height + 10 - newBottomMargin,
+            anchor = isVertical ? 'end' : 'middle';
+
+          //update size if needed
+          if(this.margin.bottom !== newBottomMargin) {
+
+            this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": newBottomMargin});
+          }
+
+          //set title location if rotation or y has changed
+          if(newRotation !== this._currentLabelRotation ||
+              yPos !== this.titleLocation.y) {
+
+            this.set('titleLocation', {
+              'x': '3',
+              'y': yPos,
+              'r': rotation,
+              'anchor': anchor
+            });
+          }
+
       }.bind(this), 5);
     },
 
@@ -437,7 +455,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
       _generateSeriesConfig: function(dimensions, seriesConfig) {
 
-      this.debounce('_generateSeriesConfig', function() {
+     // this.debounce('_generateSeriesConfig', function() {
+
         // TODO make work with multiple series
         var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
         // add a seriesConfig with seriesKey as default
@@ -465,7 +484,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         }
 
         this.set('completeSeriesConfig',config);
-      }.bind(this), 0);
+   //   }.bind(this), 0);
     },
 
     // * TODO These are in behavior chart. Should make it so we can import them from there */
@@ -489,9 +508,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _generateChartExtents: function(dimensions){
       var ext = {
-        "x": dimensions,
-        "y": {}
-      };
+              "x": dimensions,
+              "y": {}
+            };
 
       // TODO Is there a smarter way of doing this?
       for(var i = 0; i < dimensions.length; i++){
@@ -551,6 +570,19 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     _lineRedrawFun: function(){
       return [this.$.line]
     },
+
+    /**
+     * Forces the chart to resize and redraw
+     */
+    resizeChart: function() {
+      this._onIronResize();
+    },
+
+    /**
+     * Resizes the chart based on a container resize if prevent-resize is false (default)
+     *
+     * Can also be called manually to force a chart resize to container.
+     */
     _onIronResize: function() {
       this.debounce('ironresize', function() {
          if(!this.preventResize) {

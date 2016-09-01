@@ -1,3 +1,7 @@
+v0.1.8
+==================
+* merged
+
 v0.1.7
 ==================
 * update to px-vis 2.0 which incorporates many timing fixes

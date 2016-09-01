@@ -135,11 +135,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
-          svg="[[_calcGridSvg(svg,x,axes,currentDomainX)]]"
+          svg="[[_calcGridSvg(x)]]"
           tick-values="[[gridTicks]]"
           axis="[[gridAxis]]"
           margin="[[margin]]"
-          length="[[_calcGridWidth(width,x,axes,currentDomainX)]]"
+          length="[[_calcGridWidth(currentDomainX)]]"
           orientation="left"
           current-domain="[[currentDomainY]]"
           domain-changed="[[domainChanged]]">
@@ -437,17 +437,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _computeDimensions: function(axes, muted){
       if(this._doesObjHaveValues(this.axes)){
-        var dims;
         if(this._doesObjHaveValues(this.mutedAxes)){
-          dims = this.axes.filter(function(d) {
+          var dims = this.axes.filter(function(d) {
             //only get dims that are not in dims, not supposed to be skiped, and not muted
             return !this.mutedAxes[d];
           }.bind(this));
+          this.set('dimensions',dims);
         } else {
-          dims = this.axes;
+          this.set('dimensions',this.axes);
         }
-
-        this.set('dimensions',dims);
       }
     },
 
@@ -599,27 +597,28 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Returns the width for the gridlines
      *
      */
-    _calcGridWidth: function(w,x,axes){
+    _calcGridWidth: function(){
       // overall width minus the inset for the axes
-      return w - x(axes[0]) * 2;
+      return this.width - this.x(this.dimensions[0]) * 2;
     },
     /**
      * Retruns a g elem for the grid to draw to
      *
      */
-    _calcGridSvg: function(svg,x,axes){
+    _calcGridSvg: function(){
+      if(this.currentDomainX){
+        // create a g and move it so it lines up with the first axis
+        var currentG = this.svg.select('.grid');
 
-      // create a g and move it so it lines up with the first axis
-      var currentG = svg.select('.grid');
+        if(!currentG.node()) {
 
-      if(!currentG.node()) {
-
-      return svg.append('g')
-        .attr("class", "grid")
-        .attr("transform", "translate(" + x(axes[0]) + ",0)");
-      }
-      else {
-        return currentG.attr("transform", "translate(" + x(axes[0]) + ",0)");
+        return this.svg.append('g')
+          .attr("class", "grid")
+          .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
+        }
+        else {
+          return currentG.attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
+        }
       }
     },
     /**

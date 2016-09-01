@@ -1,3 +1,7 @@
+v0.1.10
+==================
+* fixed bug on muting first axis causes grid to disappear
+
 v0.1.9
 ==================
 * added axis brush update on domainchange

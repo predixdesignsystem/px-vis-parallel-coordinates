@@ -130,7 +130,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         displayed-values="{{displayedValues}}"
         append-unit-in-title
         domain-changed="[[domainChanged]]"
-        selected-domain="[[selectedDomain]]"
         axis-groups="{{axisGroups}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
@@ -329,7 +328,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcTitleLocation: function(svg, height, width, displayedValues) {
-
       this.debounce('calcTitleLocation', function() {
         var textWidth = 0,
             _this = this,
@@ -538,13 +536,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      */
     _selectedDomain: function(sd){
       this.debounce('selected_domain',function(){
-        var muted = {};
-        for(var i = 0; i < this.chartData.length; i++){
-          if(this.chartData[i][this.seriesKey] < sd[0] || this.chartData[i][this.seriesKey] > sd[1]){
-            muted[this.chartData[i][this.seriesKey]] = true;
+        if(this.chartData && this.chartData.length > 0){
+          var muted = {};
+          for(var i = 0; i < this.chartData.length; i++){
+            if(this.chartData[i][this.seriesKey] < sd[0] || this.chartData[i][this.seriesKey] > sd[1]){
+              muted[this.chartData[i][this.seriesKey]] = true;
+            }
           }
+          this.set('mutedSeriesDomain',muted);
         }
-        this.set('mutedSeriesDomain',muted);
       },200);
     },
     /**

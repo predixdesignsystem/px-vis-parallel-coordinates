@@ -58,6 +58,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
   <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
   <template>
     <div id="wrapper" class="wrapper">
+      <template is="dom-if" if="[[enableTooltip]]">
+        <px-vis-tooltip
+          px-svg-elem=[[pxSvgElem]]
+          width="250"
+          margin="[[margin]]"
+          chart-data="[[chartData]]"
+          tooltip-data="[[tooltipData]]"
+          complete-series-config="[[completeSeriesConfig]]"
+          x-axis-type="time">
+        </px-vis-tooltip>
+      </template>
       <px-vis-multi-scale
         width="[[width]]"
         height="[[height]]"
@@ -187,6 +198,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * @type Object
      */
     properties: {
+      /**
+       * Boolean to turn the on-chart tooltip on or off
+       *
+       * @property enableTooltip
+       * @type Boolean
+       */
+      enableTooltip: {
+        type: Boolean,
+        notify: true,
+        value: false
+      },
       /**
        * A dev set Object of which keys in the chart data should not be used as axes.
        *
@@ -323,6 +345,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         return true
       }
     },
+
     /**
      * At ready, set the margin and titleLocation objects
      *

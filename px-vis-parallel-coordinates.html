@@ -10,6 +10,7 @@
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 <link rel="import" href="../px-vis/px-vis-interaction-space.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
+<link rel="import" href="../px-vis/px-vis-tooltip.html" />
 
 
 <!--
@@ -59,13 +60,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
   <template>
     <div id="wrapper" class="wrapper">
       <template is="dom-if" if="[[enableTooltip]]">
+        <h1>Tool tip enabled [[enableTooltip]]</h1>
+        <h2>[[tooltipData]]</h2>
         <px-vis-tooltip
           px-svg-elem=[[pxSvgElem]]
           width="250"
           margin="[[margin]]"
           chart-data="[[chartData]]"
           tooltip-data="[[tooltipData]]"
-          complete-series-config="[[completeSeriesConfig]]"
+          complete-series-config="[[toolTipSeriesConfig]]"
           x-axis-type="time">
         </px-vis-tooltip>
       </template>
@@ -685,23 +688,66 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
          console.error("Cannot add/remove axis. Improper axis type")
        }
      },
-     _calcTooltip: function(evt){
-      var aid = evt.detail.axis,
-          mousePos = evt.detail.mousePos,
-          mouseVal = this.y[aid].invert(mousePos[1]),
-          distance = Number.MAX_VALUE,
-          minDistance = Number.MAX_VALUE,
-          yVal = null;
+     _calcTooltip: function(evt) {
+       if(this.enableTooltip) {
+         var aid = evt.detail.axis,
+             mousePos = evt.detail.mousePos,
+             mouseVal = this.y[aid].invert(mousePos[1]),
+             distance = Number.MAX_VALUE,
+             minDistance = Number.MAX_VALUE,
+             yVal = null,
+             keyValue = null;
 
-      for(var i = 0; i < this.chartData.length; i++){
-        distance = Math.abs(this.chartData[i][aid] - mouseVal);
-        if(distance < minDistance){
-          yVal = this.chartData[i][aid];
-          minDistance = distance;
-        }
-      }
-      // console.log(mouseVal);
-      // console.log(yVal);
+         for(var i = 0; i < this.chartData.length; i++){
+           distance = Math.abs(this.chartData[i][aid] - mouseVal);
+           if(distance < minDistance){
+             yVal = this.chartData[i][aid];
+             keyValue = this.chartData[i][this.seriesKey].toString();
+             minDistance = distance;
+           }
+         }
+
+         console.log(mouseVal);
+         console.log(yVal);
+
+         var x = 100, y = 0;
+
+         this.set('toolTipSeriesConfig', {
+           "test": {
+             color: this._getColor(15),
+             name: "nametest"
+           }
+         });
+
+         this.set('tooltipData', {
+           mouse: [x,y], // mouse coords in x, y
+           time:  keyValue, // line time timestamp string
+           series: [
+             {
+               color: '#cccccc',
+               coord: [
+                 123, 456
+               ],
+               name: "test",
+               value: {
+                 x: 123,
+                 y: 456
+               }
+             }
+           ]
+         });
+         /*
+         TooltipData :
+          - Mouse: mouse coords in pixels
+          - time: timestamp string
+          - xArr: an array of all the series x positions in pixels
+          - yArr: an array of all the series y positions in pixels
+          - Series is an array of object
+          - - coord: x,y pixel space coords of the datapoint
+          - - name(id) of the series
+          - - value: x,y data value of the data point
+          */
+       }
      },
      _hideTooltip: function(evt){
        // console.log("mouseleave");

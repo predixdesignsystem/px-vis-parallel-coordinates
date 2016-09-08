@@ -25,5 +25,13 @@
     "px-demo-data": "~0.0.1",
     "px-starter-kit-design": "~0.5.5",
     "iron-resizable-behavior": "^1.0.4"
+  },
+  "resolutions": {
+    "px-typography-design": "^1.1.1",
+    "px-datetime-range-field": "~0.4.1",
+    "px-theme": "~1.1.2",
+    "px-datetime-common": "~0.6.1",
+    "px-datetime-range-panel": "~0.3.0",
+    "px-calendar-picker": "~0.4.0"
   }
 }

@@ -419,7 +419,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             }.bind(this));
             //make sure we remove axis that are not there anymore
             var oldAxes = this.axes.filter(function (d) {
-              return Object.keys(this.chartData[0]).indexOf(d) !== -1;
+              return Object.keys(this.chartData[0]).indexOf(d) !== -1 && !this.skipKeys[d];
             }.bind(this));
             axes = oldAxes.concat(newAxes);
           }

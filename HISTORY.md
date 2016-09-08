@@ -1,3 +1,7 @@
+v0.1.11
+==================
+* fixed bug where adding to skipKeys did not remove an existing key
+
 v0.1.10
 ==================
 * fixed bug on muting first axis causes grid to disappear

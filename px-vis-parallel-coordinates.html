@@ -531,6 +531,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       for(var i = 0; i < dimensions.length; i++){
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
+          if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]){
+            ext.y[dimensions[i]][1]++;
+          }
         });
       }
 

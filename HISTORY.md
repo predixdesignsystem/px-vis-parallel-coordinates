@@ -1,3 +1,7 @@
+v0.1.12
+==================
+* added default grid when no valid axes can be displayed
+
 v0.1.11
 ==================
 * fixed bug where adding to skipKeys did not remove an existing key

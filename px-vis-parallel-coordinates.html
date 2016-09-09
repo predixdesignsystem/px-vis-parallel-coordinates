@@ -144,6 +144,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           domain-changed="[[domainChanged]]">
         </px-vis-gridlines>
       </template>
+      <template is="dom-if" if="[[_showFakeGrid]]" restamp>
+        <px-vis-gridlines
+          svg="[[svg]]"
+          axis="[[_fakeGrids(height)]]"
+          margin="[[margin]]"
+          length="[[width]]"
+          orientation="left"
+          current-domain='[0,10]'
+          domain-changed="true">
+        </px-vis-gridlines>
+      </template>
     </div>
   </template>
 </dom-module>
@@ -300,6 +311,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       _haveChartData: {
         type: Boolean,
         computed: '_doWeHaveChartData(chartData)'
+      },
+      _showFakeGrid: {
+        type: Boolean,
+        value: true,
+        computed: '_calcShowFakeGrid(_haveChartData, currentDomainY)'
       }
     },
 
@@ -318,8 +334,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      'px-vis-multi-axis-mousemove': '_calcTooltip',
      'px-vis-multi-axis-mouseleave': '_hideTooltip'
     },
+
     _doWeHaveChartData: function(cD){
-      if(this.chartData.length > 0){
+      if(this.chartData && this.chartData.length > 0){
         return true
       }
     },
@@ -611,12 +628,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         var currentG = this.svg.select('.grid');
 
         if(!currentG.node()) {
-
-        return this.svg.append('g')
-          .attr("class", "grid")
-          .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
-        }
-        else {
+          return this.svg.append('g')
+            .attr("class", "grid")
+            .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
+        } else {
           return currentG.attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
         }
       }
@@ -682,6 +697,16 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      },
      _hideTooltip: function(evt){
        // console.log("mouseleave");
+     },
+
+     _fakeGrids: function(){
+       var h = this.height - this.margin.top - this.margin.bottom;
+       console.log(h);
+       return Px.d3.scaleLinear().nice().range([h, 0])
+     },
+
+     _calcShowFakeGrid: function(){
+       return !this._haveChartData && this.currentDomainY.length > 0
      }
   });
 </script>

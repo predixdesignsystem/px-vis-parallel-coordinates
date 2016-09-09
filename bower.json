@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#~v1.1.6",
-    "px-rangepicker": "^1.0.0",
+    "px-rangepicker": "~1.1.10",
     "px-layout-design": "~0.3.13",
     "px-demo-data": "~0.0.1",
     "px-starter-kit-design": "~0.5.5",

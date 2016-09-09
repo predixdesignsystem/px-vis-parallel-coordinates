@@ -54,9 +54,13 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 @homepage index.html
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-vis-parallel-coordinates-styles.html">
+
 <dom-module id="px-vis-parallel-coordinates">
-  <link rel="import" type="css" href="css/px-vis-parallel-coordinates.css"/>
   <template>
+    <style include="px-vis-parallel-coordinates-styles"></style>
+    <style include="px-theme-styles"></style>
     <div id="wrapper" class="wrapper">
       <px-vis-multi-scale
         width="[[width]]"

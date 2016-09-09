@@ -1,3 +1,7 @@
+v0.1.13
+==================
+* added check if all data is one value
+
 v0.1.12
 ==================
 * added default grid when no valid axes can be displayed

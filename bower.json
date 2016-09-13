@@ -25,5 +25,8 @@
     "px-demo-data": "~0.0.1",
     "px-starter-kit-design": "~0.5.5",
     "iron-resizable-behavior": "^1.0.4"
+  },
+  "resolutions": {
+    "px-tooltip": "vis-tooltip"
   }
 }

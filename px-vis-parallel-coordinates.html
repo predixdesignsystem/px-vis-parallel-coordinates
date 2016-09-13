@@ -250,7 +250,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        */
       mutedSeriesDomain: {
         type:Object,
-        notify: true
+        notify: true,
+        value: function() { return {} }
       },
       /**
        * An object which holds the series lines that have been muted based on the axes brushes
@@ -330,6 +331,18 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       _tooltipConfig: {
         type: Object,
         value: function(){ return {}; }
+      },
+      margin:{
+        type:Object,
+        notify: true,
+        value: function() {
+          return {
+            left: 15,
+            right: 15,
+            top: 10,
+            bottom: 0
+          };
+        }
       }
     },
 
@@ -398,8 +411,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
           //update size if needed
           if(this.margin.bottom !== newBottomMargin) {
-
-            this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": newBottomMargin});
+            var m = this.margin;
+            this.set('margin', { "top": m.top, "right": m.right, "left": m.left, "bottom": newBottomMargin});
           }
 
           //set title location if rotation or y has changed

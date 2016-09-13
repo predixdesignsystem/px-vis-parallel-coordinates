@@ -131,7 +131,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         append-unit-in-title
         domain-changed="[[domainChanged]]"
         axis-groups="{{axisGroups}}"
-        axis-elems="{{axisElems}}">
+        brush-elems="{{brushElems}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
@@ -158,7 +158,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       </template>
       <px-vis-tooltip
         id="tooltip"
-        hover-target="[[axisElems]]"
+        hover-target="[[brushElems]]"
         mouse-position="[[mousePosition]]"
         chart-data="[[chartData]]"
         tooltip-data="[[tooltipData]]"

@@ -1,3 +1,7 @@
+v0.1.15
+==================
+* changed tooltip target
+
 v0.1.14
 ==================
 * added tooltip

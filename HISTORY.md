@@ -1,3 +1,7 @@
+v0.1.14
+==================
+* added tooltip
+
 v0.1.13
 ==================
 * added check if all data is one value

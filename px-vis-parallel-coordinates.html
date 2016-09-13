@@ -8,7 +8,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
-<link rel="import" href="../px-vis/px-vis-interaction-space.html"/>
+<link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
@@ -130,7 +130,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         displayed-values="{{displayedValues}}"
         append-unit-in-title
         domain-changed="[[domainChanged]]"
-        axis-groups="{{axisGroups}}">
+        axis-groups="{{axisGroups}}"
+        axis-elems="{{axisElems}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
@@ -155,6 +156,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           domain-changed="true">
         </px-vis-gridlines>
       </template>
+      <px-vis-tooltip
+        id="tooltip"
+        hover-target="[[axisElems]]"
+        mouse-position="[[mousePosition]]"
+        chart-data="[[chartData]]"
+        tooltip-data="[[tooltipData]]"
+        complete-series-config="[[_tooltipConfig]]"
+        x-axis-type="time">
+      </px-vis-tooltip>
     </div>
   </template>
 </dom-module>
@@ -316,6 +326,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         type: Boolean,
         value: true,
         computed: '_calcShowFakeGrid(_haveChartData, currentDomainY)'
+      },
+      _tooltipConfig: {
+        type: Object,
+        value: function(){ return {}; }
       }
     },
 
@@ -681,30 +695,71 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        }
      },
      _calcTooltip: function(evt){
-      var aid = evt.detail.axis,
-          mousePos = evt.detail.mousePos,
-          mouseVal = this.y[aid].invert(mousePos[1]),
-          distance = Number.MAX_VALUE,
-          minDistance = Number.MAX_VALUE,
-          yVal = null;
+      var aid = evt.detail.axis,          //axis ID
+          elem = evt.detail.elem,         //the group elem being hovered over
+          mousePos = evt.detail.mousePos, //the mouse position
+          mouseVal = this.y[aid].invert(mousePos[1]), // the data space value
+          distance = Number.MAX_VALUE,    //difference between cursor and value
+          minDistance = Number.MAX_VALUE, //difference between cursor and value
+          yVal = null,                    //the data value we will calc
+          time,                           //time we will calc
+          screenY,                        //the mouse y on the scree
+          tooltipConfig = {},             //a fake configuration object we will build
+          group,                          //the group if categoryKey is being used
+          data,                           //our tooltipData obj
+          value = {};                     //the series obj within tooltipData
 
+      //loop through our chart data and find a closetest match
       for(var i = 0; i < this.chartData.length; i++){
+        //figure out the differnce between the data value and our saved value
         distance = Math.abs(this.chartData[i][aid] - mouseVal);
+        // if it is smaller than last time, save the data info
         if(distance < minDistance){
           yVal = this.chartData[i][aid];
           minDistance = distance;
+          time = this.chartData[i][this.seriesKey];
+          if(this.categoryKey){
+            group = this.chartData[i][this.categoryKey];
+          }
         }
       }
-      // console.log(mouseVal);
-      // console.log(yVal);
+      //calc the screen y for the tooltip
+      screenY = mousePos[1] + elem.getBoundingClientRect().top + window.scrollY + 5;
+
+      //create our fake configuration object
+      tooltipConfig[aid] = {};
+      //if using categies, use it, otherwise default
+      tooltipConfig[aid]["color"] = group ? this.completeSeriesConfig[group]["color"] : this.completeSeriesConfig[this.seriesKey]["color"];
+      //if title is specified, use it, otherwiuse id
+      tooltipConfig[aid]["name"] = this.completeSeriesConfig[aid] && this.completeSeriesConfig[aid]['title'] ? this.completeSeriesConfig[aid]["title"] : aid;
+      //if there is a unit, add it
+      tooltipConfig[aid]["yAxisUnit"] = this.completeSeriesConfig[aid] && this.completeSeriesConfig[aid]["yAxisUnit"] ? this.completeSeriesConfig[aid]["yAxisUnit"] : '';
+      //add the y series id
+      tooltipConfig[aid]['y'] = aid;
+
+      //create our value obj
+      value[aid] = yVal;
+      //create our tooltipData obj
+      data = {
+        "mouse": mousePos,
+        "time": time,
+        'series': [
+          { 'name': aid, 'value': value }
+        ]
+      };
+
+      this.set('mousePosition', [this.x(aid), screenY]);
+      this.set('_tooltipConfig', tooltipConfig);
+      this.set('tooltipData', data);
+      // this.$.tooltip.tooltipElem._show();
      },
-     _hideTooltip: function(evt){
-       // console.log("mouseleave");
+
+     _hideTooltip: function() {
+      //  this.$.tooltip.tooltipElem._hide();
      },
 
      _fakeGrids: function(){
        var h = this.height - this.margin.top - this.margin.bottom;
-       console.log(h);
        return Px.d3.scaleLinear().nice().range([h, 0])
      },
 

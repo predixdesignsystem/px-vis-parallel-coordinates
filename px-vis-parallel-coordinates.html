@@ -135,7 +135,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
-          svg="[[_calcGridSvg(x)]]"
+          svg="[[_calcGridSvg(currentDomainX)]]"
           tick-values="[[gridTicks]]"
           axis="[[gridAxis]]"
           margin="[[margin]]"
@@ -640,18 +640,18 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcGridSvg: function(){
-      if(this.currentDomainX){
+      // if(this.currentDomainX){
         // create a g and move it so it lines up with the first axis
-        var currentG = this.svg.select('.grid');
+        var currentG = this.svg.select('.gridGroup');
 
         if(!currentG.node()) {
           return this.svg.append('g')
-            .attr("class", "grid")
+            .attr("class", "gridGroup")
             .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
         } else {
           return currentG.attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
         }
-      }
+      // }
     },
     /**
      * Imperatively mute an axis or group of axes.

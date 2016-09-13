@@ -1,3 +1,7 @@
+v0.1.16
+==================
+* fixed grid bug where starting with an empty chart would then delete the new grid
+
 v0.1.15
 ==================
 * changed tooltip target

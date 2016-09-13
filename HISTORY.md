@@ -1,3 +1,8 @@
+v0.1.17
+==================
+* fixed muted series bug where brushes dont work if axes are specified before chartdata
+* fixed margins so they can still be dev set
+
 v0.1.16
 ==================
 * fixed grid bug where starting with an empty chart would then delete the new grid

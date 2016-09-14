@@ -1,3 +1,7 @@
+v0.1.18
+==================
+* fixed tooltip positioning
+
 v0.1.17
 ==================
 * fixed muted series bug where brushes dont work if axes are specified before chartdata

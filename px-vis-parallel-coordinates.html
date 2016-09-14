@@ -716,6 +716,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           minDistance = Number.MAX_VALUE, //difference between cursor and value
           yVal = null,                    //the data value we will calc
           time,                           //time we will calc
+          screenX,                        //the mouse x on the scree
           screenY,                        //the mouse y on the scree
           tooltipConfig = {},             //a fake configuration object we will build
           group,                          //the group if categoryKey is being used
@@ -736,7 +737,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           }
         }
       }
-      //calc the screen y for the tooltip
+      //calc the screen positions for the tooltip
+      screenX = this.x(aid) + elem.ownerSVGElement.getBoundingClientRect().left + window.scrollX + 15;
       screenY = mousePos[1] + elem.getBoundingClientRect().top + window.scrollY + 5;
 
       //create our fake configuration object
@@ -761,7 +763,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         ]
       };
 
-      this.set('mousePosition', [this.x(aid), screenY]);
+      this.set('mousePosition', [screenX, screenY]);
       this.set('_tooltipConfig', tooltipConfig);
       this.set('tooltipData', data);
       // this.$.tooltip.tooltipElem._show();

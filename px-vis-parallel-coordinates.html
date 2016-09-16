@@ -103,6 +103,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
       </px-vis-line>
       <px-vis-multi-axis
+        id="multiAxis"
         svg="[[svg]]"
         width="[[width]]"
         height="[[height]]"
@@ -780,6 +781,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
      _calcShowFakeGrid: function(){
        return !this._haveChartData && this.currentDomainY.length > 0
+     },
+
+     deleteAllBrushes: function(){
+       this.$.multiAxis.deleteAllBrushes();
      }
   });
 </script>

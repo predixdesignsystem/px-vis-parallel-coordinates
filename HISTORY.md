@@ -1,3 +1,7 @@
+v0.1.19
+==================
+* added deleteAllBrushes method
+
 v0.1.18
 ==================
 * fixed tooltip positioning

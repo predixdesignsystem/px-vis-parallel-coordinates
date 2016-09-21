@@ -1,3 +1,7 @@
+v0.1.20
+==================
+* fixed errors when muting all axes
+
 v0.1.19
 ==================
 * added deleteAllBrushes method

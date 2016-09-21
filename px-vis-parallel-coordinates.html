@@ -654,7 +654,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcGridSvg: function(){
-      // if(this.currentDomainX){
+      if(this.currentDomainX && this.currentDomainX.length > 0){
         // create a g and move it so it lines up with the first axis
         var currentG = this.svg.select('.gridGroup');
 
@@ -665,7 +665,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         } else {
           return currentG.attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
         }
-      // }
+      }
     },
     /**
      * Imperatively mute an axis or group of axes.
@@ -780,7 +780,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      },
 
      _calcShowFakeGrid: function(){
-       return !this._haveChartData && this.currentDomainY.length > 0
+       var draw = false;
+       if(this._haveChartData) {
+         draw = this.currentDomainY.length > 0 ? false : true;
+       }
+       return draw
      },
 
      deleteAllBrushes: function(){

@@ -1,3 +1,40 @@
+v0.1.20
+==================
+* fixed errors when muting all axes
+
+v0.1.19
+==================
+* added deleteAllBrushes method
+
+v0.1.18
+==================
+* fixed tooltip positioning
+
+v0.1.17
+==================
+* fixed muted series bug where brushes dont work if axes are specified before chartdata
+* fixed margins so they can still be dev set
+
+v0.1.16
+==================
+* fixed grid bug where starting with an empty chart would then delete the new grid
+
+v0.1.15
+==================
+* changed tooltip target
+
+v0.1.14
+==================
+* added tooltip
+
+v0.1.13
+==================
+* added check if all data is one value
+
+v0.1.12
+==================
+* added default grid when no valid axes can be displayed
+
 v0.1.11
 ==================
 * fixed bug where adding to skipKeys did not remove an existing key

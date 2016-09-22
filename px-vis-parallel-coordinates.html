@@ -8,7 +8,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
-<link rel="import" href="../px-vis/px-vis-interaction-space.html"/>
+<link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
@@ -107,6 +107,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
       </px-vis-line>
       <px-vis-multi-axis
+        id="multiAxis"
         svg="[[svg]]"
         width="[[width]]"
         height="[[height]]"
@@ -134,11 +135,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         displayed-values="{{displayedValues}}"
         append-unit-in-title
         domain-changed="[[domainChanged]]"
-        axis-groups="{{axisGroups}}">
+        axis-groups="{{axisGroups}}"
+        brush-elems="{{brushElems}}">
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
-          svg="[[_calcGridSvg(x)]]"
+          svg="[[_calcGridSvg(currentDomainX)]]"
           tick-values="[[gridTicks]]"
           axis="[[gridAxis]]"
           margin="[[margin]]"
@@ -148,6 +150,26 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           domain-changed="[[domainChanged]]">
         </px-vis-gridlines>
       </template>
+      <template is="dom-if" if="[[_showFakeGrid]]" restamp>
+        <px-vis-gridlines
+          svg="[[svg]]"
+          axis="[[_fakeGrids(height)]]"
+          margin="[[margin]]"
+          length="[[width]]"
+          orientation="left"
+          current-domain='[0,10]'
+          domain-changed="true">
+        </px-vis-gridlines>
+      </template>
+      <px-vis-tooltip
+        id="tooltip"
+        hover-target="[[brushElems]]"
+        mouse-position="[[mousePosition]]"
+        chart-data="[[chartData]]"
+        tooltip-data="[[tooltipData]]"
+        complete-series-config="[[_tooltipConfig]]"
+        x-axis-type="time">
+      </px-vis-tooltip>
     </div>
   </template>
 </dom-module>
@@ -233,7 +255,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        */
       mutedSeriesDomain: {
         type:Object,
-        notify: true
+        notify: true,
+        value: function() { return {} }
       },
       /**
        * An object which holds the series lines that have been muted based on the axes brushes
@@ -304,6 +327,27 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       _haveChartData: {
         type: Boolean,
         computed: '_doWeHaveChartData(chartData)'
+      },
+      _showFakeGrid: {
+        type: Boolean,
+        value: true,
+        computed: '_calcShowFakeGrid(_haveChartData, currentDomainY)'
+      },
+      _tooltipConfig: {
+        type: Object,
+        value: function(){ return {}; }
+      },
+      margin:{
+        type:Object,
+        notify: true,
+        value: function() {
+          return {
+            left: 15,
+            right: 15,
+            top: 10,
+            bottom: 0
+          };
+        }
       }
     },
 
@@ -322,8 +366,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      'px-vis-multi-axis-mousemove': '_calcTooltip',
      'px-vis-multi-axis-mouseleave': '_hideTooltip'
     },
+
     _doWeHaveChartData: function(cD){
-      if(this.chartData.length > 0){
+      if(this.chartData && this.chartData.length > 0){
         return true
       }
     },
@@ -371,8 +416,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
           //update size if needed
           if(this.margin.bottom !== newBottomMargin) {
-
-            this.set('margin', { "top": 10, "right": 15, "left": 0, "bottom": newBottomMargin});
+            var m = this.margin;
+            this.set('margin', { "top": m.top, "right": m.right, "left": m.left, "bottom": newBottomMargin});
           }
 
           //set title location if rotation or y has changed
@@ -518,6 +563,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       for(var i = 0; i < dimensions.length; i++){
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
+          if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]){
+            ext.y[dimensions[i]][1]++;
+          }
         });
       }
 
@@ -610,17 +658,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcGridSvg: function(){
-      if(this.currentDomainX){
+      if(this.currentDomainX && this.currentDomainX.length > 0){
         // create a g and move it so it lines up with the first axis
-        var currentG = this.svg.select('.grid');
+        var currentG = this.svg.select('.gridGroup');
 
         if(!currentG.node()) {
-
-        return this.svg.append('g')
-          .attr("class", "grid")
-          .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
-        }
-        else {
+          return this.svg.append('g')
+            .attr("class", "gridGroup")
+            .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
+        } else {
           return currentG.attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
         }
       }
@@ -667,25 +713,86 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        }
      },
      _calcTooltip: function(evt){
-      var aid = evt.detail.axis,
-          mousePos = evt.detail.mousePos,
-          mouseVal = this.y[aid].invert(mousePos[1]),
-          distance = Number.MAX_VALUE,
-          minDistance = Number.MAX_VALUE,
-          yVal = null;
+      var aid = evt.detail.axis,          //axis ID
+          elem = evt.detail.elem,         //the group elem being hovered over
+          mousePos = evt.detail.mousePos, //the mouse position
+          mouseVal = this.y[aid].invert(mousePos[1]), // the data space value
+          distance = Number.MAX_VALUE,    //difference between cursor and value
+          minDistance = Number.MAX_VALUE, //difference between cursor and value
+          yVal = null,                    //the data value we will calc
+          time,                           //time we will calc
+          screenX,                        //the mouse x on the scree
+          screenY,                        //the mouse y on the scree
+          tooltipConfig = {},             //a fake configuration object we will build
+          group,                          //the group if categoryKey is being used
+          data,                           //our tooltipData obj
+          value = {};                     //the series obj within tooltipData
 
+      //loop through our chart data and find a closetest match
       for(var i = 0; i < this.chartData.length; i++){
+        //figure out the differnce between the data value and our saved value
         distance = Math.abs(this.chartData[i][aid] - mouseVal);
+        // if it is smaller than last time, save the data info
         if(distance < minDistance){
           yVal = this.chartData[i][aid];
           minDistance = distance;
+          time = this.chartData[i][this.seriesKey];
+          if(this.categoryKey){
+            group = this.chartData[i][this.categoryKey];
+          }
         }
       }
-      // console.log(mouseVal);
-      // console.log(yVal);
+      //calc the screen positions for the tooltip
+      screenX = this.x(aid) + elem.ownerSVGElement.getBoundingClientRect().left + window.scrollX + 15;
+      screenY = mousePos[1] + elem.getBoundingClientRect().top + window.scrollY + 5;
+
+      //create our fake configuration object
+      tooltipConfig[aid] = {};
+      //if using categies, use it, otherwise default
+      tooltipConfig[aid]["color"] = group ? this.completeSeriesConfig[group]["color"] : this.completeSeriesConfig[this.seriesKey]["color"];
+      //if title is specified, use it, otherwiuse id
+      tooltipConfig[aid]["name"] = this.completeSeriesConfig[aid] && this.completeSeriesConfig[aid]['title'] ? this.completeSeriesConfig[aid]["title"] : aid;
+      //if there is a unit, add it
+      tooltipConfig[aid]["yAxisUnit"] = this.completeSeriesConfig[aid] && this.completeSeriesConfig[aid]["yAxisUnit"] ? this.completeSeriesConfig[aid]["yAxisUnit"] : '';
+      //add the y series id
+      tooltipConfig[aid]['y'] = aid;
+
+      //create our value obj
+      value[aid] = yVal;
+      //create our tooltipData obj
+      data = {
+        "mouse": mousePos,
+        "time": time,
+        'series': [
+          { 'name': aid, 'value': value }
+        ]
+      };
+
+      this.set('mousePosition', [screenX, screenY]);
+      this.set('_tooltipConfig', tooltipConfig);
+      this.set('tooltipData', data);
+      // this.$.tooltip.tooltipElem._show();
      },
-     _hideTooltip: function(evt){
-       // console.log("mouseleave");
+
+     _hideTooltip: function() {
+      //  this.$.tooltip.tooltipElem._hide();
+     },
+
+     _fakeGrids: function(){
+       var h = this.height - this.margin.top - this.margin.bottom;
+       return Px.d3.scaleLinear().nice().range([h, 0])
+     },
+
+     _calcShowFakeGrid: function(){
+       var draw = false;
+       if(this._haveChartData) {
+         draw = this.currentDomainY.length > 0 ? false : true;
+       }
+       return draw
+     },
+
+     deleteAllBrushes: function(){
+       this.$.multiAxis.deleteAllBrushes();
      }
   });
 </script>

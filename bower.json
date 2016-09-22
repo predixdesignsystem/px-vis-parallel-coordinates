@@ -16,7 +16,7 @@
   "dependencies": {
     "polymer": "^1.6.1",
     "px-theme": "~1.1.2",
-    "px-vis": "~0.3.0"
+    "px-vis": "~0.4.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#~v1.1.6",
@@ -25,8 +25,5 @@
     "px-demo-data": "~0.0.15",
     "px-starter-kit-design": "~0.6.0",
     "iron-resizable-behavior": "^1.0.5"
-  },
-  "resolutions": {
-    "px-tooltip": "vis-tooltip"
   }
 }

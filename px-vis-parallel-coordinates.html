@@ -5,6 +5,7 @@
 <link rel="import" href="../px-vis/px-vis-behavior-chart.html"/>
 <link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-line.html"/>
+<link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
@@ -85,27 +86,44 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         height="[[height]]"
         margin="[[margin]]">
       </px-vis-svg-canvas>
-      <px-vis-line
-        id="line"
-        render-to-canvas
-        gradient-line
-        canvas-context="[[canvasContext]]"
-        svg="[[svg]]"
-        parallel-coordinates
-        multi-path
-        series-id="[[seriesKey]]"
-        category-key="[[categoryKey]]"
-        categories="[[categories]]"
-        chart-data="[[chartData]]"
-        complete-series-config="[[completeSeriesConfig]]"
-        x="[[x]]"
-        y="[[y]]"
-        current-domain-x="[[currentDomainX]]"
-        current-domain-y="[[currentDomainY]]"
-        selected-domain="[[selectedDomain]]"
-        muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-        no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
-      </px-vis-line>
+      <template is="dom-if" if="[[!renderToSvg]]">
+        <px-vis-line-canvas
+          id="lineCanvas"
+          gradient-line
+          canvas-context="[[canvasContext]]"
+          parallel-coordinates
+          series-id="[[seriesKey]]"
+          category-key="[[categoryKey]]"
+          categories="[[categories]]"
+          chart-data="[[chartData]]"
+          complete-series-config="[[completeSeriesConfig]]"
+          x="[[x]]"
+          y="[[y]]"
+          domain-changed="[[domainChanged]]"
+          selected-domain="[[selectedDomain]]"
+          muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
+          no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
+        </px-vis-line-canvas>
+      </template>
+      <template is="dom-if" if="[[renderToSvg]]">
+        <px-vis-line
+          id="lineSVG"
+          gradient-line
+          svg="[[svg]]"
+          parallel-coordinates
+          multi-path
+          series-id="[[seriesKey]]"
+          category-key="[[categoryKey]]"
+          categories="[[categories]]"
+          chart-data="[[chartData]]"
+          complete-series-config="[[completeSeriesConfig]]"
+          x="[[x]]"
+          y="[[y]]"
+          domain-changed="[[domainChanged]]"
+          selected-domain="[[selectedDomain]]"
+          muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
+        </px-vis-line>
+      </template>
       <px-vis-multi-axis
         id="multiAxis"
         svg="[[svg]]"
@@ -124,7 +142,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         axes="[[axes]]"
         muted-series="{{mutedSeriesBrush}}"
         redraw-series="true"
-        redraw-elems="[[_lineRedrawFun()]]"
         stroke-width="2"
         match-ticks="[[matchTicks]]"
         grid-ticks="{{gridTicks}}"
@@ -356,7 +373,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_generateSeriesConfig(dimensions, seriesConfig, _haveChartData)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
-      // '_calcRenderTarget(chartData)',
       '_selectedDomain(selectedDomain.x)',
       '_calcTitleLocation(svg, height, width, displayedValues.*)'
     ],
@@ -364,7 +380,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     listeners: {
      'iron-resize': '_onIronResize',
      'px-vis-multi-axis-mousemove': '_calcTooltip',
-     'px-vis-multi-axis-mouseleave': '_hideTooltip'
+     'px-vis-multi-axis-mouseleave': '_hideTooltip',
+     'px-vis-redraw-lines' : '_redrawLines'
     },
 
     _doWeHaveChartData: function(cD){
@@ -435,13 +452,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       }.bind(this), 5);
     },
 
-    /**
-     * FIXME: This should be called declaratively in renderToCanvas. But if we do this, first it triggers a draw rendering to svg and takes forever. Need to figure out where to put this and/or chain it so it works
-     *
-     */
-    _calcRenderTarget: function(){
-      this.set('renderToCanvas', this.chartData.length < 8000 );
-    },
     /**
      * Method to compute the axes to use. It will use all the keys in the data except those specified in skipKeys
      *
@@ -616,11 +626,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     },
 
     /**
-     * An array of the line elements.
+     * call the line draw methods vis event.
      *
      */
-    _lineRedrawFun: function(){
-      return [this.$.line]
+    _redrawLines: function(){
+      if(this.renderToSvg){
+        this.$$('#lineSVG').drawElement();
+      } else {
+        this.$$('#lineCanvas').drawCanvas();
+      }
     },
 
     /**

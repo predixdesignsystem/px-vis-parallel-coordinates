@@ -1,3 +1,11 @@
+v0.2.1
+==================
+* Upgrade to px-vis 0.5.0 and associated change to line
+
+v0.2.0
+==================
+* Gulp upgrade
+
 v0.1.20
 ==================
 * fixed errors when muting all axes

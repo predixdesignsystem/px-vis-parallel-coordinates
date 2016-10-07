@@ -73,17 +73,16 @@ gulp.task('watch', function() {
 
 gulp.task('serve', function() {
   browserSync.init({
-    port: 8088,
+    port: 8080,
     notify: false,
     reloadOnRestart: true,
     logPrefix: `${pkg.name}`,
     https: false,
-    files: ['*.*'],
     server: ['./', 'bower_components'],
   });
 
-  gulp.watch(['css/*-styles.html', '*.html', 'bower_components/**/*.html'])//.on('change', browserSync.reload);
-  gulp.watch(['!sass/*-demo.scss', 'sass/*.scss'], ['sass']);
+  gulp.watch(['css/*-styles.html', 'css/*-demo.css', '*.html', '*.js']).on('change', browserSync.reload);
+  gulp.watch(['sass/*.scss', '!sass/*-demo.scss'], ['sass']);
   gulp.watch('sass/*-demo.scss', ['demosass']);
 
 });

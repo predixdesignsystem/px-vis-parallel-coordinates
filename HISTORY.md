@@ -1,3 +1,7 @@
+v0.3.0
+==================
+* move to px-vis 0.6.0
+
 v0.2.2
 ==================
 * fixed muting to now use opacity. fixed multi path issue

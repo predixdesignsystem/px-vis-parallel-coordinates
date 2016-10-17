@@ -1,3 +1,9 @@
+v0.3.1
+==================
+* demo
+* associated changes to make more dynamic
+* delay loading until attached
+
 v0.3.0
 ==================
 * move to px-vis 0.6.0

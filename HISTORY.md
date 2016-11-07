@@ -1,3 +1,7 @@
+v0.3.3
+==================
+* removed chartExtents from demo to fix codepen
+
 v0.3.2
 ==================
 * Updated dependencies

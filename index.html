@@ -253,89 +253,17 @@
     window.addEventListener('WebComponentsReady', function() {
       var template = document.querySelector('template[is=dom-bind]')
           chartData1 = [
-            {
-              "TimeStamp":1465416480000,
-              "axis1":"11",
-              "axis2":"7",
-              "axis3":"6",
-              "axis4":"15",
-              "axis5":"7",
-              "category":"a"
-            },{
-              "TimeStamp":1465416540000,
-              "axis1":"13",
-              "axis2":"7",
-              "axis3":"7",
-              "axis4":"22",
-              "axis5":"6",
-              "category":"d"
-            },{
-              "TimeStamp":1465416600000,
-              "axis1":"14",
-              "axis2":"6",
-              "axis3":"7",
-              "axis4":"26",
-              "axis5":"7",
-              "category":"b"
-            },{
-              "TimeStamp":1465416660000,
-              "axis1":"16",
-              "axis2":"7",
-              "axis3":"7",
-              "axis4":"26",
-              "axis5":"6",
-              "category":"b"
-            },{
-              "TimeStamp":1465416720000,
-              "axis1":"18",
-              "axis2":"6",
-              "axis3":"6",
-              "axis4":"28",
-              "axis5":"7",
-              "category":"c"
-            },{
-              "TimeStamp":1465416780000,
-              "axis1":"19",
-              "axis2":"6",
-              "axis3":"8",
-              "axis4":"27",
-              "axis5":"8",
-              "category":"c"
-            },{
-              "TimeStamp":1465416840000,
-              "axis1":"10",
-              "axis2":"5",
-              "axis3":"7",
-              "axis4":"25",
-              "axis5":"6",
-              "category":"a"
-            },{
-              "TimeStamp":1465416900000,
-              "axis1":"17",
-              "axis2":"6",
-              "axis3":"7",
-              "axis4":"21",
-              "axis5":"7",
-              "category":"b"
-            },{
-              "TimeStamp":1465416960000,
-              "axis1":"15",
-              "axis2":"7",
-              "axis3":"6",
-              "axis4":"19",
-              "axis5":"6",
-              "category":"a"
-            },{
-              "TimeStamp":1465417020000,
-              "axis1":"12",
-              "axis2":"8",
-              "axis3":"6",
-              "axis4":"21",
-              "axis5":"6",
-              "category":"c"
-            }
+            {"TimeStamp":1465416480000, "axis1":"11", "axis2":"7", "axis3":"6", "axis4":"15", "axis5":"7", "category":"a"},
+            {"TimeStamp":1465416540000, "axis1":"13", "axis2":"7", "axis3":"7", "axis4":"22", "axis5":"6", "category":"d"},
+            {"TimeStamp":1465416600000, "axis1":"14", "axis2":"6", "axis3":"7", "axis4":"26", "axis5":"7", "category":"b"},
+            {"TimeStamp":1465416660000, "axis1":"16", "axis2":"7", "axis3":"7", "axis4":"26", "axis5":"6", "category":"b"},
+            {"TimeStamp":1465416720000, "axis1":"18", "axis2":"6", "axis3":"6", "axis4":"28", "axis5":"7", "category":"c"},
+            {"TimeStamp":1465416780000, "axis1":"19", "axis2":"6", "axis3":"8", "axis4":"27", "axis5":"8", "category":"c"},
+            {"TimeStamp":1465416840000, "axis1":"10", "axis2":"5", "axis3":"7", "axis4":"25", "axis5":"6", "category":"a"},
+            {"TimeStamp":1465416900000, "axis1":"17", "axis2":"6", "axis3":"7", "axis4":"21", "axis5":"7", "category":"b"},
+            {"TimeStamp":1465416960000, "axis1":"15", "axis2":"7", "axis3":"6", "axis4":"19", "axis5":"6", "category":"a"},
+            {"TimeStamp":1465417020000, "axis1":"12", "axis2":"8", "axis3":"6", "axis4":"21", "axis5":"6", "category":"c"}
           ],
-
           seriesConfig1 = {
             "axis1":{
               "yAxisUnit": "Hz",
@@ -347,7 +275,6 @@
             }
           },
           categories = [],
-          chartExtents = {'y': [0 , 10]},
 
           optionsArray = [
             {
@@ -363,7 +290,6 @@
               "categoryKey": null,
               "renderToSvg": false,
               "matchTicks": true,
-              "chartExtents": chartExtents,
               "commonAxis": false
             }
           ],

@@ -1,3 +1,8 @@
+
+v0.3.4
+==================
+* bower updating px-demo-snippet
+
 v0.3.3
 ==================
 * removed chartExtents from demo to fix codepen

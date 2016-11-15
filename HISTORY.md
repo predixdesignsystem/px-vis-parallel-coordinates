@@ -1,3 +1,8 @@
+
+==================
+* Added tooltipConfig
+* Tooltip doesn't show timestamp by default anymore. To enable it use forecDateTimeDisplay in tooltipConfig
+
 v0.3.3
 ==================
 * removed chartExtents from demo to fix codepen

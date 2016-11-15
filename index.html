@@ -176,7 +176,8 @@
                         category-key="[[item.categoryKey]]"
                         chart-data="[[item.chartData]]"
                         brush-to-remove="[[brushToRemove]]"
-                        series-config="[[item.seriesConfig]]">
+                        series-config="[[item.seriesConfig]]"
+                        tooltip-config="[[item.tooltipConfig]]">
                       </px-vis-parallel-coordinates>
                     </div>
                   </div>
@@ -275,6 +276,7 @@
             }
           },
           categories = [],
+          tooltipConfig = { "forceDateTimeDisplay" : true},
 
           optionsArray = [
             {
@@ -290,7 +292,8 @@
               "categoryKey": null,
               "renderToSvg": false,
               "matchTicks": true,
-              "commonAxis": false
+              "commonAxis": false,
+              "tooltipConfig": tooltipConfig
             }
           ],
           indexPlusOne = function(num) {

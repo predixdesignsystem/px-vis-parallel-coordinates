@@ -190,8 +190,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         mouse-position="[[mousePosition]]"
         chart-data="[[chartData]]"
         tooltip-data="[[tooltipData]]"
-        complete-series-config="[[_tooltipConfig]]"
-        x-axis-type="time">
+        complete-series-config="[[_tooltipSeriesConfig]]">
       </px-vis-tooltip>
     </div>
   </template>
@@ -227,6 +226,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.tooltipData,
       PxVisBehaviorD3.selectedDomain,
       PxVisBehaviorChart.waitForAttach,
+      PxVisBehaviorChart.subConfiguration,
       commonColors
     ],
 
@@ -366,9 +366,22 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       /**
        * A seriesConfig object specifically for the tooltip
        */
-      _tooltipConfig: {
+      _tooltipSeriesConfig: {
         type: Object,
         value: function(){ return {}; }
+      },
+      /**
+       * Configuration object used to customize the tooltip.
+       * Please refer to px-vis-tooltip (https://github.com/PredixDev/px-vis) for a list of supported properties.
+       * Most interesting properties include:
+       * - width
+       * - height
+       * - tooltipStyle
+       * - forceDateTimeDisplay
+       */
+      tooltipConfig: {
+        type: Object,
+        observer: '_tooltipConfigChanged'
       },
 
       margin:{
@@ -409,6 +422,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       if(this.chartData && this.chartData.length > 0){
         return true
       }
+    },
+    _tooltipConfigChanged: function(conf) {
+      this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -806,7 +822,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         };
 
         this.set('mousePosition', [screenX, screenY]);
-        this.set('_tooltipConfig', tooltipConfig);
+        this.set('_tooltipSeriesConfig', tooltipConfig);
         this.set('tooltipData', data);
       } else {
         // if it is off the screen, still need to give mouse coords or else it errors out

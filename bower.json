@@ -1,6 +1,6 @@
 {
     "name": "px-vis-parallel-coordinates",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "main": [
         "px-vis-parallel-coordinates.html"
     ],
@@ -33,7 +33,7 @@
         "px-code-design": "^0.2.11",
         "px-list-bare-design": "^0.2.13",
         "px-meta-lists-design": "^0.3.4",
-        "px-dropdown": "^0.12.0",
+        "px-dropdown": "~2.0.0",
         "px-rangepicker": "~1.2.1",
         "px-slider": "~0.6.1",
         "px-demo-data": "~0.0.15",

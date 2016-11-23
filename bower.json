@@ -1,6 +1,6 @@
 {
     "name": "px-vis-parallel-coordinates",
-    "version": "0.3.8",
+    "version": "0.3.9",
     "main": [
         "px-vis-parallel-coordinates.html"
     ],
@@ -19,11 +19,11 @@
         "px-vis": "~0.6.0"
     },
     "devDependencies": {
-        "px-forms-design": "#~0.3.15",
-        "px-tables-design": "#~0.3.12",
+        "px-forms-design": "^0.3.15",
+        "px-tables-design": "^0.3.12",
         "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.3",
         "px-polymer-font-awesome": "^0.1.8",
-        "px-tabs": "~0.5.2",
+        "px-tabs": "^0.5.2",
         "px-api-viewer": "^0.1.0",
         "px-demo-snippet": "^0.6.9",
         "px-list-inline-design": "^0.2.11",
@@ -33,11 +33,11 @@
         "px-code-design": "^0.2.11",
         "px-list-bare-design": "^0.2.13",
         "px-meta-lists-design": "^0.3.4",
-        "px-dropdown": "~2.0.0",
-        "px-rangepicker": "~1.2.1",
-        "px-slider": "~0.6.1",
-        "px-demo-data": "~0.0.15",
+        "px-dropdown": "^2.0.0",
+        "px-rangepicker": "^1.2.1",
+        "px-slider": "^0.6.1",
+        "px-demo-data": "^0.0.15",
         "iron-resizable-behavior": "^1.0.5",
-        "px-starter-kit-design": "~0.6.0"
+        "px-starter-kit-design": "^0.6.0"
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "px-vis-parallel-coordinates",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "main": [
         "px-vis-parallel-coordinates.html"
     ],
@@ -15,7 +15,7 @@
     ],
     "dependencies": {
         "polymer": "^1.6.1",
-        "px-theme": "~1.1.2",
+        "px-theme": "^2.0.1",
         "px-vis": "~0.6.0"
     },
     "devDependencies": {

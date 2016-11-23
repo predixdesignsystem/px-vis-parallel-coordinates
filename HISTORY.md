@@ -2,6 +2,25 @@
 ==================
 * Added tooltipConfig
 * Tooltip doesn't show timestamp by default anymore. To enable it use forecDateTimeDisplay in tooltipConfig
+* added PxVisBehaviorChart.chartCommonMethods
+* associated changes to use those methods
+* update to vis 0.7.0
+
+v0.3.7
+==================
+* update dependencies for dropdown
+
+v0.3.6
+==================
+* removing px-theme style call
+
+v0.3.5
+==================
+* changing Gruntfile.js to gulpfile.js
+
+v0.3.4
+==================
+* bower updating px-demo-snippet
 
 v0.3.3
 ==================

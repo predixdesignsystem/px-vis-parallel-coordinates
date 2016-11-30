@@ -14,7 +14,8 @@
     <style include="px-theme-styles" is="custom-style"></style>
 
     <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
-    <link rel="import" href="../px-vis/px-vis-data.html" />
+    <link rel="import" href="../iron-ajax/iron-ajax.html"/>
+
     <link rel="import" href="../px-vis/px-vis-chart-navigator.html" />
     <link rel="import" href="../px-rangepicker/px-rangepicker.html" />
     <link rel="import" href="px-vis-parallel-coordinates.html" />
@@ -203,15 +204,12 @@
         axes='["TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5"]'
       ></px-vis-parallel-coordinates>
 
-      <px-vis-data
-        id = "seriesAjax"
-        request-data = '[{
-            "url":"../px-demo-data/demo-data/apm/timeseries_demo.json"
-          }]'
-        data-var="chartData"
-        lists="flat"
-        response-data="{{chartData}}">
-      </px-vis-data>
+      <iron-ajax
+        url="../px-demo-data/demo-data/apm/timeseries_demo.json"
+        handle-as="json"
+        auto
+        last-response="{{chartData}}">
+      </iron-ajax>
 
     </template>
   </body>

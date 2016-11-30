@@ -4,7 +4,10 @@
 * Tooltip doesn't show timestamp by default anymore. To enable it use forecDateTimeDisplay in tooltipConfig
 * added PxVisBehaviorChart.chartCommonMethods
 * associated changes to use those methods
-* update to vis 0.7.0
+* Added layers
+* Added lower svg
+* Changed demo to use iron-ajax
+* Changed line to line-svg
 
 v0.3.7
 ==================

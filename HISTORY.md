@@ -9,6 +9,26 @@
 * Changed demo to use iron-ajax
 * Changed line to line-svg
 
+v0.4.1
+==================
+* Themeable
+
+v0.4.0
+==================
+* Updated dependencies
+
+v0.3.10
+==================
+* updating slider dependency
+
+v0.3.9
+==================
+* changing all devDeps to ^
+
+v0.3.8
+==================
+* Update px-theme to 2.0.1 and update test fixtures
+
 v0.3.7
 ==================
 * update dependencies for dropdown

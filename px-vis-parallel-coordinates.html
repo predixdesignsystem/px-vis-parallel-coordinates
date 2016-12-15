@@ -231,7 +231,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.subConfiguration,
       PxVisBehaviorChart.chartCommonMethods,
       PxVisBehaviorChart.layers,
-      commonColors
+      commonColors,
+      PxVisBehaviorChart.dataVisColorTheming
     ],
 
     /**
@@ -399,12 +400,19 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             bottom: 0
           };
         }
+      },
+      /**
+       * Specifies which seriesColorOrder color to start with for assigning the series color
+       */
+      startColorIndex: {
+        type: Number,
+        value: 0
       }
     },
 
     observers: [
       '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
-      '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData)',
+      '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorOrder.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*,_loadedOnPage)',
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
@@ -514,18 +522,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         if(this.generateAxesFromData){
           if(typeof(this.axes) === 'undefined'){
             // TODO what if the first object doesnt have all the dimensions?
-            axes = this._returnAllKeys(this.chartData).filter(function(d) {
+            axes = Object.keys(this.chartData[0]).filter(function(d) {
               return !this.skipKeys[d];
             }.bind(this));
           } else {
-            var k = this._returnAllKeys(this.chartData);
-            var newAxes = k.filter(function(d) {
+            var newAxes = Object.keys(this.chartData[0]).filter(function(d) {
               // what if they add data but dont want all axes, only the ones previously specified?
               return !this.skipKeys[d] && this.axes.indexOf(d) === -1;
             }.bind(this));
             //make sure we remove axis that are not there anymore
             var oldAxes = this.axes.filter(function (d) {
-              return k.indexOf(d) !== -1 && !this.skipKeys[d];
+              return Object.keys(this.chartData[0]).indexOf(d) !== -1 && !this.skipKeys[d];
             }.bind(this));
             axes = oldAxes.concat(newAxes);
           }
@@ -568,14 +575,14 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
         //FIXME Not sure this works....See color on 449
         if(!config[this.seriesKey]['color']) {
-          config[this.seriesKey]['color'] = this._getColor(18);
+          config[this.seriesKey]['color'] = this._getColor(this.startColorIndex);
         }
 
         // if categories are specified, use them
         if(typeof(this.categoryKey) !== 'undefined'){
           for(var i = 0; i < this.categories.length; i ++){
             config[this.categories[i]] = {
-              "color": this._getColor(18 + i),
+              "color": this._getColor(this.startColorIndex + i),
               "name": this.categories[i],
               "x": dimensions,
               "y": dimensions

@@ -1,3 +1,7 @@
+v0.4.2
+==================
+* Fix color dependency
+
 v0.4.1
 ==================
 * Themeable

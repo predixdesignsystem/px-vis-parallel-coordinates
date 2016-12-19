@@ -1,3 +1,7 @@
+v0.4.3
+==================
+* Fix bower dependencies
+
 v0.4.2
 ==================
 * Fix color dependency

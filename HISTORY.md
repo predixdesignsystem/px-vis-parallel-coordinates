@@ -1,4 +1,3 @@
-
 ==================
 * Added tooltipConfig
 * Tooltip doesn't show timestamp by default anymore. To enable it use forecDateTimeDisplay in tooltipConfig
@@ -8,6 +7,10 @@
 * Added lower svg
 * Changed demo to use iron-ajax
 * Changed line to line-svg
+
+v0.4.2
+==================
+* Fix color dependency
 
 v0.4.1
 ==================

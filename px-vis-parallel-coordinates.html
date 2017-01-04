@@ -4,7 +4,7 @@
 <link rel="import" href="../px-vis/px-vis-behavior-d3.html" />
 <link rel="import" href="../px-vis/px-vis-behavior-chart.html"/>
 <link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
-<link rel="import" href="../px-vis/px-vis-line.html"/>
+<link rel="import" href="../px-vis/px-vis-line-svg.html"/>
 <link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
@@ -70,7 +70,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         axes="[[axes]]"
         dimensions="[[dimensions]]"
         chart-data="[[chartData]]"
-        complete-series-config="[[completeSeriesConfig]]"
         chart-extents="[[chartExtents]]"
         x="{{x}}"
         y="{{y}}"
@@ -82,6 +81,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         canvas-context="{{canvasContext}}"
         svg="{{svg}}"
         px-svg-elem="{{pxSvgElem}}"
+        svg-lower="{{svgLower}}"
         width="[[width]]"
         height="[[height]]"
         margin="[[margin]]">
@@ -108,10 +108,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         </px-vis-line-canvas>
       </template>
       <template is="dom-if" if="[[renderToSvg]]" restamp>
-        <px-vis-line
+        <px-vis-line-svg
           id="lineSVG"
           gradient-line
-          svg="[[svg]]"
+          svg="[[layer.0]]"
           parallel-coordinates
           multi-path
           muted-opacity="0"
@@ -125,19 +125,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           domain-changed="[[domainChanged]]"
           selected-domain="[[selectedDomain]]"
           muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
-        </px-vis-line>
+        </px-vis-line-svg>
       </template>
       <px-vis-multi-axis
         id="multiAxis"
-        svg="[[svg]]"
+        svg="[[layer.1]]"
         width="[[width]]"
         height="[[height]]"
         margin="[[margin]]"
         title-location='[[titleLocation]]'
         x="[[x]]"
         y="[[y]]"
-        current-domain-x="[[currentDomainX]]"
-        current-domain-y="[[currentDomainY]]"
         complete-series-config="{{completeSeriesConfig}}"
         series-key="[[seriesKey]]"
         chart-data="[[chartData]]"
@@ -153,6 +151,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         outer-tick-size="6"
         label-type-size="10"
         title-type-size="12"
+        prevent-series-bar
         truncation-length="[[truncationLength]]"
         displayed-values="{{displayedValues}}"
         append-unit-in-title
@@ -175,7 +174,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       </template>
       <template is="dom-if" if="[[_showFakeGrid]]" restamp>
         <px-vis-gridlines
-          svg="[[svg]]"
+          svg="[[svgLower]]"
           axis="[[_fakeGrids(height)]]"
           margin="[[margin]]"
           length="[[width]]"
@@ -190,8 +189,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         mouse-position="[[mousePosition]]"
         chart-data="[[chartData]]"
         tooltip-data="[[tooltipData]]"
-        complete-series-config="[[_tooltipConfig]]"
-        x-axis-type="time">
+        complete-series-config="[[_tooltipSeriesConfig]]">
       </px-vis-tooltip>
     </div>
   </template>
@@ -205,6 +203,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     behaviors: [
       PxVisBehavior.sizing,
       PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.svgLower,
       PxVisBehaviorD3.canvas,
       PxVisBehaviorD3.axis,
       PxVisBehavior.dataset,
@@ -227,6 +226,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehavior.tooltipData,
       PxVisBehaviorD3.selectedDomain,
       PxVisBehaviorChart.waitForAttach,
+      PxVisBehaviorChart.subConfiguration,
+      PxVisBehaviorChart.chartCommonMethods,
+      PxVisBehaviorChart.layers,
       PxColorsBehavior.commonColors,
       PxColorsBehavior.dataVisColorTheming
     ],
@@ -367,9 +369,22 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       /**
        * A seriesConfig object specifically for the tooltip
        */
-      _tooltipConfig: {
+      _tooltipSeriesConfig: {
         type: Object,
         value: function(){ return {}; }
+      },
+      /**
+       * Configuration object used to customize the tooltip.
+       * Please refer to px-vis-tooltip (https://github.com/PredixDev/px-vis) for a list of supported properties.
+       * Most interesting properties include:
+       * - width
+       * - height
+       * - tooltipStyle
+       * - forceDateTimeDisplay
+       */
+      tooltipConfig: {
+        type: Object,
+        observer: '_tooltipConfigChanged'
       },
 
       margin:{
@@ -409,6 +424,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      'px-vis-redraw-lines' : '_redrawLines'
     },
 
+    ready: function() {
+      this.set('numberOfLayers',2);
+    },
+
     attached: function() {
       this._isLoadedOnPage();
     },
@@ -417,6 +436,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       if(this.chartData && this.chartData.length > 0){
         return true
       }
+    },
+    _tooltipConfigChanged: function(conf) {
+      this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -699,10 +721,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     _calcGridSvg: function(){
       if(this.currentDomainX && this.currentDomainX.length > 0){
         // create a g and move it so it lines up with the first axis
-        var currentG = this.svg.select('.gridGroup');
+        var currentG = this.svgLower.select('.gridGroup');
 
         if(!currentG.node()) {
-          return this.svg.append('g')
+          return this.svgLower.append('g')
             .attr("class", "gridGroup")
             .attr("transform", "translate(" + this.x(this.dimensions[0]) + ",0)");
         } else {
@@ -814,7 +836,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         };
 
         this.set('mousePosition', [screenX, screenY]);
-        this.set('_tooltipConfig', tooltipConfig);
+        this.set('_tooltipSeriesConfig', tooltipConfig);
         this.set('tooltipData', data);
       } else {
         // if it is off the screen, still need to give mouse coords or else it errors out

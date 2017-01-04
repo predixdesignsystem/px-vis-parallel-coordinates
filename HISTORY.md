@@ -1,3 +1,14 @@
+v1.0.0
+==================
+* Added tooltipConfig
+* Tooltip doesn't show timestamp by default anymore. To enable it use forecDateTimeDisplay in tooltipConfig
+* added PxVisBehaviorChart.chartCommonMethods
+* associated changes to use those methods
+* Added layers
+* Added lower svg
+* Changed demo to use iron-ajax
+* Changed line to line-svg
+
 v0.4.3
 ==================
 * Fix bower dependencies
@@ -34,11 +45,9 @@ v0.3.6
 ==================
 * removing px-theme style call
 
-
 v0.3.5
 ==================
 * changing Gruntfile.js to gulpfile.js
-
 
 v0.3.4
 ==================

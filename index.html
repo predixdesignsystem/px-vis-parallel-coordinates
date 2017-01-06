@@ -177,7 +177,8 @@
                         chart-data="[[item.chartData]]"
                         brush-to-remove="[[brushToRemove]]"
                         series-config="[[item.seriesConfig]]"
-                        tooltip-config="[[item.tooltipConfig]]">
+                        tooltip-config="[[item.tooltipConfig]]"
+                        dynamic-menu-config="[[item.dynamicMenuConfig]]">
                       </px-vis-parallel-coordinates>
                     </div>
                   </div>
@@ -252,7 +253,8 @@
   <script>
 
     window.addEventListener('WebComponentsReady', function() {
-      var template = document.querySelector('template[is=dom-bind]')
+      var template = document.querySelector('template[is=dom-bind]'),
+          chart = document.getElementById('parallel-coordinates'),
           chartData1 = [
             {"TimeStamp":1465416480000, "axis1":"11", "axis2":"7", "axis3":"6", "axis4":"15", "axis5":"7", "category":"a"},
             {"TimeStamp":1465416540000, "axis1":"13", "axis2":"7", "axis3":"7", "axis4":"22", "axis5":"6", "category":"d"},
@@ -277,13 +279,32 @@
           },
           categories = [],
           tooltipConfig = { "forceDateTimeDisplay" : true},
-
+          menuConfig = [
+            {
+              "name": "Delete",
+              "eventName": "delete",
+              "actionContext": chart,
+              "icon": "fa-trash",
+              "action": function(itemConfig, additionalDetail) {
+                //usually we would just pass the chart as the context for this action,
+                //unfortunately due to how our demo dynamically build the charts we don't
+                //have access to the chart when creating this config, so we manually
+                //get the chart every time
+                var chart = document.getElementById('parallel-coordinates'),
+                    newAxes = chart.axes;
+                newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
+                chart.set("axes", []);
+                chart.set("axes", newAxes);
+              }
+            }
+          ],
           optionsArray = [
             {
               "height":500,
               "width":800,
               "seriesKey": "TimeStamp",
               "preventResize":false,
+              "dynamicMenuConfig":menuConfig,
               "chartData":chartData1,
               "seriesConfig": seriesConfig1,
               "axes": ["axis1", "axis2", "axis3", "axis4", "axis5"],

@@ -51,7 +51,6 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         match-ticks
-        prevent-resize
         selected-domain="{{selectedDomain}}"
         generate-axes-from-data
         tooltip-config='{
@@ -147,7 +146,8 @@
         skip-keys='{"UnitNumber":true}'
         series-key="TimeStamp"
         category-key="DLN_MODE"
-        categories='[1,2,3,4]'
+        categories='[1, 2, 3, 4]'
+        tooltip-config='{ "forceDateTimeDisplay" : true}'
         match-ticks
         generate-axes-from-data
       ></px-vis-parallel-coordinates>
@@ -230,6 +230,23 @@
           navigator = document.getElementById('navigator');
 
       rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
+
+      var menuConfig = [
+          {
+            "name": "Delete",
+            "eventName": "delete",
+            "actionContext": parall,
+            "icon": "fa-trash",
+            "action": function(itemConfig, additionalDetail) {
+              var newAxes = this.axes;
+              newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
+              this.set("axes", []);
+              this.set("axes", newAxes);
+            }
+          }
+        ]
+
+      parall.set('dynamicMenuConfig', menuConfig);
 
       btnSnap.addEventListener('click', function() {
 

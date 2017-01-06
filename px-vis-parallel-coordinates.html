@@ -62,7 +62,25 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
   <template>
     <style include="px-vis-parallel-coordinates-styles"></style>
 
-    <div id="wrapper" class="wrapper">
+    <div id="wrapper" class="flex flex--col">
+      <px-vis-register
+        id="categoryRegister"
+        class$="{{_getHideClass(_hideCategoryRegister)}}"
+        tooltip-data="[[_categoryRegisterTooltipData]]"
+        complete-series-config="[[_categoryRegisterConfig]]"
+        type="horizontal"
+        prevent-muting>
+      </px-vis-register>
+    <div class="flex flex--row--rev">
+      <px-vis-register
+        id="axisRegister"
+        class$="{{_getHideClass(hideAxisRegister)}}"
+        dynamic-menu-config="[[dynamicMenuConfig]]"
+        tooltip-data="[[_axisRegisterTooltipData]]"
+        complete-series-config="[[_axisRegisterConfig]]"
+        type="vertical"
+        height="[[_registerHeight]]">
+      </px-vis-register>
       <px-vis-multi-scale
         width="[[width]]"
         height="[[height]]"
@@ -136,6 +154,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         title-location='[[titleLocation]]'
         x="[[x]]"
         y="[[y]]"
+        prevent-series-bar
         complete-series-config="{{completeSeriesConfig}}"
         series-key="[[seriesKey]]"
         chart-data="[[chartData]]"
@@ -230,7 +249,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.chartCommonMethods,
       PxVisBehaviorChart.layers,
       PxColorsBehavior.commonColors,
-      PxColorsBehavior.dataVisColorTheming
+      PxColorsBehavior.dataVisColorTheming,
+      PxVisBehaviorChart.axisRegister,
+      PxVisBehaviorChart.categoryRegister,
+      PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
+      PxVisBehavior.dynamicMenuConfig
     ],
 
     /**
@@ -294,23 +317,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         type:Object,
         notify: true
       },
-      /**
-       * An object to hold which axes should be muted.
-       *
-       * *When adding keys to this, be sure to use Polymer set methods or notifyPath*
-       *
-       * ```
-       *    {
-       *        "Axes_to_skip_1":true,
-       *        "Axes_to_skip_2":true
-       *    }
-       * ```
-       */
-      mutedAxes: {
-        type: Object,
-        notify: true,
-        value: function() { return {}; }
-      },
+      
       /**
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
@@ -336,7 +343,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       seriesConfig: {
         type: Object,
         notify: true,
-        value: function(){ return {} }
+        value: function() { return {} }
       },
       /**
        * Object representing the actual displayed titles for each axis
@@ -371,7 +378,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        */
       _tooltipSeriesConfig: {
         type: Object,
-        value: function(){ return {}; }
+        value: function() { return {}; }
       },
       /**
        * Configuration object used to customize the tooltip.
@@ -405,6 +412,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       startColorIndex: {
         type: Number,
         value: 0
+      },
+      _registerHeight: {
+        type: Number
       }
     },
 
@@ -421,25 +431,28 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      'iron-resize': '_onIronResize',
      'px-vis-multi-axis-mousemove': '_calcTooltip',
      'px-vis-multi-axis-mouseleave': '_hideTooltip',
-     'px-vis-redraw-lines' : '_redrawLines'
+     'px-vis-redraw-lines' : '_redrawLines',
+     'px-vis-muted-series-updated': '_muteUnmute'
     },
 
     ready: function() {
       this.set('numberOfLayers',2);
+      this.set('_registerHeight', this.height);
     },
 
     attached: function() {
       this._isLoadedOnPage();
     },
 
-    _doWeHaveChartData: function(cD){
-      if(this.chartData && this.chartData.length > 0){
+    _doWeHaveChartData: function(cD) {
+      if(this.chartData && this.chartData.length > 0) {
         return true
       }
     },
-    _tooltipConfigChanged: function(conf) {
-      this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
+    _axisRegisterConfigChanged: function(conf) {
+      this._applyConfigToElement(this.axisRegisterConfig, this.$.axisRegister);
     },
+   
     /**
      * At ready, set the margin and titleLocation objects
      *
@@ -507,17 +520,17 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Method to compute the axes to use. It will use all the keys in the data except those specified in skipKeys
      *
      */
-    _computeAxes: function(cD, sK){
-      if(this._doesObjHaveValues(this.chartData)){
+    _computeAxes: function(cD, sK) {
+      if(this._doesObjHaveValues(this.chartData)) {
         var axes;
         // add series and category key to skipKeys
         this.skipKeys[this.seriesKey] = true;
-        if(this.categoryKey){
+        if(this.categoryKey) {
           this.skipKeys[this.categoryKey] = true;
         }
 
-        if(this.generateAxesFromData){
-          if(typeof(this.axes) === 'undefined'){
+        if(this.generateAxesFromData) {
+          if(typeof(this.axes) === 'undefined') {
             // TODO what if the first object doesnt have all the dimensions?
             axes = Object.keys(this.chartData[0]).filter(function(d) {
               return !this.skipKeys[d];
@@ -543,9 +556,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Method to compute the dimensions to use by using axes and mutedAxes.
      *
      */
-    _computeDimensions: function(axes, muted){
-      if(this._doesObjHaveValues(this.axes)){
-        if(this._doesObjHaveValues(this.mutedAxes)){
+    _computeDimensions: function(axes, muted) {
+      if(this._doesObjHaveValues(this.axes)) {
+        if(this._doesObjHaveValues(this.mutedAxes)) {
           var dims = this.axes.filter(function(d) {
             //only get dims that are not in dims, not supposed to be skiped, and not muted
             return !this.mutedAxes[d];
@@ -576,8 +589,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         }
 
         // if categories are specified, use them
-        if(typeof(this.categoryKey) !== 'undefined'){
-          for(var i = 0; i < this.categories.length; i ++){
+        if(typeof(this.categoryKey) !== 'undefined') {
+
+          for(var i = 0; i < this.categories.length; i ++) {
             config[this.categories[i]] = {
               "color": this._getColor(this.startColorIndex + i),
               "name": this.categories[i],
@@ -595,7 +609,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     /**
      * Helper function to return the correct color for a particular index.
      **/
-    _getColor: function(i){
+    _getColor: function(i) {
       var l = this.seriesColorOrder.length,
           index = this._calcIndex(i,l);
       return this.dataVisColors[this.seriesColorOrder[ index ]];
@@ -603,24 +617,24 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     /**
      * Helper function to calculate the index. When we run out of indcies, it loops back over valid indicies.
      **/
-    _calcIndex: function(i,l){
+    _calcIndex: function(i,l) {
       return i < l ? i : this._calcIndex(i - l,l);
     },
     /**
      * Creates the chartExtents for each dimension
      *
      */
-    _generateChartExtents: function(dimensions){
+    _generateChartExtents: function(dimensions) {
       var ext = {
               "x": dimensions,
               "y": {}
             };
 
       // TODO Is there a smarter way of doing this?
-      for(var i = 0; i < dimensions.length; i++){
+      for(var i = 0; i < dimensions.length; i++) {
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
-          if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]){
+          if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
             ext.y[dimensions[i]][1]++;
           }
         });
@@ -628,9 +642,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
       // TODO dev set common extents?
       // if we want a common axis, find overall extents
-      if(this.commonAxis){
+      if(this.commonAxis) {
         var maxMin = d3.extent(d3.merge(d3.values(ext.y)));
-        for(var i = 0; i < dimensions.length; i++){
+        for(var i = 0; i < dimensions.length; i++) {
           // set each axis extent to max & min
           // TODO this is not the most efficient strategy, but certainly is the easiest, especially to keep it dynamic. Better would be to use only a single scale instead of calculating a scale multiple times.
           ext.y[dimensions[i]] = maxMin;
@@ -643,12 +657,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Adds data to a muted series based on the selected domain
      *
      */
-    _selectedDomain: function(sd){
-      this.debounce('selected_domain',function(){
-        if(this.chartData && this.chartData.length > 0){
+    _selectedDomain: function(sd) {
+      this.debounce('selected_domain',function() {
+        if(this.chartData && this.chartData.length > 0) {
           var muted = {};
-          for(var i = 0; i < this.chartData.length; i++){
-            if(this.chartData[i][this.seriesKey] < sd[0] || this.chartData[i][this.seriesKey] > sd[1]){
+          for(var i = 0; i < this.chartData.length; i++) {
+            if(this.chartData[i][this.seriesKey] < sd[0] || this.chartData[i][this.seriesKey] > sd[1]) {
               muted[this.chartData[i][this.seriesKey]] = true;
             }
           }
@@ -660,13 +674,13 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Takes the muted series from the axis brush and the selected domain and returns a merged copy of them
      *
      */
-    _combineMutes: function(m1,m2){
+    _combineMutes: function(m1,m2) {
       var muted = {};
       // for these, we assume that "false" items will just have been removed
-      for(var k in m1){
+      for(var k in m1) {
         muted[k] = m1[k];
       }
-      for(var k in m2){
+      for(var k in m2) {
         muted[k] = m2[k];
       }
       return muted;
@@ -676,8 +690,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * call the line draw methods vis event.
      *
      */
-    _redrawLines: function(){
-      if(this.renderToSvg){
+    _redrawLines: function() {
+      if(this.renderToSvg) {
         this.$$('#lineSVG').drawElement();
       } else {
         this.$$('#lineCanvas').drawCanvas();
@@ -699,10 +713,18 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     _onIronResize: function() {
       this.debounce('ironresize', function() {
          if(!this.preventResize) {
-          wrapperRect = this.$.wrapper.getBoundingClientRect();
+          var wrapperRect = this.$.wrapper.getBoundingClientRect(),
+              axisRegisterRect = this.$.axisRegister.getBoundingClientRect(),
+           //   categoryRegisterRect = this.$.categoryRegister.getBoundingClientRect(),
+              widthDeduct = 0,
+              heightDeduct = 0;
 
-          this.set('width', Math.max(wrapperRect.width,0));
-          this.set('height', Math.max(wrapperRect.height,0));
+       //   heightDeduct += registerRect.height;
+          widthDeduct += axisRegisterRect.width;
+
+          this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
+          this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
+          this.set('_registerHeight', Math.max(wrapperRect.height, 0));
          }
       },100);
     },
@@ -710,7 +732,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Returns the width for the gridlines
      *
      */
-    _calcGridWidth: function(){
+    _calcGridWidth: function() {
       // overall width minus the inset for the axes
       return this.width - this.x(this.dimensions[0]) * 2;
     },
@@ -718,8 +740,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Retruns a g elem for the grid to draw to
      *
      */
-    _calcGridSvg: function(){
-      if(this.currentDomainX && this.currentDomainX.length > 0){
+    _calcGridSvg: function() {
+      if(this.currentDomainX && this.currentDomainX.length > 0) {
         // create a g and move it so it lines up with the first axis
         var currentG = this.svgLower.select('.gridGroup');
 
@@ -759,11 +781,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      _changeMutedAxes: function(a,bool) {
        var mA = this.mutedAxes;
 
-       if(typeof(a) === 'string'){
+       if(typeof(a) === 'string') {
          this.mutedAxes = null;
          mA[a] = bool;
          this.set('mutedAxes', mA);
-       } else if(Array.isArray(a)){
+       } else if(Array.isArray(a)) {
          this.mutedAxes = null;
          for(var i = 0; i < a.length; i++) {
            mA[ a[i] ] = bool;
@@ -790,15 +812,15 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           value = {};                     //the series obj within tooltipData
 
       //loop through our chart data and find a closetest match
-      for(var i = 0; i < this.chartData.length; i++){
+      for(var i = 0; i < this.chartData.length; i++) {
         //figure out the differnce between the data value and our saved value
         distance = Math.abs(this.chartData[i][aid] - mouseVal);
         // if it is smaller than last time, save the data info
-        if(distance < minDistance){
+        if(distance < minDistance) {
           yVal = this.chartData[i][aid];
           minDistance = distance;
           time = this.chartData[i][this.seriesKey];
-          if(this.categoryKey){
+          if(this.categoryKey) {
             group = this.chartData[i][this.categoryKey];
           }
         }
@@ -848,12 +870,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       //  this.$.tooltip.tooltipElem._hide();
     },
 
-    _fakeGrids: function(){
+    _fakeGrids: function() {
       var h = this.height - this.margin.top - this.margin.bottom;
       return Px.d3.scaleLinear().nice().range([h, 0])
     },
 
-    _calcShowFakeGrid: function(){
+    _calcShowFakeGrid: function() {
       var draw = false;
       if(this._haveChartData) {
         draw = this.currentDomainY.length > 0 ? false : true;
@@ -861,8 +883,22 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       return draw
     },
 
-    deleteAllBrushes: function(){
+    deleteAllBrushes: function() {
       this.$.multiAxis.deleteAllBrushes();
+    },
+
+    /**
+     * Mute/unmute axis on register requests
+     */
+    _muteUnmute: function(evt) {
+      
+      if(evt.detail.fromRegister) {
+        if(evt.detail.value) {
+          this.addToMutedAxes(evt.detail.name);
+        } else {
+          this.removeFromMutedAxes(evt.detail.name);
+        }
+      }
     }
   });
 </script>

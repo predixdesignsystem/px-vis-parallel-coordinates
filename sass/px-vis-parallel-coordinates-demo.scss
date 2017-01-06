@@ -74,7 +74,7 @@ $inuit-enable-list-inline--delimited : true;
   min-height: calculateRem(500px);
 }
 .demoSnippet {
-  flex-basis: calculateRem(150px);
+  min-height: calculateRem(150px);
 }
 .componentHeader {
   border-bottom: 1px solid $gray4;
@@ -89,6 +89,7 @@ $inuit-enable-list-inline--delimited : true;
   background: $white;
   border: 1px solid $gray4;
   overflow: auto;
+  min-height: calculateRem(500px);
 }
 .componentList {
   a {

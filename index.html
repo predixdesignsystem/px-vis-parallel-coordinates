@@ -90,6 +90,32 @@
                   <div class="u-ml-">Prevent Resize</div>
                 </div>
 
+                <div class="u-mb-">Horizontal Alignment:
+                  <div style="width: 100%;">
+                    <px-dropdown id="chartHorizontalAlignment" value="{{item.chartHorizontalAlignment}}" display-value="{{item.chartHorizontalAlignment}}" bound-target="properties">
+                      <px-dropdown-content
+                        items='[
+                          {"key":"one", "val": "left"},
+                          {"key":"two", "val": "center"},
+                          {"key":"three", "val": "right"}]'>
+                      </px-dropdown-content>
+                    </px-dropdown>
+                  </div>
+                </div>
+
+                <div class="u-mb-">Vertical Alignment:
+                  <div style="width: 100%;">
+                    <px-dropdown id="chartVerticalAlignment" value="{{item.chartVerticalAlignment}}" display-value="{{item.chartVerticalAlignment}}" bound-target="properties">
+                      <px-dropdown-content
+                        items='[
+                          {"key":"one", "val": "top"},
+                          {"key":"two", "val": "center"},
+                          {"key":"three", "val": "bottom"}]'>
+                      </px-dropdown-content>
+                    </px-dropdown>
+                  </div>
+                </div>
+
                 <!-- brush to remove -->
                 <hr>
                 <div class="flex u-mb-">
@@ -156,31 +182,52 @@
                   </div>
                 </div>
 
+                <!-- registers -->
+                <hr>
+                <div class="flex u-mb-">
+                  <input
+                    id="hideAxisRegister{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.hideAxisRegister::change}}"/>
+                  <label for$="hideAxisRegister{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Hide axis register</div>
+                </div>
+                <div class="flex u-mb-">
+                  <input
+                    id="hideCategoryRegister{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.hideCategoryRegister::change}}"/>
+                  <label for$="hideCategoryRegister{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Hide category register</div>
+                </div>
+
 
               </div>
 
               <div class="demoContainer u-mt+">
                 <!-- demo -->
-                <div class="flex flex--col">
-                  <div class="flex__item demo u-ph+ u-pb+">
-                    <div class="u-mt+">
-                      <px-vis-parallel-coordinates
-                        id="parallel-coordinates"
-                        width = "{{item.width}}"
-                        height = "{{item.height}}"
-                        prevent-resize = "{{item.preventResize}}"
-                        series-key="[[item.seriesKey]]"
-                        match-ticks="{{item.matchTicks}}"
-                        axes="[[item.axes]]"
-                        categories='[[item.categories]]'
-                        category-key="[[item.categoryKey]]"
-                        chart-data="[[item.chartData]]"
-                        brush-to-remove="[[brushToRemove]]"
-                        series-config="[[item.seriesConfig]]"
-                        tooltip-config="[[item.tooltipConfig]]"
-                        dynamic-menu-config="[[item.dynamicMenuConfig]]">
-                      </px-vis-parallel-coordinates>
-                    </div>
+                <div class="flex flex--col full-height">
+                  <div class="flex__item demo full-height">
+                    <px-vis-parallel-coordinates
+                      id="parallel-coordinates"
+                      width = "{{item.width}}"
+                      height = "{{item.height}}"
+                      prevent-resize = "{{item.preventResize}}"
+                      series-key="[[item.seriesKey]]"
+                      match-ticks="{{item.matchTicks}}"
+                      axes="[[item.axes]]"
+                      categories='[[item.categories]]'
+                      category-key="[[item.categoryKey]]"
+                      chart-data="[[item.chartData]]"
+                      brush-to-remove="[[brushToRemove]]"
+                      series-config="[[item.seriesConfig]]"
+                      tooltip-config="[[item.tooltipConfig]]"
+                      dynamic-menu-config="[[item.dynamicMenuConfig]]"
+                      hide-axis-register="[[item.hideAxisRegister]]"
+                      hide-category-register="[[item.hideCategoryRegister]]">
+                    </px-vis-parallel-coordinates>
                   </div>
                   <div class="flex__item">
                     <px-demo-snippet
@@ -314,7 +361,11 @@
               "renderToSvg": false,
               "matchTicks": true,
               "commonAxis": false,
-              "tooltipConfig": tooltipConfig
+              "tooltipConfig": tooltipConfig,
+              "chartHorizontalAlignment": "center",
+              "chartVerticalAlignment": "center",
+              "hideCategoryRegister": false,
+              "hideAxisRegister": false
             }
           ],
           indexPlusOne = function(num) {

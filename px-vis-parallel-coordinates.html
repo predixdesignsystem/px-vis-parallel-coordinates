@@ -62,154 +62,158 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
   <template>
     <style include="px-vis-parallel-coordinates-styles"></style>
 
-    <div id="wrapper" class="flex flex--col">
-      <px-vis-register
-        id="categoryRegister"
-        class$="{{_getHideClass(_hideCategoryRegister)}}"
-        tooltip-data="[[_categoryRegisterTooltipData]]"
-        complete-series-config="[[_categoryRegisterConfig]]"
-        type="horizontal"
-        prevent-muting>
-      </px-vis-register>
-    <div class="flex flex--row--rev">
-      <px-vis-register
-        id="axisRegister"
-        class$="{{_getHideClass(hideAxisRegister)}}"
-        dynamic-menu-config="[[dynamicMenuConfig]]"
-        tooltip-data="[[_axisRegisterTooltipData]]"
-        complete-series-config="[[_axisRegisterConfig]]"
-        type="vertical"
-        height="[[_registerHeight]]">
-      </px-vis-register>
-      <px-vis-multi-scale
-        width="[[width]]"
-        height="[[height]]"
-        margin="[[margin]]"
-        axes="[[axes]]"
-        dimensions="[[dimensions]]"
-        chart-data="[[chartData]]"
-        chart-extents="[[chartExtents]]"
-        x="{{x}}"
-        y="{{y}}"
-        current-domain-x="{{currentDomainX}}"
-        current-domain-y="{{currentDomainY}}"
-        domain-changed="{{domainChanged}}">
-      </px-vis-multi-scale>
-      <px-vis-svg-canvas
-        canvas-context="{{canvasContext}}"
-        svg="{{svg}}"
-        px-svg-elem="{{pxSvgElem}}"
-        svg-lower="{{svgLower}}"
-        width="[[width]]"
-        height="[[height]]"
-        margin="[[margin]]">
-      </px-vis-svg-canvas>
-      <template is="dom-if" if="[[!renderToSvg]]" restamp>
-        <px-vis-line-canvas
-          id="lineCanvas"
-          gradient-line
-          canvas-context="[[canvasContext]]"
-          parallel-coordinates
-          multi-path
-          muted-opacity="0"
-          series-id="[[seriesKey]]"
-          category-key="[[categoryKey]]"
-          categories="[[categories]]"
-          chart-data="[[chartData]]"
-          complete-series-config="[[completeSeriesConfig]]"
-          x="[[x]]"
-          y="[[y]]"
-          domain-changed="[[domainChanged]]"
-          selected-domain="[[selectedDomain]]"
-          muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-          no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
-        </px-vis-line-canvas>
-      </template>
-      <template is="dom-if" if="[[renderToSvg]]" restamp>
-        <px-vis-line-svg
-          id="lineSVG"
-          gradient-line
-          svg="[[layer.0]]"
-          parallel-coordinates
-          multi-path
-          muted-opacity="0"
-          series-id="[[seriesKey]]"
-          category-key="[[categoryKey]]"
-          categories="[[categories]]"
-          chart-data="[[chartData]]"
-          complete-series-config="[[completeSeriesConfig]]"
-          x="[[x]]"
-          y="[[y]]"
-          domain-changed="[[domainChanged]]"
-          selected-domain="[[selectedDomain]]"
-          muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
-        </px-vis-line-svg>
-      </template>
-      <px-vis-multi-axis
-        id="multiAxis"
-        svg="[[layer.1]]"
-        width="[[width]]"
-        height="[[height]]"
-        margin="[[margin]]"
-        title-location='[[titleLocation]]'
-        x="[[x]]"
-        y="[[y]]"
-        prevent-series-bar
-        complete-series-config="{{completeSeriesConfig}}"
-        series-key="[[seriesKey]]"
-        chart-data="[[chartData]]"
-        dimensions="[[dimensions]]"
-        axes="[[axes]]"
-        muted-series="{{mutedSeriesBrush}}"
-        redraw-series="true"
-        stroke-width="2"
-        match-ticks="[[matchTicks]]"
-        grid-ticks="{{gridTicks}}"
-        grid-axis="{{gridAxis}}"
-        common-axis="[[commonAxis]]"
-        outer-tick-size="6"
-        label-type-size="10"
-        title-type-size="12"
-        prevent-series-bar
-        truncation-length="[[truncationLength]]"
-        displayed-values="{{displayedValues}}"
-        append-unit-in-title
-        domain-changed="[[domainChanged]]"
-        axis-groups="{{axisGroups}}"
-        brush-elems="{{brushElems}}"
-        brush-to-remove="[[brushToRemove]]">
-      </px-vis-multi-axis>
-      <template is="dom-if" if="[[matchTicks]]">
-        <px-vis-gridlines
-          svg="[[_calcGridSvg(currentDomainX)]]"
-          tick-values="[[gridTicks]]"
-          axis="[[gridAxis]]"
-          margin="[[margin]]"
-          length="[[_calcGridWidth(currentDomainX)]]"
-          orientation="left"
-          current-domain="[[currentDomainY]]"
-          domain-changed="[[domainChanged]]">
-        </px-vis-gridlines>
-      </template>
-      <template is="dom-if" if="[[_showFakeGrid]]" restamp>
-        <px-vis-gridlines
-          svg="[[svgLower]]"
-          axis="[[_fakeGrids(height)]]"
-          margin="[[margin]]"
-          length="[[width]]"
-          orientation="left"
-          current-domain='[0,10]'
-          domain-changed="true">
-        </px-vis-gridlines>
-      </template>
-      <px-vis-tooltip
-        id="tooltip"
-        hover-target="[[brushElems]]"
-        mouse-position="[[mousePosition]]"
-        chart-data="[[chartData]]"
-        tooltip-data="[[tooltipData]]"
-        complete-series-config="[[_tooltipSeriesConfig]]">
-      </px-vis-tooltip>
+    <div id="wrapper" class$="{{_chartWrapperClass}}">
+      <div class="flex flex--col">
+        <px-vis-register
+          id="categoryRegister"
+          class$="{{_getHideClass(_hideCategoryRegister)}}"
+          tooltip-data="[[_categoryRegisterTooltipData]]"
+          complete-series-config="[[_categoryRegisterConfig]]"
+          type="horizontal"
+          prevent-muting>
+        </px-vis-register>
+        <div class="flex flex--row--rev">
+          <px-vis-register
+            id="axisRegister"
+            class$="{{_getHideClass(hideAxisRegister)}}"
+            dynamic-menu-config="[[dynamicMenuConfig]]"
+            tooltip-data="[[_axisRegisterTooltipData]]"
+            complete-series-config="[[_axisRegisterConfig]]"
+            type="vertical"
+            height="[[_registerHeight]]">
+          </px-vis-register>
+          <px-vis-multi-scale
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]"
+            axes="[[axes]]"
+            dimensions="[[dimensions]]"
+            chart-data="[[chartData]]"
+            chart-extents="[[chartExtents]]"
+            x="{{x}}"
+            y="{{y}}"
+            current-domain-x="{{currentDomainX}}"
+            current-domain-y="{{currentDomainY}}"
+            domain-changed="{{domainChanged}}">
+          </px-vis-multi-scale>
+          <px-vis-svg-canvas
+            id="svgCanvas"
+            canvas-context="{{canvasContext}}"
+            svg="{{svg}}"
+            px-svg-elem="{{pxSvgElem}}"
+            svg-lower="{{svgLower}}"
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]">
+          </px-vis-svg-canvas>
+          <template is="dom-if" if="[[!renderToSvg]]" restamp>
+            <px-vis-line-canvas
+              id="lineCanvas"
+              gradient-line
+              canvas-context="[[canvasContext]]"
+              parallel-coordinates
+              multi-path
+              muted-opacity="0"
+              series-id="[[seriesKey]]"
+              category-key="[[categoryKey]]"
+              categories="[[categories]]"
+              chart-data="[[chartData]]"
+              complete-series-config="[[completeSeriesConfig]]"
+              x="[[x]]"
+              y="[[y]]"
+              domain-changed="[[domainChanged]]"
+              selected-domain="[[selectedDomain]]"
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
+              no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
+            </px-vis-line-canvas>
+          </template>
+          <template is="dom-if" if="[[renderToSvg]]" restamp>
+            <px-vis-line-svg
+              id="lineSVG"
+              gradient-line
+              svg="[[layer.0]]"
+              parallel-coordinates
+              multi-path
+              muted-opacity="0"
+              series-id="[[seriesKey]]"
+              category-key="[[categoryKey]]"
+              categories="[[categories]]"
+              chart-data="[[chartData]]"
+              complete-series-config="[[completeSeriesConfig]]"
+              x="[[x]]"
+              y="[[y]]"
+              domain-changed="[[domainChanged]]"
+              selected-domain="[[selectedDomain]]"
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
+            </px-vis-line-svg>
+          </template>
+          <px-vis-multi-axis
+            id="multiAxis"
+            svg="[[layer.1]]"
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]"
+            title-location='[[titleLocation]]'
+            x="[[x]]"
+            y="[[y]]"
+            prevent-series-bar
+            complete-series-config="{{completeSeriesConfig}}"
+            series-key="[[seriesKey]]"
+            chart-data="[[chartData]]"
+            dimensions="[[dimensions]]"
+            axes="[[axes]]"
+            muted-series="{{mutedSeriesBrush}}"
+            redraw-series="true"
+            stroke-width="2"
+            match-ticks="[[matchTicks]]"
+            grid-ticks="{{gridTicks}}"
+            grid-axis="{{gridAxis}}"
+            common-axis="[[commonAxis]]"
+            outer-tick-size="6"
+            label-type-size="10"
+            title-type-size="12"
+            prevent-series-bar
+            truncation-length="[[truncationLength]]"
+            displayed-values="{{displayedValues}}"
+            append-unit-in-title
+            domain-changed="[[domainChanged]]"
+            axis-groups="{{axisGroups}}"
+            brush-elems="{{brushElems}}"
+            brush-to-remove="[[brushToRemove]]">
+          </px-vis-multi-axis>
+          <template is="dom-if" if="[[matchTicks]]">
+            <px-vis-gridlines
+              svg="[[_calcGridSvg(currentDomainX)]]"
+              tick-values="[[gridTicks]]"
+              axis="[[gridAxis]]"
+              margin="[[margin]]"
+              length="[[_calcGridWidth(currentDomainX)]]"
+              orientation="left"
+              current-domain="[[currentDomainY]]"
+              domain-changed="[[domainChanged]]">
+            </px-vis-gridlines>
+          </template>
+          <template is="dom-if" if="[[_showFakeGrid]]" restamp>
+            <px-vis-gridlines
+              svg="[[svgLower]]"
+              axis="[[_fakeGrids(height)]]"
+              margin="[[margin]]"
+              length="[[width]]"
+              orientation="left"
+              current-domain='[0,10]'
+              domain-changed="true">
+            </px-vis-gridlines>
+          </template>
+          <px-vis-tooltip
+            id="tooltip"
+            hover-target="[[brushElems]]"
+            mouse-position="[[mousePosition]]"
+            chart-data="[[chartData]]"
+            tooltip-data="[[tooltipData]]"
+            complete-series-config="[[_tooltipSeriesConfig]]">
+          </px-vis-tooltip>
+        </div>  
+      </div>
     </div>
   </template>
 </dom-module>
@@ -424,7 +428,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*,_loadedOnPage)',
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
-      '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)'
+      '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)',
+      '_computeRegisterHeight(height)'
     ],
 
     listeners: {
@@ -715,18 +720,25 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
          if(!this.preventResize) {
           var wrapperRect = this.$.wrapper.getBoundingClientRect(),
               axisRegisterRect = this.$.axisRegister.getBoundingClientRect(),
-           //   categoryRegisterRect = this.$.categoryRegister.getBoundingClientRect(),
+              categoryRegisterRect = this.$.categoryRegister.getBoundingClientRect(),
               widthDeduct = 0,
               heightDeduct = 0;
 
-       //   heightDeduct += registerRect.height;
+          heightDeduct += categoryRegisterRect.height;
           widthDeduct += axisRegisterRect.width;
 
           this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
           this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
-          this.set('_registerHeight', Math.max(wrapperRect.height, 0));
+          this._computeRegisterHeight();
          }
       },100);
+    },
+    _computeRegisterHeight: function() {
+
+      this.debounce('_computeRegisterHeight', function() {
+
+        this.set('_registerHeight', Math.max(this.$.svgCanvas.height, 0));
+      }.bind(this), 50);
     },
     /**
      * Returns the width for the gridlines

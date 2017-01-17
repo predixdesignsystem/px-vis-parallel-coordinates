@@ -1,3 +1,7 @@
+v0.4.4
+==================
+* Updated to cool grays
+
 v0.4.3
 ==================
 * Fix bower dependencies

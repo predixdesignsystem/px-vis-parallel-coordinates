@@ -73,8 +73,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         chart-extents="[[chartExtents]]"
         x="{{x}}"
         y="{{y}}"
-        current-domain-x="{{currentDomainX}}"
-        current-domain-y="{{currentDomainY}}"
         domain-changed="{{domainChanged}}">
       </px-vis-multi-scale>
       <px-vis-svg-canvas
@@ -162,13 +160,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       </px-vis-multi-axis>
       <template is="dom-if" if="[[matchTicks]]">
         <px-vis-gridlines
-          svg="[[_calcGridSvg(currentDomainX)]]"
+          svg="[[_calcGridSvg(domainChanged)]]"
           tick-values="[[gridTicks]]"
           axis="[[gridAxis]]"
           margin="[[margin]]"
-          length="[[_calcGridWidth(currentDomainX)]]"
+          length="[[_calcGridWidth(domainChanged, dimensions)]]"
           orientation="left"
-          current-domain="[[currentDomainY]]"
           domain-changed="[[domainChanged]]">
         </px-vis-gridlines>
       </template>
@@ -179,7 +176,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           margin="[[margin]]"
           length="[[width]]"
           orientation="left"
-          current-domain='[0,10]'
           domain-changed="true">
         </px-vis-gridlines>
       </template>
@@ -364,7 +360,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       _showFakeGrid: {
         type: Boolean,
         value: true,
-        computed: '_calcShowFakeGrid(_haveChartData, currentDomainY)'
+        computed: '_calcShowFakeGrid(_haveChartData, y, domainChanged)'
       },
       /**
        * A seriesConfig object specifically for the tooltip
@@ -710,7 +706,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Returns the width for the gridlines
      *
      */
-    _calcGridWidth: function(){
+    _calcGridWidth: function() {
       // overall width minus the inset for the axes
       return this.width - this.x(this.dimensions[0]) * 2;
     },
@@ -719,7 +715,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcGridSvg: function(){
-      if(this.currentDomainX && this.currentDomainX.length > 0){
+      if(this.domainChanged !== null) {
         // create a g and move it so it lines up with the first axis
         var currentG = this.svgLower.select('.gridGroup');
 
@@ -848,15 +844,16 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       //  this.$.tooltip.tooltipElem._hide();
     },
 
-    _fakeGrids: function(){
+    _fakeGrids: function() {
       var h = this.height - this.margin.top - this.margin.bottom;
       return Px.d3.scaleLinear().nice().range([h, 0])
     },
 
-    _calcShowFakeGrid: function(){
+    _calcShowFakeGrid: function() {
       var draw = false;
-      if(this._haveChartData) {
-        draw = this.currentDomainY.length > 0 ? false : true;
+      if(this._haveChartData && Object.keys(this.y).length > 0) {
+        var k = Object.keys(this.y)[0];
+        draw = this.y[k].domain().length > 0 ? false : true;
       }
       return draw
     },

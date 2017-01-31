@@ -66,6 +66,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       <div class="flex flex--col">
         <px-vis-register
           id="categoryRegister"
+          x-axis-type="linear"
+          y-axis-type="linear"
           class$="{{_getHideClass(_hideCategoryRegister)}}"
           tooltip-data="[[_categoryRegisterTooltipData]]"
           complete-series-config="[[_categoryRegisterConfig]]"
@@ -75,6 +77,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         <div class="flex flex--row--rev">
           <px-vis-register
             id="axisRegister"
+            x-axis-type="linear"
+            y-axis-type="linear"
             class$="{{_getHideClass(hideAxisRegister)}}"
             dynamic-menu-config="[[dynamicMenuConfig]]"
             tooltip-data="[[_axisRegisterTooltipData]]"

@@ -207,6 +207,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           <px-vis-tooltip
             id="tooltip"
             hover-target="[[brushElems]]"
+            x-axis-type="linear"
+            y-axis-type="linear"
             mouse-position="[[mousePosition]]"
             chart-data="[[chartData]]"
             tooltip-data="[[tooltipData]]"
@@ -257,7 +259,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.axisRegister,
       PxVisBehaviorChart.categoryRegister,
       PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
-      PxVisBehavior.dynamicMenuConfig
+      PxVisBehavior.dynamicMenuConfig,
+      PxVisBehaviorChart.actionRequest
     ],
 
     /**
@@ -869,17 +872,27 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           ]
         };
 
+        //update axis register value
+        this._buildAxisTooltipData(aid, value, time);
+        this._updateAxisConfig(aid, tooltipConfig[aid]['color']);
+
         this.set('mousePosition', [screenX, screenY]);
         this.set('_tooltipSeriesConfig', tooltipConfig);
         this.set('tooltipData', data);
       } else {
         // if it is off the screen, still need to give mouse coords or else it errors out
         this.set('mousePosition', [-1000, -1000]);
+
+        //clear axis register
+        this._buildAxisTooltipData();
+        this._updateAxisConfig();
       }
     },
 
     _hideTooltip: function() {
-      //  this.$.tooltip.tooltipElem._hide();
+      //clear axis register
+      this._buildAxisTooltipData();
+      this._updateAxisConfig();
     },
 
     _fakeGrids: function() {

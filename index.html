@@ -330,18 +330,12 @@
             {
               "name": "Delete",
               "eventName": "delete",
-              "actionContext": chart,
               "icon": "fa-trash",
-              "action": function(itemConfig, additionalDetail) {
-                //usually we would just pass the chart as the context for this action,
-                //unfortunately due to how our demo dynamically build the charts we don't
-                //have access to the chart when creating this config, so we manually
-                //get the chart every time
-                var chart = document.getElementById('parallel-coordinates'),
-                    newAxes = chart.axes;
-                newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
-                chart.set("axes", []);
-                chart.set("axes", newAxes);
+              "action": function(data) {
+                var newAxes = this.axes;
+                newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1);
+                this.set("axes", []);
+                this.set("axes", newAxes);
               }
             }
           ],

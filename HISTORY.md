@@ -12,6 +12,9 @@ v1.0.0
 * Added lower svg
 * Changed demo to use iron-ajax
 * Changed line to line-svg
+* Added axis register (on the right) and category register (on top, only if using categories). 
+Can be hidden respectively with hideAxisRegister and hideCategoryRegister. Can be configured respectively with axisRegisterConfig and categoryRegisterConfig
+* Tooltip is now off by default. Enable with showTooltip
 
 v0.4.3
 ==================

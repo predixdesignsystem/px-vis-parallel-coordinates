@@ -260,7 +260,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.categoryRegister,
       PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
       PxVisBehavior.dynamicMenuConfig,
-      PxVisBehaviorChart.actionRequest
+      PxVisBehaviorChart.actionRequest,
+      PxVisBehaviorChart.showTooltip 
     ],
 
     /**
@@ -824,7 +825,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           tooltipConfig = {},             //a fake configuration object we will build
           group,                          //the group if categoryKey is being used
           data,                           //our tooltipData obj
-          value = {};                     //the series obj within tooltipData
+          value = {},                     //the series obj within tooltipData
+          dataFound;
 
       //loop through our chart data and find a closetest match
       for(var i = 0; i < this.chartData.length; i++) {
@@ -832,6 +834,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         distance = Math.abs(this.chartData[i][aid] - mouseVal);
         // if it is smaller than last time, save the data info
         if(distance < minDistance) {
+          dataFound = this.chartData[i];
           yVal = this.chartData[i][aid];
           minDistance = distance;
           time = this.chartData[i][this.seriesKey];
@@ -873,12 +876,14 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         };
 
         //update axis register value
-        this._buildAxisTooltipData(aid, value, time);
-        this._updateAxisConfig(aid, tooltipConfig[aid]['color']);
+        this._buildAxisTooltipData(dataFound, time);
+        this._updateAxisConfig(tooltipConfig[aid]['color']);
 
-        this.set('mousePosition', [screenX, screenY]);
-        this.set('_tooltipSeriesConfig', tooltipConfig);
-        this.set('tooltipData', data);
+        if(this.showTooltip) {
+          this.set('mousePosition', [screenX, screenY]);
+          this.set('_tooltipSeriesConfig', tooltipConfig);
+          this.set('tooltipData', data);
+        }
       } else {
         // if it is off the screen, still need to give mouse coords or else it errors out
         this.set('mousePosition', [-1000, -1000]);

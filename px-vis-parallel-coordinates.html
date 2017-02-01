@@ -398,8 +398,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
        * - forceDateTimeDisplay
        */
       tooltipConfig: {
-        type: Object,
-        observer: '_tooltipConfigChanged'
+        type: Object
       },
 
       margin:{
@@ -433,7 +432,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_computeDimensions(axes.*, mutedAxes.*,_loadedOnPage)',
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
       '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)',
-      '_computeRegisterHeight(height)'
+      '_computeRegisterHeight(height)',
+      '_tooltipConfigChanged(tooltipConfig)'
     ],
 
     listeners: {
@@ -458,10 +458,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         return true
       }
     },
-    _axisRegisterConfigChanged: function(conf) {
-      this._applyConfigToElement(this.axisRegisterConfig, this.$.axisRegister);
+   _tooltipConfigChanged: function(conf) {
+      this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
     },
-   
     /**
      * At ready, set the margin and titleLocation objects
      *

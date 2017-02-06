@@ -10,6 +10,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
+<link rel="import" href="../px-vis/px-vis-toolbar.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
@@ -98,16 +99,26 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             y="{{y}}"
             domain-changed="{{domainChanged}}">
           </px-vis-multi-scale>
-          <px-vis-svg-canvas
-            id="svgCanvas"
-            canvas-context="{{canvasContext}}"
-            svg="{{svg}}"
-            px-svg-elem="{{pxSvgElem}}"
-            svg-lower="{{svgLower}}"
-            width="[[width]]"
-            height="[[height]]"
-            margin="[[margin]]">
-          </px-vis-svg-canvas>
+          <div class="flex flex--col">
+            <px-vis-toolbar
+              id="toolbar"
+              current-sub-config='[[toolbarSubConfig]]'
+              action-config='{{actionConfig}}'
+              within-chart
+              chart-margin="[[margin]]"
+              show-tooltip="{{_internalShowTooltip}}">
+            </px-vis-toolbar>
+            <px-vis-svg-canvas
+              id="svgCanvas"
+              canvas-context="{{canvasContext}}"
+              svg="{{svg}}"
+              px-svg-elem="{{pxSvgElem}}"
+              svg-lower="{{svgLower}}"
+              width="[[width]]"
+              height="[[height]]"
+              margin="[[margin]]">
+            </px-vis-svg-canvas>
+          </div>
           <template is="dom-if" if="[[!renderToSvg]]" restamp>
             <px-vis-line-canvas
               id="lineCanvas"
@@ -261,7 +272,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
       PxVisBehavior.dynamicMenuConfig,
       PxVisBehaviorChart.actionRequest,
-      PxVisBehaviorChart.showTooltip 
+      PxVisBehaviorChart.showTooltip,
+      PxVisBehaviorChart.toolbarSubConfig,
     ],
 
     /**
@@ -422,6 +434,23 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       },
       _registerHeight: {
         type: Number
+      },
+      /**
+      * Configuration object used to customize the toolbar
+      * Please refer to px-vis-toolbar (https://github.com/PredixDev/px-vis) for a list of supported properties.
+      * Toolbar is empty by default and this chart does not support zooming or panning
+      * Most interesting properties include:
+      * - config (complex object for customizing the toolbar)
+      * - horizontalAlignment
+      * - subToolbarAlignment
+      */
+    toolbarConfig: {
+        type: Object,
+        value: function() {
+          return {
+              "config": {}
+          };
+        }
       }
     },
 
@@ -433,7 +462,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
       '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)',
       '_computeRegisterHeight(height)',
-      '_tooltipConfigChanged(tooltipConfig)'
+      '_tooltipConfigChanged(tooltipConfig)',
+      '_toolbarConfigChanged(toolbarConfig)',
     ],
 
     listeners: {
@@ -460,6 +490,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
     },
    _tooltipConfigChanged: function(conf) {
       this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
+    },
+    _toolbarConfigChanged: function(conf) {
+      this._applyConfigToElement(this.toolbarConfig, this.$.toolbar);
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -725,10 +758,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           var wrapperRect = this.$.wrapper.getBoundingClientRect(),
               axisRegisterRect = this.$.axisRegister.getBoundingClientRect(),
               categoryRegisterRect = this.$.categoryRegister.getBoundingClientRect(),
+              toolbarRect = this.$.toolbar.getBoundingClientRect(),
               widthDeduct = 0,
               heightDeduct = 0;
 
           heightDeduct += categoryRegisterRect.height;
+          heightDeduct += toolbarRect.height;
           widthDeduct += axisRegisterRect.width;
 
           this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));

@@ -15,6 +15,7 @@ v1.0.0
 * Added axis register (on the right) and category register (on top, only if using categories). 
 Can be hidden respectively with hideAxisRegister and hideCategoryRegister. Can be configured respectively with axisRegisterConfig and categoryRegisterConfig
 * Tooltip is now off by default. Enable with showTooltip
+* Added toolbar, configurable through toolbarConfig
 
 v0.4.3
 ==================

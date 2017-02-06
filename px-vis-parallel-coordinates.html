@@ -455,7 +455,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
     _doWeHaveChartData: function(cD) {
       if(this.chartData && this.chartData.length > 0) {
-        return true
+        return true;
       }
     },
    _tooltipConfigChanged: function(conf) {
@@ -485,7 +485,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           .attr('font-size', this.labelTypeSize + 'px')
           .attr('font-style','GE Inspira Sans')
           .text(function(d) {
-            return d
+            return d;
           })
           .each(function(d,i) {
             var w = this.getComputedTextLength();
@@ -642,9 +642,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       for(var i = 0; i < dimensions.length; i++) {
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
-          if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
-            ext.y[dimensions[i]][1]++;
-          }
+          //TODO: do we need this check anymore?
+          // if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
+          //   ext.y[dimensions[i]][1]++;
+          // }
         });
       }
 
@@ -901,7 +902,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
     _fakeGrids: function() {
       var h = this.height - this.margin.top - this.margin.bottom;
-      return Px.d3.scaleLinear().nice().range([h, 0])
+      return Px.d3.scaleLinear().nice().range([h, 0]);
     },
 
     _calcShowFakeGrid: function() {
@@ -910,7 +911,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         var k = Object.keys(this.y)[0];
         draw = this.y[k].domain().length > 0 ? false : true;
       }
-      return draw
+      return draw;
     },
 
     deleteAllBrushes: function() {

@@ -274,6 +274,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.actionRequest,
       PxVisBehaviorChart.showTooltip,
       PxVisBehaviorChart.toolbarSubConfig,
+      PxVisBehaviorChart.chartToolbarConfig
     ],
 
     /**
@@ -434,23 +435,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       },
       _registerHeight: {
         type: Number
-      },
-      /**
-      * Configuration object used to customize the toolbar
-      * Please refer to px-vis-toolbar (https://github.com/PredixDev/px-vis) for a list of supported properties.
-      * Toolbar is empty by default and this chart does not support zooming or panning
-      * Most interesting properties include:
-      * - config (complex object for customizing the toolbar)
-      * - horizontalAlignment
-      * - subToolbarAlignment
-      */
-    toolbarConfig: {
-        type: Object,
-        value: function() {
-          return {
-              "config": {}
-          };
-        }
       }
     },
 

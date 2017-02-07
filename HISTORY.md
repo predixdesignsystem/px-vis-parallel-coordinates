@@ -1,7 +1,3 @@
-v1.0.1
-==================
-* changing ghp.sh to account for Alpha releases
-
 v1.0.0
 ==================
 * Added tooltipConfig
@@ -17,6 +13,7 @@ Can be hidden respectively with hideAxisRegister and hideCategoryRegister. Can b
 * Axis register can have dynamic menus
 * Tooltip is now off by default. Enable with showTooltip
 * Added toolbar, configurable through toolbarConfig
+* changing ghp.sh to account for Alpha releases
 
 v0.4.3
 ==================

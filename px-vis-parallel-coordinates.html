@@ -10,6 +10,7 @@
 <link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
+<link rel="import" href="../px-vis/px-vis-toolbar.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 
 
@@ -98,16 +99,26 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             y="{{y}}"
             domain-changed="{{domainChanged}}">
           </px-vis-multi-scale>
-          <px-vis-svg-canvas
-            id="svgCanvas"
-            canvas-context="{{canvasContext}}"
-            svg="{{svg}}"
-            px-svg-elem="{{pxSvgElem}}"
-            svg-lower="{{svgLower}}"
-            width="[[width]]"
-            height="[[height]]"
-            margin="[[margin]]">
-          </px-vis-svg-canvas>
+          <div class="flex flex--col">
+            <px-vis-toolbar
+              id="toolbar"
+              current-sub-config='[[toolbarSubConfig]]'
+              action-config='{{actionConfig}}'
+              within-chart
+              chart-margin="[[margin]]"
+              show-tooltip="{{_internalShowTooltip}}">
+            </px-vis-toolbar>
+            <px-vis-svg-canvas
+              id="svgCanvas"
+              canvas-context="{{canvasContext}}"
+              svg="{{svg}}"
+              px-svg-elem="{{pxSvgElem}}"
+              svg-lower="{{svgLower}}"
+              width="[[width]]"
+              height="[[height]]"
+              margin="[[margin]]">
+            </px-vis-svg-canvas>
+          </div>
           <template is="dom-if" if="[[!renderToSvg]]" restamp>
             <px-vis-line-canvas
               id="lineCanvas"
@@ -185,11 +196,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
-          svg="[[_calcGridSvg(domainChanged)]]"
+              svg="[[_calcGridSvg(domainChanged, svgLower)]]"
               tick-values="[[gridTicks]]"
               axis="[[gridAxis]]"
               margin="[[margin]]"
-          length="[[_calcGridWidth(domainChanged, dimensions)]]"
+              length="[[_calcGridWidth(domainChanged, dimensions)]]"
               orientation="left"
               domain-changed="[[domainChanged]]">
             </px-vis-gridlines>
@@ -261,7 +272,9 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
       PxVisBehavior.dynamicMenuConfig,
       PxVisBehaviorChart.actionRequest,
-      PxVisBehaviorChart.showTooltip
+      PxVisBehaviorChart.showTooltip,
+      PxVisBehaviorChart.toolbarSubConfig,
+      PxVisBehaviorChart.chartToolbarConfig
     ],
 
     /**
@@ -433,15 +446,16 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
       '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)',
       '_computeRegisterHeight(height)',
-      '_tooltipConfigChanged(tooltipConfig)'
+      '_tooltipConfigChanged(tooltipConfig)',
+      '_toolbarConfigChanged(toolbarConfig)',
     ],
 
     listeners: {
       'iron-resize': '_onIronResize',
       'px-vis-multi-axis-mousemove': '_calcTooltip',
       'px-vis-multi-axis-mouseleave': '_hideTooltip',
-     'px-vis-redraw-lines' : '_redrawLines',
-     'px-vis-muted-series-updated': '_muteUnmute'
+      'px-vis-redraw-lines' : '_redrawLines',
+      'px-vis-muted-series-updated': '_muteUnmute'
     },
 
     ready: function() {
@@ -455,11 +469,14 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
     _doWeHaveChartData: function(cD) {
       if(this.chartData && this.chartData.length > 0) {
-        return true
+        return true;
       }
     },
    _tooltipConfigChanged: function(conf) {
       this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
+    },
+    _toolbarConfigChanged: function(conf) {
+      this._applyConfigToElement(this.toolbarConfig, this.$.toolbar);
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -485,7 +502,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           .attr('font-size', this.labelTypeSize + 'px')
           .attr('font-style','GE Inspira Sans')
           .text(function(d) {
-            return d
+            return d;
           })
           .each(function(d,i) {
             var w = this.getComputedTextLength();
@@ -642,9 +659,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       for(var i = 0; i < dimensions.length; i++) {
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           return Number(d[dimensions[i]]);
-          if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
-            ext.y[dimensions[i]][1]++;
-          }
+          //TODO: do we need this check anymore?
+          // if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
+          //   ext.y[dimensions[i]][1]++;
+          // }
         });
       }
 
@@ -724,10 +742,12 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           var wrapperRect = this.$.wrapper.getBoundingClientRect(),
               axisRegisterRect = this.$.axisRegister.getBoundingClientRect(),
               categoryRegisterRect = this.$.categoryRegister.getBoundingClientRect(),
+              toolbarRect = this.$.toolbar.getBoundingClientRect(),
               widthDeduct = 0,
               heightDeduct = 0;
 
           heightDeduct += categoryRegisterRect.height;
+          heightDeduct += toolbarRect.height;
           widthDeduct += axisRegisterRect.width;
 
           this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
@@ -748,8 +768,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcGridWidth: function() {
-      // overall width minus the inset for the axes
-      return this.width - this.x(this.dimensions[0]) * 2;
+      if(this.domainChanged !== null) {
+        // overall width minus the inset for the axes
+        return this.width - this.x(this.dimensions[0]) * 2;
+      }
     },
     /**
      * Retruns a g elem for the grid to draw to
@@ -901,7 +923,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
     _fakeGrids: function() {
       var h = this.height - this.margin.top - this.margin.bottom;
-      return Px.d3.scaleLinear().nice().range([h, 0])
+      return Px.d3.scaleLinear().nice().range([h, 0]);
     },
 
     _calcShowFakeGrid: function() {
@@ -910,7 +932,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         var k = Object.keys(this.y)[0];
         draw = this.y[k].domain().length > 0 ? false : true;
       }
-      return draw
+      return draw;
     },
 
     deleteAllBrushes: function() {

@@ -1,0 +1,377 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>px-vis-parallel-coordinates Demo</title>
+  <link rel="stylesheet" type="text/css" href="css/px-vis-parallel-coordinates-demo.css" />
+  <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../px-theme/px-theme-styles.html">
+  <style include="px-theme-styles" is="custom-style"></style>
+
+  <link rel="import" href="../px-api-viewer/px-api-viewer.html" />
+  <link rel="import" href="../px-tabs/px-tab-set.html" />
+  <link rel="import" href="../px-dropdown/px-dropdown.html" />
+  <link rel="import" href="px-vis-parallel-coordinates.html" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+  <link rel="import" href="../px-demo-snippet/px-demo-snippet.html">
+  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
+  <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+</head>
+
+<body>
+
+  <!-- Wrap elements with auto-binding template to -->
+  <!-- allow use of Polymer bindings in main document -->
+  <template id="just-for-demo" is="dom-bind">
+    <!-- discription -->
+    <div class="hero u-p++ text--shadow">
+      <a class="actionable flex flex--right flex--middle" href="https://github.com/PredixDev/px-vis-parallel-coordinates" target="_blank">
+        <iron-icon class="menu__open" icon="fa:fa-github"></iron-icon>View on Github
+      </a>
+      <h1 class="delta">px-vis-parallel-coordinates</h1>
+      <div class="description-text">
+        The	px-vis-parallel-coordinates component allows you to draw a parallel coordinates chart. Initial height and width can be set but the component will try to fill its parent container on resize. It can be manually notified to recalculate its size by using notifyResize().
+      </div>
+      <div class="flex">
+        <img class="u-mr-- " src="https://img.shields.io/travis/PredixDev/px-vis-parallel-coordinates/master.svg?style=flat-square" alt="Travis"  onerror="this.style.display='none'"/>
+        <img class="u-mr--" src="https://img.shields.io/bower/v/px-vis-parallel-coordinates.svg?style=flat-square" alt="Bower" onerror="this.style.display='none'" />
+        <img class="u-mr--" src="https://img.shields.io/github/issues-raw/PredixDev/px-vis-parallel-coordinates.svg?style=flat-square" alt="Issues" onerror="this.style.display='none'" />
+      </div>
+    </div>
+    <br />
+
+    <!-- mega demo -->
+    <div style="position: relative;" class="u-pb++ flex flex--col" id="defaultTab">
+      <div class="tabContainer u-pt++ u-pl++">
+        <px-tab-set selected="{{selected}}" bare no-bottom-border>
+          <template is="dom-repeat" items="{{optionsArray}}">
+            <px-tab>Option {{indexPlusOne(index)}}</px-tab>
+          </template>
+        </px-tab-set>
+      </div>
+      <px-tab-pages selected="{{selected}}">
+        <template id="myDomRepeat" is="dom-repeat" items="{{optionsArray}}">
+          <section class="tab-page">
+            <div class="mega-demo flex u-ph++ u-pb++">
+              <!-- Properties -->
+              <div class="properties u-ph+ u-pb+ u-mt+">
+                <p class="epsilon">Properties</p>
+
+                <!-- sizing -->
+                <div class="u-mb-">Width:
+                  <input
+                    id="width"
+                    class="text-input"
+                    type="text"
+                    placeholder="{{item.width}}"
+                    value="{{item.width::input}}" />
+                </div>
+                <div class="u-mb-">Height:
+                  <input
+                    id="height"
+                    class="text-input"
+                    type="text"
+                    placeholder="{{item.height}}"
+                    value="{{item.height::input}}" />
+                </div>
+
+                <div class="flex u-mb-">
+                  <input
+                    id="preventResize{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.preventResize::change}}"/>
+                  <label for$="preventResize{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Prevent Resize</div>
+                </div>
+
+                <div class="u-mb-">Horizontal Alignment:
+                  <div style="width: 100%;">
+                    <px-dropdown id="chartHorizontalAlignment" value="{{item.chartHorizontalAlignment}}" display-value="{{item.chartHorizontalAlignment}}" bound-target="properties">
+                      <px-dropdown-content
+                        items='[
+                          {"key":"one", "val": "left"},
+                          {"key":"two", "val": "center"},
+                          {"key":"three", "val": "right"}]'>
+                      </px-dropdown-content>
+                    </px-dropdown>
+                  </div>
+                </div>
+
+                <div class="u-mb-">Vertical Alignment:
+                  <div style="width: 100%;">
+                    <px-dropdown id="chartVerticalAlignment" value="{{item.chartVerticalAlignment}}" display-value="{{item.chartVerticalAlignment}}" bound-target="properties">
+                      <px-dropdown-content
+                        items='[
+                          {"key":"one", "val": "top"},
+                          {"key":"two", "val": "center"},
+                          {"key":"three", "val": "bottom"}]'>
+                      </px-dropdown-content>
+                    </px-dropdown>
+                  </div>
+                </div>
+
+                <!-- brush to remove -->
+                <hr>
+                <div class="flex u-mb-">
+                  <input
+                    id="brushToRemove{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.brushToRemove::change}}"
+                    on-change="_deleteBrushes"/>
+                  <label for$="brushToRemove{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Brush to remove</div>
+                </div>
+
+                <hr>
+                <div class="flex u-mb-">
+                  <input
+                    id="renderToSvg{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.renderToSvg::change}}"/>
+                  <label for$="renderToSvg{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Render to SVG (instead of Canvas)</div>
+                </div>
+
+                <hr>
+                <div class="flex u-mb-">
+                  <input
+                    id="commonAxis{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.commonAxis::change}}"/>
+                  <label for$="commonAxis{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Use Common Axis</div>
+                </div>
+
+                <!-- categories -->
+                <hr>
+                <div class="flex u-mb-">
+                  <input
+                    id="colorByCategires{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    index="{{index}}"
+                    on-change="_categoryChanged"/>
+                  <label for$="colorByCategires{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Color by categories</div>
+                </div>
+                <div id="categoryWrapper{{indexPlusOne(index)}}" class="hidden">
+                  <div class="u-mb- u-ml+">categoryKey:
+                    <input
+                      id="categoryKey{{indexPlusOne(index)}}"
+                      class="text-input"
+                      type="text"
+                      placeholder="{{item.categoryKey}}"
+                      value="{{item.categoryKey::input}}" />
+                  </div>
+                  <div class="u-mb- u-ml+">categories:
+                    <input
+                      id="categories{{indexPlusOne(index)}}"
+                      class="text-input"
+                      type="text"
+                      placeholder="{{item.categories}}"
+                      value="{{item.categories::input}}" />
+                  </div>
+                </div>
+
+                <!-- registers -->
+                <hr>
+                <div class="flex u-mb-">
+                  <input
+                    id="hideAxisRegister{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.hideAxisRegister::change}}"/>
+                  <label for$="hideAxisRegister{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Hide axis register</div>
+                </div>
+                <div class="flex u-mb-">
+                  <input
+                    id="hideCategoryRegister{{indexPlusOne(index)}}"
+                    class="toggle__input toggle__input--small"
+                    type="checkbox"
+                    checked="{{item.hideCategoryRegister::change}}"/>
+                  <label for$="hideCategoryRegister{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Hide category register</div>
+                </div>
+
+
+              </div>
+
+              <div class="demoContainer u-mt+">
+                <!-- demo -->
+                <div class="flex flex--col full-height">
+                  <div class="flex__item demo full-height">
+                    <px-vis-parallel-coordinates
+                      id="parallel-coordinates"
+                      width = "{{item.width}}"
+                      height = "{{item.height}}"
+                      prevent-resize = "{{item.preventResize}}"
+                      series-key="[[item.seriesKey]]"
+                      match-ticks="{{item.matchTicks}}"
+                      axes="[[item.axes]]"
+                      categories='[[item.categories]]'
+                      category-key="[[item.categoryKey]]"
+                      chart-data="[[item.chartData]]"
+                      brush-to-remove="[[brushToRemove]]"
+                      series-config="[[item.seriesConfig]]"
+                      tooltip-config="[[item.tooltipConfig]]"
+                      dynamic-menu-config="[[item.dynamicMenuConfig]]"
+                      hide-axis-register="[[item.hideAxisRegister]]"
+                      hide-category-register="[[item.hideCategoryRegister]]">
+                    </px-vis-parallel-coordinates>
+                  </div>
+                  <div class="flex__item">
+                    <px-demo-snippet
+                      element-properties={{item}}
+                      element-name="px-vis-parallel-coordinates"
+                      scripts-includes="[[scriptsIncludes]]"
+                      links-includes="[[linksIncludes]]"
+                      polygit-includes="[[polygitIncludes]]">
+                    </px-demo-snippet>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="apiContainer">
+              <div class="flex flex--col api u-mt++" >
+                <div>
+                  <px-api-viewer source="px-vis-parallel-coordinates"></px-api-viewer>
+                </div>
+              </div>
+            </div>
+          </section>
+        </template>
+      </px-tab-pages>
+    </div>
+    <footer class="footer flex flex--center">
+      <div class="footer__container u-pv++">
+        <div>
+          <a href="https://ge.com/digital" >
+            <img src="monogram-wdmk.png" alt="GE Monogram" class="footer__img">
+          </a>
+        </div>
+        <div class="footer__list">
+          <ul class="list-inline list-inline--delimited">
+            <li>
+              <a href="http://predix.io/legal" class="footer__list--lnk">Legal</a>
+            </li>
+            <li>
+              <a href="mailto:info@predix.io" class="footer__list--lnk">Contact Us</a>
+            </li>
+            <li>Copyright &copy; 2016 General Electric Company. All rights reserved.</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </template>
+  <script>
+
+    window.addEventListener('WebComponentsReady', function() {
+      var template = document.querySelector('template[is=dom-bind]'),
+          chart = document.getElementById('parallel-coordinates'),
+          chartData1 = [
+            {"TimeStamp":1465416480000, "axis1":"11", "axis2":"7", "axis3":"6", "axis4":"15", "axis5":"7", "category":"a"},
+            {"TimeStamp":1465416540000, "axis1":"13", "axis2":"7", "axis3":"7", "axis4":"22", "axis5":"6", "category":"d"},
+            {"TimeStamp":1465416600000, "axis1":"14", "axis2":"6", "axis3":"7", "axis4":"26", "axis5":"7", "category":"b"},
+            {"TimeStamp":1465416660000, "axis1":"16", "axis2":"7", "axis3":"7", "axis4":"26", "axis5":"6", "category":"b"},
+            {"TimeStamp":1465416720000, "axis1":"18", "axis2":"6", "axis3":"6", "axis4":"28", "axis5":"7", "category":"c"},
+            {"TimeStamp":1465416780000, "axis1":"19", "axis2":"6", "axis3":"8", "axis4":"27", "axis5":"8", "category":"c"},
+            {"TimeStamp":1465416840000, "axis1":"10", "axis2":"5", "axis3":"7", "axis4":"25", "axis5":"6", "category":"a"},
+            {"TimeStamp":1465416900000, "axis1":"17", "axis2":"6", "axis3":"7", "axis4":"21", "axis5":"7", "category":"b"},
+            {"TimeStamp":1465416960000, "axis1":"15", "axis2":"7", "axis3":"6", "axis4":"19", "axis5":"6", "category":"a"},
+            {"TimeStamp":1465417020000, "axis1":"12", "axis2":"8", "axis3":"6", "axis4":"21", "axis5":"6", "category":"c"}
+          ],
+          seriesConfig1 = {
+            "axis1":{
+              "yAxisUnit": "Hz",
+              "title": "Axis 1"
+            },
+            "axis2":{
+              "yAxisUnit": "F",
+              "title": "Axis 2"
+            }
+          },
+          categories = [],
+          tooltipConfig = { "forceDateTimeDisplay" : true},
+          menuConfig = [
+            {
+              "name": "Delete",
+              "eventName": "delete",
+              "icon": "fa-trash",
+              "action": function(data) {
+                var newAxes = this.axes;
+                newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1);
+                this.set("axes", []);
+                this.set("axes", newAxes);
+              }
+            }
+          ],
+          optionsArray = [
+            {
+              "height":500,
+              "width":800,
+              "seriesKey": "TimeStamp",
+              "preventResize":false,
+              "dynamicMenuConfig":menuConfig,
+              "chartData":chartData1,
+              "seriesConfig": seriesConfig1,
+              "axes": ["axis1", "axis2", "axis3", "axis4", "axis5"],
+              "brushToRemove":false,
+              "categories": categories,
+              "categoryKey": null,
+              "renderToSvg": false,
+              "matchTicks": true,
+              "commonAxis": false,
+              "tooltipConfig": tooltipConfig,
+              "chartHorizontalAlignment": "center",
+              "chartVerticalAlignment": "center",
+              "hideCategoryRegister": false,
+              "hideAxisRegister": false
+            }
+          ],
+          indexPlusOne = function(num) {
+            return num + 1;
+          };
+
+      template.selected = "0";
+      template.optionsArray = optionsArray;
+      template.indexPlusOne = indexPlusOne;
+      template.scriptsIncludes = ['https://cdn.rawgit.com/foretagsplatsen/numbro/1.7.1/numbro.js'];
+      template.linksIncludes = ['px-vis/px-polygit-imports-vis.html', 'px-datetime-common/px-polygit-imports-datetime.html', 'numbro-element/numbro-element.html'];
+      template.polygitIncludes = ['numbro*+MeTaNoV+*'];
+      template._deleteBrushes = function(e) {
+        var i = e.target.index,
+            chart = document.querySelector('#parallel-coordinates');
+
+        // chart.deleteAllBrushes();
+      }
+      template._categoryChanged = function(e) {
+        var i = e.target.index,
+            bool = e.target.checked,
+            cats = bool ? ['a','b','c','d'] : [],
+            key = bool ? 'category' : null;
+
+        var ck = document.querySelector('#categoryKey' + (i+1)),
+            c = document.querySelector('#categories' + (i+1)),
+            wrapper = document.querySelector('#categoryWrapper' + (i+1));
+
+        wrapper.className = (wrapper.className === 'hidden') ? "" : "hidden"
+
+        template.set('optionsArray.#' + i + '.categories', cats);
+        template.set('optionsArray.#' + i + '.categoryKey', key);
+
+      };
+    });
+
+  </script>
+</body>
+</html>

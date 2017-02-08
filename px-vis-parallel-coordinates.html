@@ -214,7 +214,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             tooltip-data="[[tooltipData]]"
             complete-series-config="[[_tooltipSeriesConfig]]">
           </px-vis-tooltip>
-        </div>  
+        </div>
       </div>
     </div>
   </template>
@@ -230,13 +230,13 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorD3.svg,
       PxVisBehaviorD3.svgLower,
       PxVisBehaviorD3.canvas,
-      PxVisBehaviorD3.axis,
+      PxVisBehaviorD3.axes,
       PxVisBehavior.dataset,
       PxVisBehavior.dimensions,
       PxVisBehavior.commonMethods,
       PxVisBehavior.chartExtents,
       PxVisBehavior.completeSeriesConfig,
-      PxVisBehaviorD3.axisConfig,
+      PxVisBehaviorD3.labelTypeSize,
       PxVisBehavior.mutedSeries,
       PxVisBehaviorD3.dynamicRedraw,
       Polymer.IronResizableBehavior,
@@ -261,7 +261,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
       PxVisBehavior.dynamicMenuConfig,
       PxVisBehaviorChart.actionRequest,
-      PxVisBehaviorChart.showTooltip 
+      PxVisBehaviorChart.showTooltip
     ],
 
     /**
@@ -325,7 +325,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         type:Object,
         notify: true
       },
-      
+
       /**
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
@@ -921,7 +921,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Mute/unmute axis on register requests
      */
     _muteUnmute: function(evt) {
-      
+
       if(evt.detail.fromRegister) {
         if(evt.detail.value) {
           this.addToMutedAxes(evt.detail.name);

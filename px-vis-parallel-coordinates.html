@@ -446,7 +446,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       '_computeDimensions(axes.*, mutedAxes.*,_loadedOnPage)',
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
       '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)',
-      '_computeRegisterHeight(height)',
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
     ],
@@ -757,13 +756,6 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           this._computeVerticalRegisterHeight([toolbarRect.height]);
          }
       },100);
-    },
-    _computeRegisterHeight: function() {
-
-      this.debounce('_computeRegisterHeight', function() {
-
-        this.set('_registerHeight', Math.max(this.$.svgCanvas.height, 0));
-      }.bind(this), 50);
     },
     /**
      * Returns the width for the gridlines

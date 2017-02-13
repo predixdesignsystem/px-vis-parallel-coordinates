@@ -208,7 +208,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           <template is="dom-if" if="[[_showFakeGrid]]" restamp>
             <px-vis-gridlines
               svg="[[svgLower]]"
-              axis="[[_fakeGrids(height)]]"
+              axis="[[_fakeGrids(height, margin)]]"
               margin="[[margin]]"
               length="[[width]]"
               orientation="left"
@@ -741,19 +741,19 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       this.debounce('ironresize', function() {
          if(!this.preventResize) {
           var wrapperRect = this.$.wrapper.getBoundingClientRect(),
-              axisRegisterRect = this.$.axisRegister.getBoundingClientRect(),
-              categoryRegisterRect = this.$.categoryRegister.getBoundingClientRect(),
+              axisRegisterWidth = this.hideAxisRegister ? 0 : this.$.axisRegister.getBoundingClientRect().width,
+              categoryRegisterHeight = this._hideCategoryRegister ? 0 : this.$.categoryRegister.getBoundingClientRect().height,
               toolbarRect = this.$.toolbar.getBoundingClientRect(),
               widthDeduct = 0,
               heightDeduct = 0;
 
-          heightDeduct += categoryRegisterRect.height;
+          heightDeduct += categoryRegisterHeight;
           heightDeduct += toolbarRect.height;
-          widthDeduct += axisRegisterRect.width;
+          widthDeduct += axisRegisterWidth;
 
           this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
           this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
-          this._computeVerticalRegisterHeight([toolbarRect.height]);
+          this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);
          }
       },100);
     },

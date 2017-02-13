@@ -55,32 +55,33 @@
             handle-as="json"
             last-response="{{eventData}}" auto></iron-ajax> -->
 
-        <div style="width:100%; height: 500px">
-          <px-vis-parallel-coordinates
-            id="parallel-coordinates"
-            prevent-resize = "{{props.preventResize.value}}"
-            width = "{{props.width.value}}"
-            height = "{{props.height.value}}"
-            chart-horizontal-alignment="{{props.chartHorizontalAlignment.value}}"
-            chart-vertical-alignment="{{props.chartVerticalAlignment.value}}"
-            margin="[[props.margin.value]]"
-            chart-data="[[props.chartData.value]]"
-            series-key="[[props.seriesKey.value]]"
-            series-config="[[props.seriesConfig.value]]"
-            axes="[[props.axes.value]]"
-            category-key="[[props.categoryKey.value]]"
-            categories='[[props.categories.value]]'
-            brush-to-remove="[[props.brushToRemove.value]]"
-            render-to-svg="[[props.renderToSvg.value]]"
-            match-ticks="{{props.matchTicks.value}}"
-            common-axis="[[props.commonAxis.value]]"
-            hide-axis-register="[[props.hideAxisRegister.value]]"
-            hide-category-register="[[props.hideCategoryRegister.value]]"
-            show-tooltip-"[[props.showTooltip.value]]"
-            tooltip-config="[[props.tooltipConfig.value]]"
-            dynamic-menu-config="[[props.dynamicMenuConfig.value]]">
-          </px-vis-parallel-coordinates>
-        </div>
+          <div style="width:100%; height:100%">
+            <px-vis-parallel-coordinates
+              id="parallel-coordinates"
+              prevent-resize = "{{props.preventResize.value}}"
+              width = "{{props.width.value}}"
+              height = "{{props.height.value}}"
+              chart-horizontal-alignment="{{props.chartHorizontalAlignment.value}}"
+              chart-vertical-alignment="{{props.chartVerticalAlignment.value}}"
+              margin="[[props.margin.value]]"
+              chart-data="[[props.chartData.value]]"
+              series-key="[[props.seriesKey.value]]"
+              series-config="[[props.seriesConfig.value]]"
+              axes="[[props.axes.value]]"
+              category-key="[[props.categoryKey.value]]"
+              categories='[[props.categories.value]]'
+              brush-to-remove="[[props.brushToRemove.value]]"
+              render-to-svg="[[props.renderToSvg.value]]"
+              match-ticks="{{props.matchTicks.value}}"
+              common-axis="[[props.commonAxis.value]]"
+              hide-axis-register="[[props.hideAxisRegister.value]]"
+              hide-category-register="[[props.hideCategoryRegister.value]]"
+              show-tooltip-"[[props.showTooltip.value]]"
+              tooltip-config="[[props.tooltipConfig.value]]"
+              dynamic-menu-config="[[props.dynamicMenuConfig.value]]">
+            </px-vis-parallel-coordinates>
+          </div>
+
       </px-demo-component>
       <!-- END Component ------------------------------------------------------>
 

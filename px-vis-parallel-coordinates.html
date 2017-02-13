@@ -196,11 +196,11 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
-          svg="[[_calcGridSvg(domainChanged)]]"
+              svg="[[_calcGridSvg(domainChanged, svgLower)]]"
               tick-values="[[gridTicks]]"
               axis="[[gridAxis]]"
               margin="[[margin]]"
-          length="[[_calcGridWidth(domainChanged, dimensions)]]"
+              length="[[_calcGridWidth(domainChanged, dimensions)]]"
               orientation="left"
               domain-changed="[[domainChanged]]">
             </px-vis-gridlines>
@@ -225,7 +225,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             tooltip-data="[[tooltipData]]"
             complete-series-config="[[_tooltipSeriesConfig]]">
           </px-vis-tooltip>
-        </div>  
+        </div>
       </div>
     </div>
   </template>
@@ -241,13 +241,13 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorD3.svg,
       PxVisBehaviorD3.svgLower,
       PxVisBehaviorD3.canvas,
-      PxVisBehaviorD3.axis,
+      PxVisBehaviorD3.axes,
       PxVisBehavior.dataset,
       PxVisBehavior.dimensions,
       PxVisBehavior.commonMethods,
       PxVisBehavior.chartExtents,
       PxVisBehavior.completeSeriesConfig,
-      PxVisBehaviorD3.axisConfig,
+      PxVisBehaviorD3.labelTypeSize,
       PxVisBehavior.mutedSeries,
       PxVisBehaviorD3.dynamicRedraw,
       Polymer.IronResizableBehavior,
@@ -339,7 +339,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
         type:Object,
         notify: true
       },
-      
+
       /**
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
@@ -770,8 +770,10 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      *
      */
     _calcGridWidth: function() {
-      // overall width minus the inset for the axes
-      return this.width - this.x(this.dimensions[0]) * 2;
+      if(this.domainChanged !== null) {
+        // overall width minus the inset for the axes
+        return this.width - this.x(this.dimensions[0]) * 2;
+      }
     },
     /**
      * Retruns a g elem for the grid to draw to
@@ -943,7 +945,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
      * Mute/unmute axis on register requests
      */
     _muteUnmute: function(evt) {
-      
+
       if(evt.detail.fromRegister) {
         if(evt.detail.value) {
           this.addToMutedAxes(evt.detail.name);

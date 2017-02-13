@@ -85,7 +85,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
             tooltip-data="[[_axisRegisterTooltipData]]"
             complete-series-config="[[_axisRegisterConfig]]"
             type="vertical"
-            height="[[_registerHeight]]">
+            height="[[_verticalRegisterHeight]]">
           </px-vis-register>
           <px-vis-multi-scale
             width="[[width]]"
@@ -274,7 +274,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
       PxVisBehaviorChart.actionRequest,
       PxVisBehaviorChart.showTooltip,
       PxVisBehaviorChart.toolbarSubConfig,
-      PxVisBehaviorChart.chartToolbarConfig
+      PxVisBehaviorChart.chartToolbarConfig,
+      PxVisBehaviorChart.sizeVerticalRegister 
     ],
 
     /**
@@ -460,7 +461,8 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
     ready: function() {
       this.set('numberOfLayers',2);
-      this.set('_registerHeight', this.height);
+      this.set('_verticalRegisterDrawingCanvasId', 'svgCanvas');
+      this.set('_verticalRegisterHeightDeductions', ['toolbar']);
     },
 
     attached: function() {
@@ -752,7 +754,7 @@ PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
 
           this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
           this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
-          this._computeRegisterHeight();
+          this._computeVerticalRegisterHeight([toolbarRect.height]);
          }
       },100);
     },

@@ -879,14 +879,20 @@ Custom property | Description | Default
       *
       */
      _changeMutedAxes: function(a,bool) {
-       var mA = this.mutedAxes;
+       var mA = {},
+           keys = Object.keys(this.mutedAxes);
+
+       //copy object
+       for(var i=0; i<keys.length; i++) {
+         mA[keys[i]] = this.mutedAxes[keys[i]];
+       }
 
        if(typeof(a) === 'string') {
-         this.mutedAxes = null;
+
          mA[a] = bool;
          this.set('mutedAxes', mA);
        } else if(Array.isArray(a)) {
-         this.mutedAxes = null;
+
          for(var i = 0; i < a.length; i++) {
            mA[ a[i] ] = bool;
          }

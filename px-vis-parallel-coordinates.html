@@ -510,7 +510,7 @@ Custom property | Description | Default
 
     observers: [
       '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
-      '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorOrder.*)',
+      '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, dataVisColors.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*,_loadedOnPage)',
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
@@ -670,34 +670,37 @@ Custom property | Description | Default
      *
      */
       _generateSeriesConfig: function(dimensions, seriesConfig) {
-        var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
-        // add a seriesConfig with seriesKey as default
-        config[this.seriesKey] = {
-          "name": this.seriesKey,
-          "x": dimensions,
-          "y": dimensions
-        };
 
-        //FIXME Not sure this works....See color on 449
-        if(!config[this.seriesKey]['color']) {
-          config[this.seriesKey]['color'] = this._getColor(this.startColorIndex);
-        }
+        //wait for colors design to have finished processing...
+        if(this.dataVisColors['pxVisSeriesColor0']) {
+          var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
+          // add a seriesConfig with seriesKey as default
+          config[this.seriesKey] = {
+            "name": this.seriesKey,
+            "x": dimensions,
+            "y": dimensions
+          };
 
-        // if categories are specified, use them
-        if(typeof(this.categoryKey) !== 'undefined') {
+          //FIXME Not sure this works....See color on 449
+          if(!config[this.seriesKey]['color']) {
+            config[this.seriesKey]['color'] = this._getColor(this.startColorIndex);
+          }
 
-          for(var i = 0; i < this.categories.length; i ++) {
-            config[this.categories[i]] = {
-              "color": this._getColor(this.startColorIndex + i),
-              "name": this.categories[i],
-              "x": dimensions,
-              "y": dimensions
+          // if categories are specified, use them
+          if(typeof(this.categoryKey) !== 'undefined') {
+
+            for(var i = 0; i < this.categories.length; i ++) {
+              config[this.categories[i]] = {
+                "color": this._getColor(this.startColorIndex + i),
+                "name": this.categories[i],
+                "x": dimensions,
+                "y": dimensions
+              }
             }
           }
+
+          this.set('completeSeriesConfig',config);
         }
-
-        this.set('completeSeriesConfig',config);
-
     },
 
     // * TODO These are in behavior chart. Should make it so we can import them from there */

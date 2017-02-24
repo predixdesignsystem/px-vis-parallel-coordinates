@@ -1,0 +1,178 @@
+<!doctype html>
+
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      px-vis-parallel-coordinates Demo</title>
+    <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+    <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="../px-theme/px-theme-styles.html">
+    <!-- <link rel="import" href="../px-dark-theme/px-dark-theme-styles.html"> -->
+
+    <style include="px-theme-styles" is="custom-style"></style>
+
+    <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+    <link rel="import" href="../iron-ajax/iron-ajax.html"/>
+
+    <link rel="import" href="../px-vis/px-vis-chart-navigator.html" />
+    <link rel="import" href="../px-rangepicker/px-rangepicker.html" />
+    <link rel="import" href="px-vis-parallel-coordinates.html" />
+  </head>
+
+  <!-- <body style="padding:30px; background-color: rgb(27,42,51);"> -->
+  <body>
+
+    <h3>Parallel Coordinates</h3>
+    <template is="dom-bind">
+      <h3>Parallel Coordinates linked with a rangepicker and navigator</h3>
+      <div id="bigdiv">
+        <button id="btn">add</button>
+        <button id="btnR">remove</button>
+        <px-rangepicker
+          id="rangepicker"
+          range="{{range}}"
+          date-format="YYYY/MM/DD"
+          time-format="hh:mm:ss A"
+          show-buttons="true"
+          show-time-zone="text">
+        </px-rangepicker>
+        <br />
+        <span>Open new tab with snapshot of parallel chart with its navigator</span>
+        <button id="btnSnap">Smile!</button>
+        <br />
+        <br />
+        <br />
+        <px-vis-parallel-coordinates
+          id="parall"
+          width="1300"
+          height="500"
+          chart-data="[[chartData]]"
+          skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
+          series-key="TimeStamp"
+          match-ticks
+          selected-domain="{{selectedDomain}}"
+          generate-axes-from-data
+          tooltip-config='{
+            "forceDateTimeDisplay": true,
+            "tooltipStyle": "light"
+          }'
+          series-config='{
+              "TTXD1_1":{
+                "yAxisUnit": "Hz",
+                "title": "verylongname"
+              },
+              "TTXD1_12":{
+                "yAxisUnit": "F",
+                "title": "stout"
+              }
+            }'
+        ></px-vis-parallel-coordinates>
+        <!--<div style="height:100px">
+          <px-vis-chart-navigator
+              id="navigator"
+              prevent-resize
+              width="1280"
+              height="100"
+              x-axis-type="time"
+              y-axis-type="linear"
+              range="[[range]]"
+              margin='{
+                "top": 5,
+                "right": 10,
+                "bottom": 20,
+                "left": 10
+              }'
+              chart-extents='{
+                              "x":["dynamic","dynamic"],
+                              "y":["dynamic","dynamic"]
+                            }'
+              chart-data="[[chartData]]"
+              series-config='{
+                "TTXD1_1":{
+                  "type": "line",
+                  "name": "TTXD1_1",
+                  "x":"TimeStamp",
+                  "y":"TTXD1_1"
+                }
+              }'
+              selected-domain="{{selectedDomain}}"
+              gradient-overlay>
+            </px-vis-chart-navigator>
+          </div>-->
+
+        <iron-ajax
+          url="../px-demo-data/demo-data/apm/timeseries_demo.json"
+          handle-as="json"
+          auto
+          last-response="{{chartData}}">
+        </iron-ajax>
+      </div>
+    </template>
+  </body>
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+      var chart = document.getElementById('parall'),
+          rangepicker = document.getElementById('rangepicker'),
+          btnSnap = document.getElementById('btnSnap'),
+          parall = document.getElementById('parall'),
+          navigator = document.getElementById('navigator'),
+          btn = document.getElementById('btn'),
+          btnR = document.getElementById('btnR'),
+          bigdiv = document.getElementById('bigdiv');
+
+      rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
+
+      var menuConfig = [
+          {
+            "name": "Delete",
+            "eventName": "delete",
+            "actionContext": parall,
+            "icon": "fa-trash",
+            "action": function(itemConfig, additionalDetail) {
+              var newAxes = this.axes;
+              newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
+              this.set("axes", []);
+              this.set("axes", newAxes);
+            }
+          }
+        ]
+
+      parall.set('dynamicMenuConfig', menuConfig);
+
+       btn.addEventListener('click', function() {
+        var newDiv = document.createElement('div'),
+            newChart;
+
+        for(var i=0; i<1; i++) {
+          newDiv.classList.add('divwrapper');
+
+          newChart = document.createElement('px-vis-parallel-coordinates');
+          newChart.generateAxesFromData = true;
+          newChart.chartData = chart.chartData;
+          newChart.seriesConfig = chart.seriesConfig;
+          newChart.height = chart.height;
+          newChart.margin = chart.margin;
+          newChart.width = chart.width;
+          newChart.skipKeys = chart.skipKeys;
+          newChart.seriesKey = chart.seriesKey;
+          newChart.selectedDomain = chart.selectedDomain
+          Polymer.dom(newDiv).appendChild(newChart);
+        }
+        
+        Polymer.dom(bigdiv).appendChild(newDiv);
+      });
+         
+      btnR.addEventListener('click', function() {
+        var wrappers = document.getElementsByClassName('divwrapper');
+        Polymer.dom(bigdiv).removeChild(wrappers[wrappers.length - 1]);
+        
+      });
+
+    });
+  </script>
+
+</html>

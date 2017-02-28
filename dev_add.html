@@ -32,14 +32,14 @@
       <div id="bigdiv">
         <button id="btn">add</button>
         <button id="btnR">remove</button>
-        <px-rangepicker
+        <!--<px-rangepicker
           id="rangepicker"
           range="{{range}}"
           date-format="YYYY/MM/DD"
           time-format="hh:mm:ss A"
           show-buttons="true"
           show-time-zone="text">
-        </px-rangepicker>
+        </px-rangepicker>-->
         <br />
         <span>Open new tab with snapshot of parallel chart with its navigator</span>
         <button id="btnSnap">Smile!</button>
@@ -105,7 +105,7 @@
           </div>-->
 
         <iron-ajax
-          url="../px-demo-data/demo-data/apm/timeseries_demo.json"
+          url="../px-demo-data/demo-data/apm/timeseries.json"
           handle-as="json"
           auto
           last-response="{{chartData}}">
@@ -124,7 +124,7 @@
           btnR = document.getElementById('btnR'),
           bigdiv = document.getElementById('bigdiv');
 
-      rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
+    //  rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
 
       var menuConfig = [
           {
@@ -132,9 +132,9 @@
             "eventName": "delete",
             "actionContext": parall,
             "icon": "fa-trash",
-            "action": function(itemConfig, additionalDetail) {
+            "action": function(data) {
               var newAxes = this.axes;
-              newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
+              newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1);
               this.set("axes", []);
               this.set("axes", newAxes);
             }

@@ -209,7 +209,8 @@ Custom property | Description | Default
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
               muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-              no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]">
+              no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
+              prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -229,7 +230,8 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]">
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
+              prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-svg>
           </template>
           <px-vis-multi-axis
@@ -264,7 +266,8 @@ Custom property | Description | Default
             domain-changed="[[domainChanged]]"
             axis-groups="{{axisGroups}}"
             brush-elems="{{brushElems}}"
-            brush-to-remove="[[brushToRemove]]">
+            brush-to-remove="[[brushToRemove]]"
+            prevent-initial-drawing="[[_preventInitialDrawing]]">
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
@@ -505,6 +508,13 @@ Custom property | Description | Default
       startColorIndex: {
         type: Number,
         value: 0
+      },
+      /**
+       * blocks initial drawings of axis/grid/lines until set to false
+       */
+      _preventInitialDrawing: {
+        type: Boolean,
+        value: true
       }
     },
 
@@ -554,6 +564,7 @@ Custom property | Description | Default
      */
     _calcTitleLocation: function(svg, height, width, displayedValues) {
       this.debounce('calcTitleLocation', function() {
+
         var textWidth = 0,
             _this = this,
             keys = Object.keys(this.displayedValues),
@@ -607,6 +618,8 @@ Custom property | Description | Default
               'anchor': anchor
             });
           }
+
+          this.set('_preventInitialDrawing', false);
 
       }.bind(this), 5);
     },

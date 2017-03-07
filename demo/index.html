@@ -55,12 +55,12 @@
             handle-as="json"
             last-response="{{eventData}}" auto></iron-ajax> -->
 
-          <div style="width:100%; height:100%">
+          <div class="flex--column flex__item" style="width:100%;">
             <px-vis-parallel-coordinates
               id="parallel-coordinates"
               prevent-resize = "{{props.preventResize.value}}"
-              width = "{{props.width.value}}"
-              height = "{{props.height.value}}"
+              width = "{{appliedWidth}}"
+              height = "{{appliedHeight}}"
               chart-horizontal-alignment="{{props.chartHorizontalAlignment.value}}"
               chart-vertical-alignment="{{props.chartVerticalAlignment.value}}"
               margin="[[props.margin.value]]"
@@ -75,10 +75,16 @@
               match-ticks="{{props.matchTicks.value}}"
               common-axis="[[props.commonAxis.value]]"
               hide-axis-register="[[props.hideAxisRegister.value]]"
+              axis-register-config="{{props.axisRegisterConfig.value}}"
               hide-category-register="[[props.hideCategoryRegister.value]]"
-              show-tooltip-"[[props.showTooltip.value]]"
+              category-register-config="{{props.categoryRegisterConfig.value}}"
+              show-tooltip="[[props.showTooltip.value]]"
               tooltip-config="[[props.tooltipConfig.value]]"
-              dynamic-menu-config="[[props.dynamicMenuConfig.value]]">
+              dynamic-menu-config="[[props.dynamicMenuConfig.value]]"
+              skip-keys="[[props.skipKeys.value]]"
+              generate-axes-from-data="[[props.generateAxesFromData.value]]"
+              start-color-index="{{props.startColorIndex.value}}"
+              displayed-values="{{props.displayedValues.value}}">
             </px-vis-parallel-coordinates>
           </div>
 
@@ -323,7 +329,18 @@
         value: function() {
           return ['numbro*+MeTaNoV+*'];
         }
-      }
+      },
+
+
+      appliedWidth: {
+        type: Number,
+        defaultValue: 400
+      },
+
+      appliedHeight: {
+        type: Number,
+        defaultValue: 400
+      },
     },
 
     /**
@@ -337,15 +354,19 @@
         inputType: 'toggle'
       },
 
+      //we need inputDisabled: false to be able to dynamically turn it on
       width: {
         type: Number,
         defaultValue: 800,
+        inputDisabled: false,
         inputType: 'text'
       },
 
+      //we need inputDisabled: false to be able to dynamically turn it on
       height: {
         type: Number,
         defaultValue: 500,
+        inputDisabled: false,
         inputType: 'text'
       },
 
@@ -366,6 +387,42 @@
       margin: {
         type: Object,
         defaultValue: { "top": 10, "bottom": 10, "left": 10, "right": 10 },
+        inputType: 'code:JSON'
+      },
+
+      hideAxisRegister: {
+        type: Boolean,
+        defaultValue: false,
+        inputType: 'toggle'
+      },
+
+      axisRegisterConfig: {
+        type: Object,
+        defaultValue: {},
+        inputType: 'code:JSON'
+      },
+
+      hideCategoryRegister: {
+        type: Boolean,
+        defaultValue: false,
+        inputType: 'toggle'
+      },
+
+      categoryRegisterConfig: {
+        type: Object,
+        defaultValue: {},
+        inputType: 'code:JSON'
+      },
+
+      showTooltip: {
+        type: Boolean,
+        defaultValue: false,
+        inputType: 'toggle'
+      },
+
+      tooltipConfig: {
+        type: Object,
+        defaultValue: { "forceDateTimeDisplay" : true },
         inputType: 'code:JSON'
       },
 
@@ -391,6 +448,12 @@
         defaultValue: 'TimeStamp',
         inputType: 'text',
         inputPlaceholder: 'Dataset series key'
+      },
+
+      skipKeys: {
+        type: Object,
+        defaultValue: {},
+        inputType: 'code:JSON'
       },
 
       seriesConfig: {
@@ -451,28 +514,17 @@
         inputType: 'toggle'
       },
 
-      hideAxisRegister: {
-        type: Boolean,
-        defaultValue: false,
-        inputType: 'toggle'
+      startColorIndex: {
+        type: Number,
+        defaultValue: 0,
+        inputType: 'text',
+        inputLabel: 'Start Color Index [not supposed to be dynamic, change seriesConfig to have it applied]'
       },
 
-      hideCategoryRegister: {
-        type: Boolean,
-        defaultValue: false,
-        inputType: 'toggle'
-      },
-
-      showTooltip: {
-        type: Boolean,
-        defaultValue: false,
-        inputType: 'toggle'
-      },
-
-      tooltipConfig: {
+      displayedValues: {
         type: Object,
-        defaultValue: { "forceDateTimeDisplay" : true },
-        inputType: 'code:JSON'
+        inputType: 'code:JSON',
+        inputLabel: 'Displayed Values [for read purposes, setting it has no effect]'
       },
 
       menuConfig: {
@@ -520,22 +572,33 @@
       // }
     },
 
-    listeners: {
-      'px-demo-component-light-dom-loaded' : '_handleDemoLoaded'
-    },
+    observers: [
+      '_preventResizeChanged(props.preventResize.value)',
+      '_appliedWidthChanged(appliedWidth)',
+      '_appliedHeightChanged(appliedHeight)',
+      '_widthChanged(props.width.value)',
+      '_heightChanged(props.height.value)'
+    ],
 
-    /**
-     * When the chart is loaded, try to call `notifyResize()` on it to ensure
-     * that it resizes to the correct dimensions.
-     */
-    _handleDemoLoaded: function() {
-      var chart = this.$$('px-vis-parallel-coordinates');
-      if(chart && typeof chart.notifyResize === 'function') {
-        // Wait 1000ms to make sure the parent is sized and ready for the redraw
-        this.async(function(){
-          chart.notifyResize();
-        }, 1000);
+    _preventResizeChanged: function() {
+      this.set('props.width.inputDisabled', !this.props.preventResize.value);
+      this.set('props.height.inputDisabled', !this.props.preventResize.value);
+    },
+    _widthChanged: function() {
+      if(this.props.preventResize.value) {
+       this.set('appliedWidth', this.props.width.value);
       }
-    }
+    },
+    _heightChanged: function() {
+      if(this.props.preventResize.value) {
+       this.set('appliedHeight', this.props.height.value);
+      }
+    },
+    _appliedWidthChanged: function() {
+      this.set('props.width.value', this.appliedWidth);
+    },
+    _appliedHeightChanged: function() {
+      this.set('props.height.value', this.appliedHeight);
+    },
   });
 </script>

@@ -1001,6 +1001,17 @@ Custom property | Description | Default
     },
 
     _hideTooltip: function() {
+      
+      //hide tooltip
+      this.set('tooltipData', {
+            'time': null,
+            'hidden': true,
+            'series': [],
+            'mouse': null,
+            'xArr': null,
+            'yArr': null
+          });
+
       //clear axis register
       this._buildAxisTooltipData();
       this._updateAxisConfig();

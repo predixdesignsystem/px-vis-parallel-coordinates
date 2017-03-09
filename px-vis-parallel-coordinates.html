@@ -744,6 +744,7 @@ Custom property | Description | Default
       // TODO Is there a smarter way of doing this?
       for(var i = 0; i < dimensions.length; i++) {
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
+          //PERF: this Number hurts us a bit
           return Number(d[dimensions[i]]);
           //TODO: do we need this check anymore?
           // if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {

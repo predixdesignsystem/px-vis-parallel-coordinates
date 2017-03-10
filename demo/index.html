@@ -331,15 +331,12 @@
         }
       },
 
-
       appliedWidth: {
-        type: Number,
-        defaultValue: 400
+        type: Number
       },
 
       appliedHeight: {
-        type: Number,
-        defaultValue: 400
+        type: Number
       },
     },
 
@@ -527,49 +524,18 @@
         inputLabel: 'Displayed Values [for read purposes, setting it has no effect]'
       },
 
-      menuConfig: {
+      dynamicMenuConfig: {
         type: Array,
         defaultValue: [
           {
             "name": "Delete",
             "eventName": "delete",
             "icon": "fa-trash",
-            "action": function(data) {
-              var newAxes = this.axes;
-              newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1);
-              this.set("axes", []);
-              this.set("axes", newAxes);
-            }
+            "action": 'function(data) {var newAxes = this.axes; newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1); this.set("axes", []); this.set("axes", newAxes);}'
           }
         ],
         inputType: 'code:JSON'
-      },
-
-      // dynamicMenuConfig: {
-      //   type: Array,
-      //   defaultValue: [
-      //     {
-      //       'name': 'Delete',
-      //       'action': function(data) {
-      //         var conf = this.seriesConfig;
-      //         delete conf[data.additionalDetail.name];
-      //         this.set('seriesConfig', {});
-      //         this.set('seriesConfig', conf);
-      //       },
-      //       'eventName': 'delete',
-      //       'icon': 'fa-trash',
-      //     },
-      //     {
-      //       'name': 'Bring To Front',
-      //       'action': function(data) {
-      //         this.set('serieToRedrawOnTop', data.additionalDetail.name);
-      //       },
-      //       'eventName': 'bring-to-front',
-      //       'icon': 'fa-arrow-up'
-      //     }
-      //   ],
-      //   inputType: 'code:JSON'
-      // }
+      }
     },
 
     observers: [

@@ -686,7 +686,7 @@ Custom property | Description | Default
       _generateSeriesConfig: function() {
 
         //wait for colors design to have finished processing...
-        if(this.dataVisColors['pxVisSeriesColor0']) {
+        if(this.dataVisColors['pxVisSeriesColor0'] && this._haveChartData && this._doesObjHaveValues(this.dimensions)) {
           var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
           // add a seriesConfig with seriesKey as default
           config[this.seriesKey] = {

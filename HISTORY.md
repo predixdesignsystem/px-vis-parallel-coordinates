@@ -1,3 +1,7 @@
+v1.0.2
+==================
+* API doc update
+
 v1.0.1
 ==================
 * Fixing dark theme demo

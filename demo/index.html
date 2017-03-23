@@ -58,9 +58,9 @@
           <div class="flex--column flex__item" style="width:100%;">
             <px-vis-parallel-coordinates
               id="parallel-coordinates"
-              prevent-resize = "{{props.preventResize.value}}"
-              width = "{{appliedWidth}}"
-              height = "{{appliedHeight}}"
+              prevent-resize="{{props.preventResize.value}}"
+              width="{{appliedWidth}}"
+              height="{{appliedHeight}}"
               chart-horizontal-alignment="{{props.chartHorizontalAlignment.value}}"
               chart-vertical-alignment="{{props.chartVerticalAlignment.value}}"
               margin="[[props.margin.value]]"
@@ -282,6 +282,7 @@
         type: Array,
         value: function() {
           return [
+            "chartExtents",
             "completeSeriesConfig",
             "domainChanged",
             "layer",
@@ -324,13 +325,6 @@
         type: Array,
         value: function() {
           return ['px-vis/px-polygit-imports-vis.html', 'px-datetime-common/px-polygit-imports-datetime.html', 'numbro-element/numbro-element.html'];
-        }
-      },
-
-      polygitIncludes: {
-        type: Array,
-        value: function() {
-          return ['numbro*+MeTaNoV+*'];
         }
       },
 

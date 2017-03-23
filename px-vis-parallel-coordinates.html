@@ -524,7 +524,7 @@ Custom property | Description | Default
 
     observers: [
       '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
-      '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, dataVisColors.*)',
+      '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*,_loadedOnPage)',
       '_selectedDomain(selectedDomain.x, _loadedOnPage)',
@@ -538,7 +538,8 @@ Custom property | Description | Default
       'px-vis-multi-axis-mousemove': '_calcTooltip',
       'px-vis-multi-axis-mouseleave': '_hideTooltip',
       'px-vis-redraw-lines' : '_redrawLines',
-      'px-vis-muted-series-updated': '_muteUnmute'
+      'px-vis-muted-series-updated': '_muteUnmute',
+      "px-data-vis-colors-applied" : '_generateSeriesConfig'
     },
 
     ready: function() {
@@ -686,16 +687,16 @@ Custom property | Description | Default
      * Creates the series configuration file
      *
      */
-      _generateSeriesConfig: function(dimensions, seriesConfig) {
+      _generateSeriesConfig: function() {
 
         //wait for colors design to have finished processing...
-        if(this.dataVisColors['pxVisSeriesColor0']) {
+        if(this.dataVisColors['pxVisSeriesColor0'] && this._haveChartData && this._doesObjHaveValues(this.dimensions)) {
           var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
           // add a seriesConfig with seriesKey as default
           config[this.seriesKey] = {
             "name": this.seriesKey,
-            "x": dimensions,
-            "y": dimensions
+            "x": this.dimensions,
+            "y": this.dimensions
           };
 
           //FIXME Not sure this works....See color on 449
@@ -710,8 +711,8 @@ Custom property | Description | Default
               config[this.categories[i]] = {
                 "color": this._getColor(this.startColorIndex + i),
                 "name": this.categories[i],
-                "x": dimensions,
-                "y": dimensions
+                "x": this.dimensions,
+                "y": this.dimensions
               }
             }
           }

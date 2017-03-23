@@ -210,7 +210,10 @@ Custom property | Description | Default
               selected-domain="[[selectedDomain]]"
               muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
               no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]">
+              progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
+              progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
+              prevent-initial-drawing="[[_preventInitialDrawing]]"
+              clean-on-detached="[[cleanOnDetached]]">
             </px-vis-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -231,7 +234,8 @@ Custom property | Description | Default
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
               muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]">
+              prevent-initial-drawing="[[_preventInitialDrawing]]"
+              clean-on-detached="[[cleanOnDetached]]">
             </px-vis-line-svg>
           </template>
           <px-vis-multi-axis
@@ -841,7 +845,7 @@ Custom property | Description | Default
           this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
           this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);
          }
-      },100);
+      }, this.debounceResizeTiming);
     },
     /**
      * Returns the width for the gridlines
@@ -1002,7 +1006,7 @@ Custom property | Description | Default
     },
 
     _hideTooltip: function() {
-      
+
       //hide tooltip
       this.set('tooltipData', {
             'time': null,

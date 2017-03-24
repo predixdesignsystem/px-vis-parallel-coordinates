@@ -72,6 +72,9 @@
               categories='[[props.categories.value]]'
               brush-to-remove="[[props.brushToRemove.value]]"
               render-to-svg="[[props.renderToSvg.value]]"
+              progressive-rendering-points-per-frame="{{props.progressiveRenderingPointsPerFrame.value}}"
+              progressive-rendering-minimum-frames="{{props.progressiveRenderingMinFrames.value}}"
+              no-canvas-progressive-rendering="{{props.noCanvasProgressiveRendering.value}}"
               match-ticks="{{props.matchTicks.value}}"
               common-axis="[[props.commonAxis.value]]"
               hide-axis-register="[[props.hideAxisRegister.value]]"
@@ -84,7 +87,8 @@
               skip-keys="[[props.skipKeys.value]]"
               generate-axes-from-data="[[props.generateAxesFromData.value]]"
               start-color-index="{{props.startColorIndex.value}}"
-              displayed-values="{{props.displayedValues.value}}">
+              displayed-values="{{props.displayedValues.value}}"
+              debounce-resize-timing="{{props.debounceResizeTiming.value}}">
             </px-vis-parallel-coordinates>
           </div>
 
@@ -246,7 +250,6 @@
         value: function(){
           return [
             { configName: "Default",
-              configReset: true,
               width: 700,
               height: 400 }
           ]
@@ -345,6 +348,12 @@
         inputType: 'toggle'
       },
 
+      debounceResizeTiming: {
+        type: Number,
+        defaultValue: 250,
+        inputType: 'text'
+      },
+
       //we need inputDisabled: false to be able to dynamically turn it on
       width: {
         type: Number,
@@ -358,6 +367,34 @@
         type: Number,
         defaultValue: 500,
         inputDisabled: false,
+        inputType: 'text'
+      },
+
+      renderToSvg: {
+        type: Boolean,
+        defaultValue: false,
+        inputType: 'toggle'
+      },
+
+            //we need inputDisabled: false to be able to dynamically turn it on
+      noCanvasProgressiveRendering: {
+        type: Boolean,
+        defaultValue: false,
+        inputDisabled: true,
+        inputType: 'toggle'
+      },
+
+      progressiveRenderingPointsPerFrame: {
+        type: Number,
+        defaultValue: 16000,
+        inputDisabled: true,
+        inputType: 'text'
+      },
+
+      progressiveRenderingMinFrames: {
+        type: Number,
+        defaultValue: 1,
+        inputDisabled: true,
         inputType: 'text'
       },
 
@@ -487,12 +524,6 @@
         inputType: 'toggle'
       },
 
-      renderToSvg: {
-        type: Boolean,
-        defaultValue: false,
-        inputType: 'toggle'
-      },
-
       matchTicks: {
         type: Boolean,
         defaultValue: true,
@@ -537,7 +568,8 @@
       '_appliedWidthChanged(appliedWidth)',
       '_appliedHeightChanged(appliedHeight)',
       '_widthChanged(props.width.value)',
-      '_heightChanged(props.height.value)'
+      '_heightChanged(props.height.value)',
+      '_renderToCanvasChanged(props.renderToSvg.value, props.noCanvasProgressiveRendering.value)'
     ],
 
     _preventResizeChanged: function() {
@@ -560,5 +592,11 @@
     _appliedHeightChanged: function() {
       this.set('props.height.value', this.appliedHeight);
     },
+    _renderToCanvasChanged: function() {
+      this.set('props.noCanvasProgressiveRendering.inputDisabled', this.props.renderToSvg.value);
+
+      this.set('props.progressiveRenderingPointsPerFrame.inputDisabled', this.props.renderToSvg.value || this.props.noCanvasProgressiveRendering.value);
+      this.set('props.progressiveRenderingMinFrames.inputDisabled', this.props.renderToSvg.value ||this.props.noCanvasProgressiveRendering.value);
+    }
   });
 </script>

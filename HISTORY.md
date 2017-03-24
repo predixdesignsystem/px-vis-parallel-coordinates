@@ -1,3 +1,7 @@
+v1.1.1
+==================
+* fixed register not muted with mutedAxes on start
+
 v1.1.0
 ==================
 * upgraded to vis 1.1.0

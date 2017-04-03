@@ -1,3 +1,7 @@
+v1.1.2
+==================
+* removed cleanOnDetached
+
 v1.1.1
 ==================
 * fixed register not muted with mutedAxes on start

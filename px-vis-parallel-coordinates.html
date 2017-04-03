@@ -213,8 +213,7 @@ Custom property | Description | Default
               no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
               progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
               progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]"
-              clean-on-detached="[[cleanOnDetached]]">
+              prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -235,8 +234,7 @@ Custom property | Description | Default
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
               muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]"
-              clean-on-detached="[[cleanOnDetached]]">
+              prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-svg>
           </template>
           <px-vis-multi-axis

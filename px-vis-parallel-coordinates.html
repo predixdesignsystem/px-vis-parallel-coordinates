@@ -957,12 +957,11 @@ Custom property | Description | Default
 
       //only update if the value is on the screen
       if(this.y[aid].domain()[0] < yVal && yVal < this.y[aid].domain()[1]) {
+
+        var svgBounding = elem.ownerSVGElement.getBoundingClientRect();
         //calc the screen positions for the tooltip
-        screenX = this.x(aid) + elem.ownerSVGElement.getBoundingClientRect().left + window.scrollX + 15;
-        //follow mouse
-        // screenY = mousePos[1] + elem.getBoundingClientRect().top + window.scrollY + 5;
-        //snap to point
-        screenY = this.y[aid](yVal) + this.margin.top + elem.ownerSVGElement.getBoundingClientRect().top + window.scrollY;
+        screenX = this.x(aid) + svgBounding.left + window.pageXOffset + 15;
+        screenY = this.y[aid](yVal) + this.margin.top + svgBounding.top + window.pageYOffset;
 
         //create our fake configuration object
         tooltipConfig[aid] = {};
@@ -986,12 +985,15 @@ Custom property | Description | Default
           ]
         };
 
+
+
         //update axis register value
         this._buildAxisTooltipData(dataFound, time);
         this._updateAxisConfig(tooltipConfig[aid]['color']);
 
         if(this.showTooltip) {
           this.set('mousePosition', [screenX, screenY]);
+          console.log('mouse pos: ' + JSON.stringify([screenX, screenY]))
           this.set('_tooltipSeriesConfig', tooltipConfig);
           this.set('tooltipData', data);
         }

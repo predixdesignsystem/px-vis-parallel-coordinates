@@ -30,26 +30,11 @@
     <template is="dom-bind">
       <h3>Parallel Coordinates linked with a rangepicker and navigator</h3>
       <div id="bigdiv">
-        <button id="btn">add</button>
-        <button id="btnR">remove</button>
-        <!--<px-rangepicker
-          id="rangepicker"
-          range="{{range}}"
-          date-format="YYYY/MM/DD"
-          time-format="hh:mm:ss A"
-          show-buttons="true"
-          show-time-zone="text">
-        </px-rangepicker>-->
-        <br />
-        <span>Open new tab with snapshot of parallel chart with its navigator</span>
-        <button id="btnSnap">Smile!</button>
-        <br />
-        <br />
-        <br />
         <px-vis-parallel-coordinates
           id="parall"
           width="1300"
           height="500"
+          show-tooltip
           chart-data="[[chartData]]"
           skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
           series-key="TimeStamp"
@@ -71,39 +56,6 @@
               }
             }'
         ></px-vis-parallel-coordinates>
-        <!--<div style="height:100px">
-          <px-vis-chart-navigator
-              id="navigator"
-              prevent-resize
-              width="1280"
-              height="100"
-              x-axis-type="time"
-              y-axis-type="linear"
-              range="[[range]]"
-              margin='{
-                "top": 5,
-                "right": 10,
-                "bottom": 20,
-                "left": 10
-              }'
-              chart-extents='{
-                              "x":["dynamic","dynamic"],
-                              "y":["dynamic","dynamic"]
-                            }'
-              chart-data="[[chartData]]"
-              series-config='{
-                "TTXD1_1":{
-                  "type": "line",
-                  "name": "TTXD1_1",
-                  "x":"TimeStamp",
-                  "y":"TTXD1_1"
-                }
-              }'
-              selected-domain="{{selectedDomain}}"
-              gradient-overlay>
-            </px-vis-chart-navigator>
-          </div>-->
-
         <iron-ajax
           url="../px-demo-data/demo-data/apm/timeseries.json"
           handle-as="json"
@@ -112,7 +64,7 @@
         </iron-ajax>
       </div>
     </template>
-  </body>
+
   <script>
     document.addEventListener('WebComponentsReady', function() {
       var chart = document.getElementById('parall'),
@@ -162,17 +114,17 @@
           newChart.selectedDomain = chart.selectedDomain
           Polymer.dom(newDiv).appendChild(newChart);
         }
-        
+
         Polymer.dom(bigdiv).appendChild(newDiv);
       });
-         
+
       btnR.addEventListener('click', function() {
         var wrappers = document.getElementsByClassName('divwrapper');
         Polymer.dom(bigdiv).removeChild(wrappers[wrappers.length - 1]);
-        
+
       });
 
     });
   </script>
-
+ </body>
 </html>

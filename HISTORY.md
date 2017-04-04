@@ -1,3 +1,7 @@
+v1.1.3
+==================
+* fixed tooltip positioning on IE
+
 v1.1.2
 ==================
 * removed cleanOnDetached

@@ -1,3 +1,7 @@
+v1.1.4
+==================
+* removed console logs
+
 v1.1.3
 ==================
 * fixed tooltip positioning on IE

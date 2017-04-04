@@ -12,7 +12,7 @@
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../px-vis/px-vis-toolbar.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
-
+<link rel="import" href="../px-vis/px-vis-highlight-line.html"/>
 
 <!--
 PX Vis component that creates a parallel coordinates (aka parallel axes) chart.
@@ -303,6 +303,19 @@ Custom property | Description | Default
             tooltip-data="[[tooltipData]]"
             complete-series-config="[[_tooltipSeriesConfig]]">
           </px-vis-tooltip>
+          <px-vis-highlight-line
+            id="highlighter"
+            svg="[[layer.1]]"
+            x="[[x]]"
+            y="[[y]]"
+            dimensions="[[dimensions]]"
+            domain-changed="[[domainChanged]]"
+            time-data="[[seriesKey]]"
+            complete-series-config="[[completeSeriesConfig]]"
+            chart-data="[[chartData]]"
+            generating-crosshair-data="[[generatingCrosshairData]]"
+            crosshair-data="[[crosshairData]]">
+          </px-vis-highlight-line>
         </div>
       </div>
     </div>
@@ -353,7 +366,8 @@ Custom property | Description | Default
       PxVisBehaviorChart.showTooltip,
       PxVisBehaviorChart.toolbarSubConfig,
       PxVisBehaviorChart.chartToolbarConfig,
-      PxVisBehaviorChart.sizeVerticalRegister
+      PxVisBehaviorChart.sizeVerticalRegister,
+      PxVisBehavior.crosshairData
     ],
 
     /**

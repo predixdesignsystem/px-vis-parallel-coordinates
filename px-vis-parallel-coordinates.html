@@ -179,7 +179,8 @@ Custom property | Description | Default
               action-config='{{actionConfig}}'
               within-chart
               chart-margin="[[margin]]"
-              show-tooltip="{{_internalShowTooltip}}">
+              show-tooltip="{{_internalShowTooltip}}"
+              config='{"axisBrush": true, "axisDrag": true, "tooltip": true}'>
             </px-vis-toolbar>
             <px-vis-svg-canvas
               id="svgCanvas"
@@ -270,7 +271,8 @@ Custom property | Description | Default
             axis-groups="{{axisGroups}}"
             brush-elems="{{brushElems}}"
             brush-to-remove="[[brushToRemove]]"
-            prevent-initial-drawing="[[_preventInitialDrawing]]">
+            prevent-initial-drawing="[[_preventInitialDrawing]]"
+            action-config="[[actionConfig]]">
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
@@ -367,6 +369,7 @@ Custom property | Description | Default
       PxVisBehaviorChart.toolbarSubConfig,
       PxVisBehaviorChart.chartToolbarConfig,
       PxVisBehaviorChart.sizeVerticalRegister,
+      PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData
     ],
 
@@ -532,7 +535,24 @@ Custom property | Description | Default
       _preventInitialDrawing: {
         type: Boolean,
         value: true
-      }
+      },
+      /**
+      * Configuration used to define what actions happen on events. Each key represents an event,
+      * each value can be:
+      * - a predefined action found in px-vis-interaction-space `actionMapping`
+      * - a function which context will be bound to the chart. The function argument will be the mouse position on the chart
+      */
+      actionConfig: {
+        type: Object,
+        value: function() {
+          return {
+            'mousedown': 'callAxisBrush',
+            'mouseup': 'callAxisBrush',
+            'mouseout': 'resetTooltip',
+            'mousemove': 'calcTooltipData'
+          };
+        }
+      },
     },
 
     observers: [
@@ -544,12 +564,13 @@ Custom property | Description | Default
       '_calcTitleLocation(svg, height, width, displayedValues.*, _loadedOnPage)',
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
+      '_highlighterConfigChanged(highlighterConfig.*)'
     ],
 
     listeners: {
       'iron-resize': '_onIronResize',
-      'px-vis-multi-axis-mousemove': '_calcTooltip',
-      'px-vis-multi-axis-mouseleave': '_hideTooltip',
+      'px-vis-axis-interaction-space-mousemove': '_calcTooltip',
+      'px-vis-axis-interaction-space-mouseleave': '_hideTooltip',
       'px-vis-redraw-lines' : '_redrawLines',
       'px-vis-muted-series-updated': '_muteUnmute',
       "px-data-vis-colors-applied" : '_generateSeriesConfig'
@@ -575,6 +596,9 @@ Custom property | Description | Default
     },
     _toolbarConfigChanged: function(conf) {
       this._applyConfigToElement(this.toolbarConfig, this.$.toolbar);
+    },
+    _highlighterConfigChanged: function(conf) {
+      this._applyConfigToElement(this.highlighterConfig, this.$.highlighter);
     },
     /**
      * At ready, set the margin and titleLocation objects
@@ -936,102 +960,25 @@ Custom property | Description | Default
          console.error("Cannot add/remove axis. Improper axis type")
        }
      },
+
      _calcTooltip: function(evt) {
-      var aid = evt.detail.axis,          //axis ID
-          elem = evt.detail.elem,         //the group elem being hovered over
-          mousePos = evt.detail.mousePos, //the mouse position
-          mouseVal = this.y[aid].invert(mousePos[1]), // the data space value
-          distance = Number.MAX_VALUE,    //difference between cursor and value
-          minDistance = Number.MAX_VALUE, //difference between cursor and value
-          yVal = null,                    //the data value we will calc
-          time,                           //time we will calc
-          screenX,                        //the mouse x on the scree
-          screenY,                        //the mouse y on the scree
-          tooltipConfig = {},             //a fake configuration object we will build
-          group,                          //the group if categoryKey is being used
-          data,                           //our tooltipData obj
-          value = {},                     //the series obj within tooltipData
-          dataFound;
+       var d = evt.detail;
 
-      //loop through our chart data and find a closetest match
-      for(var i = 0; i < this.chartData.length; i++) {
-        //figure out the differnce between the data value and our saved value
-        distance = Math.abs(this.chartData[i][aid] - mouseVal);
-        // if it is smaller than last time, save the data info
-        if(distance < minDistance) {
-          dataFound = this.chartData[i];
-          yVal = this.chartData[i][aid];
-          minDistance = distance;
-          time = this.chartData[i][this.seriesKey];
-          if(this.categoryKey) {
-            group = this.chartData[i][this.categoryKey];
-          }
-        }
-      }
+      //update axis register value
+      this._buildAxisTooltipData(d.dataset, d.time);
+      this._updateAxisConfig(d.color);
 
-      //only update if the value is on the screen
-      if(this.y[aid].domain()[0] < yVal && yVal < this.y[aid].domain()[1]) {
+      if(this.showTooltip) {
+        this.set('mousePosition', d.dataPos);
 
-        var svgBounding = elem.ownerSVGElement.getBoundingClientRect();
-        //calc the screen positions for the tooltip
-        screenX = this.x(aid) + svgBounding.left + window.pageXOffset + 15;
-        screenY = this.y[aid](yVal) + this.margin.top + svgBounding.top + window.pageYOffset;
-
-        //create our fake configuration object
-        tooltipConfig[aid] = {};
-        //if using categies, use it, otherwise default
-        tooltipConfig[aid]["color"] = group && this.completeSeriesConfig[group] ? this.completeSeriesConfig[group]["color"] : this.completeSeriesConfig[this.seriesKey]["color"];
-        //if title is specified, use it, otherwiuse id
-        tooltipConfig[aid]["name"] = this.completeSeriesConfig[aid] && this.completeSeriesConfig[aid]['title'] ? this.completeSeriesConfig[aid]["title"] : aid;
-        //if there is a unit, add it
-        tooltipConfig[aid]["yAxisUnit"] = this.completeSeriesConfig[aid] && this.completeSeriesConfig[aid]["yAxisUnit"] ? this.completeSeriesConfig[aid]["yAxisUnit"] : '';
-        //add the y series id
-        tooltipConfig[aid]['y'] = aid;
-
-        //create our value obj
-        value[aid] = yVal;
-        //create our tooltipData obj
-        data = {
-          "mouse": mousePos,
-          "time": time,
-          'series': [
-            { 'name': aid, 'value': value }
-          ]
-        };
-
-
-
-        //update axis register value
-        this._buildAxisTooltipData(dataFound, time);
-        this._updateAxisConfig(tooltipConfig[aid]['color']);
-
-        if(this.showTooltip) {
-          this.set('mousePosition', [screenX, screenY]);
-
-          this.set('_tooltipSeriesConfig', tooltipConfig);
-          this.set('tooltipData', data);
-        }
-      } else {
-        // if it is off the screen, still need to give mouse coords or else it errors out
-        this.set('mousePosition', [-1000, -1000]);
-
-        //clear axis register
-        this._buildAxisTooltipData();
-        this._updateAxisConfig();
+        this.set('_tooltipSeriesConfig', d.tooltipConfig);
+        this.set('tooltipData', d);
       }
     },
 
-    _hideTooltip: function() {
-
+    _hideTooltip: function(evt) {
       //hide tooltip
-      this.set('tooltipData', {
-            'time': null,
-            'hidden': true,
-            'series': [],
-            'mouse': null,
-            'xArr': null,
-            'yArr': null
-          });
+      this.set('tooltipData', evt.detail);
 
       //clear axis register
       this._buildAxisTooltipData();

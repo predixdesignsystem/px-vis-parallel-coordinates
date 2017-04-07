@@ -569,8 +569,10 @@ Custom property | Description | Default
 
     listeners: {
       'iron-resize': '_onIronResize',
-      'px-vis-axis-interaction-space-mousemove': '_calcTooltip',
-      'px-vis-axis-interaction-space-mouseleave': '_hideTooltip',
+      'px-vis-axis-interaction-space-tooltip-data': '_calcTooltip',
+      'px-vis-axis-interaction-space-reset-tooltip': '_hideTooltip',
+      'px-vis-axis-interaction-space-crosshair-data': '_calcCrosshair',
+      'px-vis-axis-interaction-space-reset-crosshair': '_hideCrosshair',
       'px-vis-redraw-lines' : '_redrawLines',
       'px-vis-muted-series-updated': '_muteUnmute',
       "px-data-vis-colors-applied" : '_generateSeriesConfig'
@@ -983,6 +985,16 @@ Custom property | Description | Default
       //clear axis register
       this._buildAxisTooltipData();
       this._updateAxisConfig();
+    },
+
+    _calcCrosshair: function(evt) {
+      this.generatingCrosshairData = true;
+      this.set('crosshairData', evt.detail);
+    },
+
+    _hideCrosshair: function(evt) {
+      this.generatingCrosshairData = false;
+      this.set('crosshairData', evt.detail);
     },
 
     _fakeGrids: function() {

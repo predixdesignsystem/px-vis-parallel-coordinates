@@ -310,6 +310,7 @@ Custom property | Description | Default
             svg="[[layer.1]]"
             x="[[x]]"
             y="[[y]]"
+            parallel-coordinates
             dimensions="[[dimensions]]"
             domain-changed="[[domainChanged]]"
             time-data="[[seriesKey]]"
@@ -971,6 +972,7 @@ Custom property | Description | Default
       this._updateAxisConfig(d.color);
 
       if(this.showTooltip) {
+
         this.set('mousePosition', d.dataPos);
 
         this.set('_tooltipSeriesConfig', d.tooltipConfig);
@@ -981,6 +983,7 @@ Custom property | Description | Default
     _hideTooltip: function(evt) {
       //hide tooltip
       this.set('tooltipData', evt.detail);
+      this.set('mousePosition', evt.detail.dataPos);
 
       //clear axis register
       this._buildAxisTooltipData();

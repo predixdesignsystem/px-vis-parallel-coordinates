@@ -162,6 +162,7 @@ Custom property | Description | Default
             height="[[_verticalRegisterHeight]]">
           </px-vis-register>
           <px-vis-multi-scale
+            id="multiScale"
             width="[[width]]"
             height="[[height]]"
             margin="[[margin]]"
@@ -404,7 +405,8 @@ Custom property | Description | Default
       PxVisBehaviorChart.chartToolbarConfig,
       PxVisBehaviorChart.sizeVerticalRegister,
       PxVisBehaviorChart.highlighterConfigs,
-      PxVisBehavior.crosshairData
+      PxVisBehavior.crosshairData,
+      Polymer.AppLocalizeBehavior
     ],
 
     /**
@@ -586,6 +588,30 @@ Custom property | Description | Default
             'mousemove': 'calcTooltipData'
           };
         }
+      },
+       /*
+       * List of key/values to be included for translating this component
+       */
+      resources: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
+      /**
+      * set a default for localizing
+      */
+      language: {
+        type: String,
+        value: 'en'
+      },
+      /**
+      * Use the key for localization if value for  language is missing. Should
+      * always be true for  our components
+      */
+      useKeyIfMissing: {
+        type: Boolean,
+        value: true
       }
     },
 
@@ -598,7 +624,8 @@ Custom property | Description | Default
       '_calcTitleLocation(svg, height, width, displayedValues.*)',
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
-      '_highlighterConfigChanged(highlighterConfig.*)'
+      '_highlighterConfigChanged(highlighterConfig.*)',
+      '_langChanged(language)'
     ],
 
     listeners: {
@@ -1069,6 +1096,11 @@ Custom property | Description | Default
           this.removeFromMutedAxes(evt.detail.name);
         }
       }
+    },
+    _langChanged: function() {
+
+      //recreate X and Y in case d3 locale changed
+      this.$.multiScale._recreateScales();
     }
   });
 </script>

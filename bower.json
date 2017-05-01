@@ -24,7 +24,8 @@
     "px-theme": "^2.0.1",
     "px-vis": "~1.1.0",
     "px-colors-design": "^0.3.9",
-    "iron-resizable-behavior": "^1.0.5"
+    "iron-resizable-behavior": "^1.0.5",
+    "app-localize-behavior": "^1.0.2"
   },
   "devDependencies": {
     "px-rangepicker": "^1.2.1",

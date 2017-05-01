@@ -326,7 +326,8 @@ Custom property | Description | Default
               mask-opacity='0.3'
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
-              crosshair-data="[[crosshairData]]">
+              crosshair-data="[[crosshairData]]"
+              tooltip-data="{{tooltipData}}">
             </px-vis-highlight-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -347,7 +348,8 @@ Custom property | Description | Default
               mask-opacity='0.3'
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
-              crosshair-data="[[crosshairData]]">
+              crosshair-data="[[crosshairData]]"
+              tooltip-data="{{tooltipData}}">
             </px-vis-highlight-line>
           </template>
         </div>

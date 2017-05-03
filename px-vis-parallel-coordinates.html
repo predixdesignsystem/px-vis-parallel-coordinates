@@ -12,6 +12,7 @@
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../px-vis/px-vis-toolbar.html"/>
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
+<link rel="import" href="../px-vis/px-vis-cursor-line.html"/>
 <link rel="import" href="../px-vis/px-vis-highlight-line.html"/>
 <link rel="import" href="../px-vis/px-vis-highlight-line-canvas.html"/>
 
@@ -243,7 +244,7 @@ Custom property | Description | Default
           </template>
           <px-vis-multi-axis
             id="multiAxis"
-            svg="[[layer.1]]"
+            svg="[[layer.2]]"
             width="[[width]]"
             height="[[height]]"
             margin="[[margin]]"
@@ -324,7 +325,6 @@ Custom property | Description | Default
               series-id="[[seriesKey]]"
               category-key="[[categoryKey]]"
               categories="[[categories]]"
-              mask-opacity='0.3'
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
               crosshair-data="[[crosshairData]]"
@@ -346,13 +346,32 @@ Custom property | Description | Default
               series-id="[[seriesKey]]"
               category-key="[[categoryKey]]"
               categories="[[categories]]"
-              mask-opacity='0.3'
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
               crosshair-data="[[crosshairData]]"
               tooltip-data="{{tooltipData}}">
             </px-vis-highlight-line>
           </template>
+
+          <px-vis-cursor-line
+            id="lineCursor"
+            svg="[[layer.2]]"
+            svg-data-layer="[[layer.0]]"
+            svg-overlay-layer="[[layer.1]]"
+            canvas-data-layer="[[canvasContext]]"
+            canvas-overlay-layer="[[canvasContextTop]]"
+            x="[[x]]"
+            y="[[y]]"
+            parallel-coordinates
+            dimensions="[[dimensions]]"
+            domain-changed="[[domainChanged]]"
+            time-data="[[seriesKey]]"
+            complete-series-config="[[completeSeriesConfig]]"
+            series-id="[[seriesKey]]"
+            category-key="[[categoryKey]]"
+            categories="[[categories]]"
+            tooltip-data="[[tooltipData.dataset]]">
+          </px-vis-highlight-line>
         </div>
       </div>
     </div>
@@ -644,7 +663,7 @@ Custom property | Description | Default
     },
 
     ready: function() {
-      this.set('numberOfLayers',2);
+      this.set('numberOfLayers', 3);
       this.set('_verticalRegisterDrawingCanvasId', 'svgCanvas');
       this.set('_verticalRegisterHeightDeductions', ['toolbar']);
 
@@ -1033,17 +1052,17 @@ Custom property | Description | Default
      _calcTooltip: function(evt) {
        var d = evt.detail;
 
-      //update axis register value
+      //Our d.series only has one series since each axis only knows about itself.
+      // So, to display in register, create a copy with data for the associated axes
       this._buildAxisTooltipData(d.dataset, d.time);
       this._updateAxisConfig(d.color);
 
       if(this.showTooltip) {
-
         this.set('mousePosition', d.dataPos);
-
         this.set('_tooltipSeriesConfig', d.tooltipConfig);
-        this.set('tooltipData', d);
       }
+
+      this.set('tooltipData', d);
     },
 
     _hideTooltip: function(evt) {

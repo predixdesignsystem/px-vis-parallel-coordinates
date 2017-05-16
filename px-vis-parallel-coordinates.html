@@ -328,7 +328,7 @@ Custom property | Description | Default
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
               crosshair-data="[[crosshairData]]"
-              tooltip-data="{{tooltipData}}">
+              default-empty-data="{{defaultEmptyData}}">
             </px-vis-highlight-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -349,7 +349,7 @@ Custom property | Description | Default
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
               crosshair-data="[[crosshairData]]"
-              tooltip-data="{{tooltipData}}">
+              default-empty-data="{{defaultEmptyData}}">
             </px-vis-highlight-line>
           </template>
 
@@ -1066,6 +1066,11 @@ Custom property | Description | Default
     },
 
     _hideTooltip: function(evt) {
+      if(this.defaultEmptyData && this.defaultEmptyData.dataset) {
+        this._calcTooltip({"detail": this.defaultEmptyData});
+        return;
+      }
+
       //hide tooltip
       this.set('tooltipData', evt.detail);
       this.set('mousePosition', evt.detail.dataPos);

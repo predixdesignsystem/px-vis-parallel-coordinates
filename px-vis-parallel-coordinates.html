@@ -276,7 +276,8 @@ Custom property | Description | Default
             brush-elems="{{brushElems}}"
             brush-to-remove="[[brushToRemove]]"
             prevent-initial-drawing="[[_preventInitialDrawing]]"
-            action-config="[[actionConfig]]">
+            action-config="[[actionConfig]]"
+            interaction-space-config="[[interactionSpaceConfig]]">
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
@@ -425,7 +426,8 @@ Custom property | Description | Default
       PxVisBehaviorChart.sizeVerticalRegister,
       PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData,
-      Polymer.AppLocalizeBehavior
+      Polymer.AppLocalizeBehavior,
+      PxVisBehavior.interactionSpaceConfigGeneric
     ],
 
     /**
@@ -936,9 +938,13 @@ Custom property | Description | Default
     _redrawLines: function() {
       if(this.renderToSvg) {
         this.$$('#lineSVG').drawElement();
+        this.$$('#highlighter').reDrawElement();
       } else {
         this.$$('#lineCanvas').drawCanvas();
+        this.$$('#highlighterCanvas').reDrawElement();
       }
+
+      this.$.lineCursor.reDrawElement();
     },
 
     /**

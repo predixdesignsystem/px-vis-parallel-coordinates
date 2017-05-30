@@ -314,6 +314,7 @@ Custom property | Description | Default
           <template id="highlighterDomIf" is="dom-if" if="[[!renderToSvg]]" restamp>
             <px-vis-highlight-line-canvas
               id="highlighterCanvas"
+              margin="[[margin]]"
               canvas-context="{{canvasContextTop}}"
               layers-to-mask="[[canvasContext]]"
               x="[[x]]"
@@ -335,6 +336,7 @@ Custom property | Description | Default
           <template is="dom-if" if="[[renderToSvg]]" restamp>
             <px-vis-highlight-line
               id="highlighter"
+              margin="[[margin]]"
               svg="[[layer.1]]"
               layers-to-mask="[[layer.0]]"
               x="[[x]]"

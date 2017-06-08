@@ -2,6 +2,7 @@ v1.2.0
 ==================
 * Upgrade to vis 2.0.0
 * Adds highlight components for optional crosshair
+* Add cursor component
 
 v1.1.4
 ==================

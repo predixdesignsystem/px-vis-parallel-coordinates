@@ -5,6 +5,7 @@
     "px-vis-parallel-coordinates.html"
   ],
   "ignore": [
+    "*.enc",
     "**/.*",
     "node_modules",
     "bower_components",

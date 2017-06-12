@@ -505,15 +505,39 @@ Custom property | Description | Default
         value: false
       },
       /**
-      * A configuration file to associate series order, name, type, and colors.
+      * A developer set configuration file to specify a vareity of options.
       *
-      * Association of name, type, and seriesNumber should be developer set. Color and axis are optional.
+      * The seriesKey can be specified to set the color for the lines.
       *
       *```
       *  {
-      *     "seriesKey": {              //seriesKey is a unique identifier for the configuration
-      *         "color": "line",        //color of the line for this axis
-      *         "yAxisUnit": "Oranges"  //unit to be used for this axis.
+      *     "mySeriesKey": {                  //seriesKey is a unique identifier for the configuration
+      *         "color": "rgb(0,0,0)"        //color of the series lines
+      *     }
+      *  }
+      *```
+      *
+      * The axes can be specified to set the title and units.
+      *
+      *```
+      *  {
+      *     "myAxis1": {
+      *         "title": "My awesome title",
+      *         "yAxisUnit": "Oranges"
+      *     }
+      *  }
+      *```
+      *
+      *
+      * The category color can also be specified if using categories.
+      *
+      *```
+      *  {
+      *     "cat1": {
+      *         "color": "rgb(0,0,0)"
+      *     },
+      *     "cat2": {
+      *         "color": "rgb(0,255,0)"
       *     }
       *  }
       *```

@@ -276,6 +276,7 @@ Custom property | Description | Default
             axis-groups="{{axisGroups}}"
             brush-elems="{{brushElems}}"
             brush-to-remove="[[brushToRemove]]"
+            category-key="[[categoryKey]]"
             prevent-initial-drawing="[[_preventInitialDrawing]]"
             action-config="[[actionConfig]]"
             interaction-space-config="[[interactionSpaceConfig]]">
@@ -838,11 +839,22 @@ Custom property | Description | Default
           if(typeof(this.categoryKey) !== 'undefined') {
 
             for(var i = 0; i < this.categories.length; i ++) {
-              config[this.categories[i]] = {
-                "color": this._getColor(this.startColorIndex + i),
-                "name": this.categories[i],
-                "x": this.dimensions,
-                "y": this.dimensions
+              if(!config[this.categories[i]]) {
+
+                //no config, create one
+                config[this.categories[i]] = {
+                  "color": this._getColor(this.startColorIndex + i),
+                  "name": this.categories[i],
+                  "x": this.dimensions,
+                  "y": this.dimensions
+                }
+              } else {
+
+                //there's a config, make sure it has everything
+                config[this.categories[i]].color = config[this.categories[i]].color ? config[this.categories[i]].color : this._getColor(this.startColorIndex + i);
+                config[this.categories[i]].name = config[this.categories[i]].name ? config[this.categories[i]].name : this.categories[i];
+                config[this.categories[i]].x = config[this.categories[i]].x ? config[this.categories[i]].x : this.dimensions;
+                config[this.categories[i]].y = config[this.categories[i]].y ? config[this.categories[i]].y : this.dimensions;
               }
             }
           }
@@ -1063,6 +1075,7 @@ Custom property | Description | Default
 
       //Our d.series only has one series since each axis only knows about itself.
       // So, to display in register, create a copy with data for the associated axes
+
       this._buildAxisTooltipData(d.dataset, d.time);
       this._updateAxisConfig(d.color);
 

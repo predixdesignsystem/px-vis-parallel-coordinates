@@ -6,6 +6,10 @@ v2.0.0
 * Categories colorscan now be configured through seriesConfig
 * Ensure category and axis register gets category color
 * Add toolbar control over the axis actions
+* Toolbar now controls axis actions
+* Internationalization support
+* Breaking changes:
+  * Implement toolbar to control interactions. You can no longer have multiple interactions on the same mouse event (IE drag and brush)
 
 v1.2.0 && v1.2.1
 ==================

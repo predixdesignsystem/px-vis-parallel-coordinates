@@ -3,6 +3,7 @@
 <link rel="import" href="../px-vis/px-vis-behavior-common.html" />
 <link rel="import" href="../px-vis/px-vis-behavior-d3.html" />
 <link rel="import" href="../px-vis/px-vis-behavior-chart.html"/>
+<link rel="import" href="../px-vis/px-vis-behavior-renderer.html"/>
 <link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-line-svg.html"/>
 <link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
@@ -215,11 +216,7 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-              no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
-              progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
-              progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]">
+              muted-series="[[_combinedMutedSeries]]">
             </px-vis-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -239,8 +236,8 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]">
+              muted-series="[[_combinedMutedSeries]]"
+              prevent-initial-drawing="[[preventInitialDrawing]]">
             </px-vis-line-svg>
           </template>
           <px-vis-multi-axis
@@ -277,7 +274,7 @@ Custom property | Description | Default
             brush-elems="{{brushElems}}"
             brush-to-remove="[[brushToRemove]]"
             category-key="[[categoryKey]]"
-            prevent-initial-drawing="[[_preventInitialDrawing]]"
+            prevent-initial-drawing="[[preventInitialDrawing]]"
             action-config="[[actionConfig]]"
             interaction-space-config="[[interactionSpaceConfig]]">
           </px-vis-multi-axis>
@@ -407,7 +404,6 @@ Custom property | Description | Default
       PxVisBehavior.commonAxis,
       PxVisBehaviorD3.selectedTimeDomain,
       PxVisBehaviorChart.saveImage,
-      PxVisBehavior.progressiveRendering,
       PxVisBehaviorChart.chartAutoResize,
       PxVisBehavior.truncating,
       PxVisBehaviorD3.domainUpdate,
@@ -431,7 +427,9 @@ Custom property | Description | Default
       PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData,
       Polymer.AppLocalizeBehavior,
-      PxVisBehavior.interactionSpaceConfigGeneric
+      PxVisBehavior.interactionSpaceConfigGeneric,
+      PxVisBehaviorRenderer.base,
+      PxVisBehaviorChart.combineMutes
     ],
 
     /**
@@ -476,26 +474,6 @@ Custom property | Description | Default
         type: Boolean,
         value: false
       },
-      /**
-       * An object which holds the series lines that have been muted based on the selected domain
-       *
-       * @private
-       */
-      mutedSeriesDomain: {
-        type:Object,
-        notify: true,
-        value: function() { return {} }
-      },
-      /**
-       * An object which holds the series lines that have been muted based on the axes brushes
-       *
-       * @private
-       */
-      mutedSeriesBrush: {
-        type:Object,
-        notify: true
-      },
-
       /**
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
@@ -615,13 +593,6 @@ Custom property | Description | Default
         value: 0
       },
       /**
-       * blocks initial drawings of axis/grid/lines until set to false
-       */
-      _preventInitialDrawing: {
-        type: Boolean,
-        value: true
-      },
-      /**
       * Configuration used to define what actions happen on events. Each key represents an event,
       * each value can be:
       * - a predefined action found in px-vis-interaction-space `actionMapping`
@@ -661,6 +632,13 @@ Custom property | Description | Default
       useKeyIfMissing: {
         type: Boolean,
         value: true
+      },
+      /**
+      * blocks initial drawings of axis until set to false
+      */
+      preventInitialDrawing: {
+        type: Boolean,
+        value: true
       }
     },
 
@@ -683,13 +661,28 @@ Custom property | Description | Default
       'px-vis-axis-interaction-space-reset-tooltip': '_hideTooltip',
       'px-vis-axis-interaction-space-crosshair-data': '_calcCrosshair',
       'px-vis-axis-interaction-space-reset-crosshair': '_hideCrosshair',
-      'px-vis-redraw-lines' : '_redrawLines',
       'px-vis-muted-series-updated': '_muteUnmute',
       "px-data-vis-colors-applied" : '_generateSeriesConfig'
     },
 
     detached: function() {
       this.unlisten(this.$.highlighterDomIf, 'dom-change', '_highlighterConfigChanged');
+      this.set('preventInitialDrawing', true);
+    },
+
+    attached: function() {
+
+      // we need this in attached as well in case the chart is
+      // moved in the dom or reused
+      this.listen(this.$.highlighterDomIf, 'dom-change', '_highlighterConfigChanged');
+
+      //we probably are re-attaching. if nothing has changed (neither series nor size) we might
+      //still need to kick this in order for preventInitialDrawing to go false
+      if(this.displayedValues) {
+        window.requestAnimationFrame(function(){
+          this._calcTitleLocation();
+        }.bind(this));
+      }
     },
 
     ready: function() {
@@ -735,7 +728,7 @@ Custom property | Description | Default
         }
 
         // append and remove the dimensions text so we can measure how long
-        var labels = svg.selectAll('.dummyText')
+        var labels = this.svg.selectAll('.dummyText')
           .data(values);
           labels.enter()
           .append("text")
@@ -779,7 +772,7 @@ Custom property | Description | Default
             });
           }
 
-          this.set('_preventInitialDrawing', false);
+          this.set('preventInitialDrawing', false);
 
       }.bind(this), 5);
     },
@@ -967,37 +960,6 @@ Custom property | Description | Default
         }
       },200);
     },
-    /**
-     * Takes the muted series from the axis brush and the selected domain and returns a merged copy of them
-     *
-     */
-    _combineMutes: function(m1,m2) {
-      var muted = {};
-      // for these, we assume that "false" items will just have been removed
-      for(var k in m1) {
-        muted[k] = m1[k];
-      }
-      for(var k in m2) {
-        muted[k] = m2[k];
-      }
-      return muted;
-    },
-
-    /**
-     * call the line draw methods vis event.
-     *
-     */
-    _redrawLines: function() {
-      if(this.renderToSvg) {
-        this.$$('#lineSVG').drawElement();
-        this.$$('#highlighter').reDrawElement();
-      } else {
-        this.$$('#lineCanvas').drawCanvas();
-        this.$$('#highlighterCanvas').reDrawElement();
-      }
-
-      this.$.lineCursor.reDrawElement();
-    },
 
     /**
      * Forces the chart to resize and redraw
@@ -1025,6 +987,7 @@ Custom property | Description | Default
           heightDeduct += toolbarRect.height;
           widthDeduct += axisRegisterWidth;
 
+          this.set('preventInitialDrawing', true);
           this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
           this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
           this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);

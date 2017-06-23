@@ -215,7 +215,7 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, _mutedSeriesCategories)]]"
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, _mutedSeriesCategories.*)]]"
               no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
               progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
               progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
@@ -239,7 +239,7 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, _mutedSeriesCategories)]]"
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, _mutedSeriesCategories.*)]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-svg>
           </template>
@@ -991,7 +991,6 @@ Custom property | Description | Default
         muted[k] = m2[k];
       }
 
-      console.time('filter')
       if(mutedCategories.length) {
         //parse data to add points muted by category
         var isMuted;
@@ -1007,7 +1006,6 @@ Custom property | Description | Default
           }
         }
       }
-      console.timeEnd('filter')
 
       return muted;
     },

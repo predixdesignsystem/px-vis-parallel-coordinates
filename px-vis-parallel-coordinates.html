@@ -147,8 +147,8 @@ Custom property | Description | Default
           class$="{{_getHideClass(_hideCategoryRegister)}}"
           tooltip-data="[[_categoryRegisterTooltipData]]"
           complete-series-config="[[_categoryRegisterConfig]]"
-          type="horizontal"
-          prevent-muting>
+          muted-series="{{_mutedSeriesCategories}}"
+          type="horizontal">
         </px-vis-register>
         <div class="flex flex--row--rev">
           <px-vis-register
@@ -215,7 +215,7 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, _mutedSeriesCategories)]]"
               no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
               progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
               progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
@@ -239,7 +239,7 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain)]]"
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, _mutedSeriesCategories)]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-svg>
           </template>
@@ -495,7 +495,14 @@ Custom property | Description | Default
         type:Object,
         notify: true
       },
-
+      /**
+       * An object which holds the series lines that have been muted based on the categories
+       *
+       */
+      _mutedSeriesCategories: {
+        type:Object,
+        value: function() { return {} }
+      },
       /**
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
@@ -971,8 +978,11 @@ Custom property | Description | Default
      * Takes the muted series from the axis brush and the selected domain and returns a merged copy of them
      *
      */
-    _combineMutes: function(m1,m2) {
-      var muted = {};
+    _combineMutes: function(m1, m2, m3) {
+      var muted = {},
+          mutedCategories = Object.keys(this._mutedSeriesCategories).filter(function(cat) {
+            return this._mutedSeriesCategories[cat];
+          }.bind(this));
       // for these, we assume that "false" items will just have been removed
       for(var k in m1) {
         muted[k] = m1[k];
@@ -980,6 +990,25 @@ Custom property | Description | Default
       for(var k in m2) {
         muted[k] = m2[k];
       }
+
+      console.time('filter')
+      if(mutedCategories.length) {
+        //parse data to add points muted by category
+        var isMuted;
+        //for each point
+        for(var i=0; i<this.chartData.length; i++) {
+
+          //search for each muted category
+          for(var j=0; j<mutedCategories.length;j++) {
+            if(this.chartData[i][this.categoryKey] ===mutedCategories[j]) {
+              muted[this.chartData[i][this.seriesKey]] = true;
+              break;
+            }
+          }
+        }
+      }
+      console.timeEnd('filter')
+
       return muted;
     },
 

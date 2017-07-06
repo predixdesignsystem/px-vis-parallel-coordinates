@@ -1,3 +1,7 @@
+v2.1.1
+==================
+* muted categories are now reflected (and can be set) in mutedSeriesCategories
+
 v2.0.0
 ==================
 * Upgrade to vis 2.0.0

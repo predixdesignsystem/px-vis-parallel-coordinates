@@ -61,11 +61,15 @@
         series-config='{
             "TTXD1_1":{
               "yAxisUnit": "Hz",
-              "title": "verylongname"
+              "title": "verylongdfsdfname"
             },
             "TTXD1_12":{
               "yAxisUnit": "F",
-              "title": "stout"
+              "title": "stodfsdfsdfsdfut"
+            },
+            "TTXD1_11":{
+              "yAxisUnit": "F",
+              "title": "stodfsdfssadsddfsdfut"
             }
           }'
       ></px-vis-parallel-coordinates>
@@ -101,7 +105,7 @@
             gradient-overlay>
           </px-vis-chart-navigator>
         </div>
-
+<!--
 
         <br />
         <br />
@@ -210,10 +214,10 @@
         skip-keys='{"TimeStamp":true}'
         series-key="TimeStamp"
         axes='["TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5"]'
-      ></px-vis-parallel-coordinates>
+      ></px-vis-parallel-coordinates>-->
 
       <iron-ajax
-        url="../px-demo-data/demo-data/apm/timeseries_demo.json"
+        url="../px-demo-data/demo-data/apm/timeseries.json"
         handle-as="json"
         auto
         last-response="{{chartData}}">
@@ -255,37 +259,12 @@
 
       btnSnap.addEventListener('click', function() {
 
-        //fetch svg+canvas from chart and svg
-        //from navigator and render them on a canvas
-        var canvas = document.createElement('canvas'),
-                context,
-                chartCanvasContext = parall.canvasContext,
-                svgChart = parall.pxSvgElem,
-                svgNavigator = navigator.pxSvgElem,
-                count = 0;
-
-        canvas.width = Math.max(chartCanvasContext.canvas.width, navigator.width);
-        canvas.height = chartCanvasContext.canvas.height + navigator.height;
-        context = canvas.getContext('2d');
-
-        //render chart canvas
-        context.drawImage(chartCanvasContext.canvas, 0, 0);
-
-        //to be called when svg is done drawing
-        var callback = function(res) {
-          if(count === 0) {
-            //first svg has rendered, wait for second one
-            count++;
-          } else {
-
-            //everything done
-            window.open().location = res.toDataURL("image/png");
-          }
-        }
-
-        //render chart svg and navigator svg
-        parall._drawSVGOnCanvas(canvas, callback);
-        navigator._drawSVGOnCanvas(canvas, callback, 0, parall.height);
+       parall.getImage(function(result) {
+          var img = document.createElement('img');
+          img.src= result.image;
+          document.body.appendChild(img);
+        //   window.open().location = result.image;
+        }, true);
       });
 
       btnInc.addEventListener('click', function() {

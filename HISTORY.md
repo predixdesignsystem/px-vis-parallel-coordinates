@@ -1,3 +1,7 @@
+v2.1.2
+==================
+* fix issue where an axes couldn't be un muted from the register
+
 v2.1.1
 ==================
 * muted categories are now reflected (and can be set) in mutedSeriesCategories

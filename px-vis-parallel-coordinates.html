@@ -148,8 +148,8 @@ Custom property | Description | Default
           class$="{{_getHideClass(_hideCategoryRegister)}}"
           tooltip-data="[[_categoryRegisterTooltipData]]"
           complete-series-config="[[_categoryRegisterConfig]]"
-          type="horizontal"
-          prevent-muting>
+          muted-series="{{mutedSeriesCategories}}"
+          type="horizontal">
         </px-vis-register>
         <div class="flex flex--row--rev">
           <px-vis-register
@@ -194,6 +194,7 @@ Custom property | Description | Default
               svg="{{svg}}"
               px-svg-elem="{{pxSvgElem}}"
               svg-lower="{{svgLower}}"
+              px-svg-elem-lower="{{pxSvgElemLower}}"
               width="[[width]]"
               height="[[height]]"
               margin="[[margin]]">
@@ -216,7 +217,15 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
+<<<<<<< HEAD
               muted-series="[[_combinedMutedSeries]]">
+=======
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, mutedSeriesCategories.*)]]"
+              no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
+              progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
+              progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
+              prevent-initial-drawing="[[_preventInitialDrawing]]">
+>>>>>>> master
             </px-vis-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -236,8 +245,13 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
+<<<<<<< HEAD
               muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[preventInitialDrawing]]">
+=======
+              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, mutedSeriesCategories.*)]]"
+              prevent-initial-drawing="[[_preventInitialDrawing]]">
+>>>>>>> master
             </px-vis-line-svg>
           </template>
           <px-vis-multi-axis
@@ -475,6 +489,36 @@ Custom property | Description | Default
         value: false
       },
       /**
+<<<<<<< HEAD
+=======
+       * An object which holds the series lines that have been muted based on the selected domain
+       *
+       * @private
+       */
+      mutedSeriesDomain: {
+        type:Object,
+        notify: true,
+        value: function() { return {} }
+      },
+      /**
+       * An object which holds the series lines that have been muted based on the axes brushes
+       *
+       * @private
+       */
+      mutedSeriesBrush: {
+        type:Object,
+        notify: true
+      },
+      /**
+       * An object which holds the series lines that have been muted based on the categories
+       *
+       */
+      mutedSeriesCategories: {
+        type:Object,
+        value: function() { return {} }
+      },
+      /**
+>>>>>>> master
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
        */
@@ -1135,7 +1179,8 @@ Custom property | Description | Default
      */
     _muteUnmute: function(evt) {
 
-      if(evt.detail.fromRegister) {
+      //only care if it's an axis and it comes from a register
+      if(evt.detail.fromRegister && this.axes.indexOf(evt.detail.name) !== -1) {
         if(evt.detail.value) {
           this.addToMutedAxes(evt.detail.name);
         } else {

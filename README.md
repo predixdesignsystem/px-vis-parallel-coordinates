@@ -1,6 +1,5 @@
 #Px-Vis-Parallel-Coordinates
 
-[![px-vis-parallel-coordinates demo](px-vis-parallel-coordinates.png?raw=true)](https://predixdev.github.io/px-vis-parallel-coordinates)
 
 ## Overview
 

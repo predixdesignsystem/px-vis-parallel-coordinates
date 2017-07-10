@@ -217,15 +217,11 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-<<<<<<< HEAD
-              muted-series="[[_combinedMutedSeries]]">
-=======
               muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, mutedSeriesCategories.*)]]"
               no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
               progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
               progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
->>>>>>> master
             </px-vis-line-canvas>
           </template>
           <template is="dom-if" if="[[renderToSvg]]" restamp>
@@ -245,13 +241,8 @@ Custom property | Description | Default
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-<<<<<<< HEAD
-              muted-series="[[_combinedMutedSeries]]"
-              prevent-initial-drawing="[[preventInitialDrawing]]">
-=======
               muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, mutedSeriesCategories.*)]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
->>>>>>> master
             </px-vis-line-svg>
           </template>
           <px-vis-multi-axis
@@ -489,8 +480,6 @@ Custom property | Description | Default
         value: false
       },
       /**
-<<<<<<< HEAD
-=======
        * An object which holds the series lines that have been muted based on the selected domain
        *
        * @private
@@ -518,7 +507,6 @@ Custom property | Description | Default
         value: function() { return {} }
       },
       /**
->>>>>>> master
        * A boolean to specify if axes are developer set or should be generated from the chart data
        *
        */

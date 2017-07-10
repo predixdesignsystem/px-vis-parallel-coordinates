@@ -35,5 +35,8 @@
     "px-demo-data": "^0.0.20",
     "px-starter-kit-design": "^0.7.1",
     "px-demo": "^1.5.9"
+  },
+  "resolutions": {
+    "webcomponentsjs": "^0.7.24"
   }
 }

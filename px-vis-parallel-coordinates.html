@@ -190,10 +190,7 @@ Custom property | Description
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, mutedSeriesCategories.*)]]"
-              no-canvas-progressive-rendering="[[noCanvasProgressiveRendering]]"
-              progressive-rendering-points-per-frame="[[progressiveRenderingPointsPerFrame]]"
-              progressive-rendering-minimum-frames="[[progressiveRenderingMinimumFrames]]"
+              muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-canvas>
           </template>
@@ -214,7 +211,7 @@ Custom property | Description
               y="[[y]]"
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
-              muted-series="[[_combineMutes(mutedSeriesBrush,mutedSeriesDomain, mutedSeriesCategories.*)]]"
+              muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-svg>
           </template>
@@ -451,33 +448,6 @@ Custom property | Description
       matchTicks: {
         type: Boolean,
         value: false
-      },
-      /**
-       * An object which holds the series lines that have been muted based on the selected domain
-       *
-       * @private
-       */
-      mutedSeriesDomain: {
-        type:Object,
-        notify: true,
-        value: function() { return {} }
-      },
-      /**
-       * An object which holds the series lines that have been muted based on the axes brushes
-       *
-       * @private
-       */
-      mutedSeriesBrush: {
-        type:Object,
-        notify: true
-      },
-      /**
-       * An object which holds the series lines that have been muted based on the categories
-       *
-       */
-      mutedSeriesCategories: {
-        type:Object,
-        value: function() { return {} }
       },
       /**
        * A boolean to specify if axes are developer set or should be generated from the chart data

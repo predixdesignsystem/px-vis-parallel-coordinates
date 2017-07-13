@@ -627,7 +627,12 @@ Custom property | Description
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
       '_highlighterConfigChanged(highlighterConfig.*)',
-      '_langChanged(language)'
+      '_langChanged(language)',
+
+      //renderer
+      '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToCanvas)',
+      '_renderHighlight(domainChanged, canvasContextTop, _highlightData.*, completeSeriesConfig.*, preventInitialDrawing, renderToCanvas)',
+      '_mutedChanged(_combinedMutedSeries)'
     ],
 
     listeners: {

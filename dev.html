@@ -109,7 +109,7 @@
         </div>
 
 
-        <!--<br />
+        <br />
         <br />
         <br />
         <h3>Parallel Coordinates demonstrating responsive behavior</h3>
@@ -223,7 +223,7 @@
         handle-as="json"
         auto
         last-response="{{chartData}}">
-      </iron-ajax>-->
+      </iron-ajax>
 
     </template>
   </body>
@@ -247,7 +247,7 @@
             "name": "Delete",
             "eventName": "delete",
             "actionContext": parall,
-            "icon": "fa-trash",
+            "icon": "px-vis:trash-series",
             "action": function(itemConfig, additionalDetail) {
               var newAxes = this.axes;
               newAxes.splice(newAxes.indexOf(additionalDetail.name),1);

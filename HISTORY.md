@@ -1,6 +1,8 @@
 v3.0.0
 ==================
 * design refresh
+* update for new renderer
+* see px-vis for a list of breaking changes
 
 v2.1.2
 ==================

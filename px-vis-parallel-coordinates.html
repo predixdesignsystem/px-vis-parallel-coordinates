@@ -163,7 +163,8 @@ Custom property | Description
             <px-vis-svg-canvas
               id="svgCanvas"
               canvas-context="{{canvasContext}}"
-              canvas-context-top="{{canvasContextTop}}"
+              canvas-layers="{{canvasLayers}}"
+              canvas-layers-config="[[canvasLayersConfig]]"
               svg="{{svg}}"
               px-svg-elem="{{pxSvgElem}}"
               svg-lower="{{svgLower}}"
@@ -289,7 +290,8 @@ Custom property | Description
             <px-vis-highlight-line-canvas
               id="highlighterCanvas"
               margin="[[margin]]"
-              canvas-context="{{canvasContextTop}}"
+              canvas-context="[[canvasLayers.highlighter]]"
+              canvas-layers-config="{{canvasLayersConfig}}"
               layers-to-mask="[[canvasContext]]"
               x="[[x]]"
               y="[[y]]"
@@ -336,7 +338,7 @@ Custom property | Description
             svg-data-layer="[[layer.0]]"
             svg-overlay-layer="[[layer.1]]"
             canvas-data-layer="[[canvasContext]]"
-            canvas-overlay-layer="[[canvasContextTop]]"
+            canvas-overlay-layer="[[canvasLayers.highlighter]]"
             x="[[x]]"
             y="[[y]]"
             parallel-coordinates
@@ -631,7 +633,7 @@ Custom property | Description
 
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToCanvas)',
-      '_renderHighlight(domainChanged, canvasContextTop, _highlightData.*, completeSeriesConfig.*, preventInitialDrawing, renderToCanvas)',
+      '_renderHighlight(domainChanged, canvasLayers.highlighter, _highlightData.*, completeSeriesConfig.*, preventInitialDrawing, renderToCanvas)',
       '_mutedChanged(_combinedMutedSeries)'
     ],
 

@@ -1,9 +1,8 @@
-#Px-Vis-Parallel-Coordinates
-
+# px-vis-parallel-coordinates
 
 ## Overview
 
-Px-Vis-Parallel-Coordinates is a Predix UI component
+`Px-vis-parallel-coordinates` is a Predix UI component that allows you to draw a parallel coordinates (aka parallel axes) chart.
 
 ## Usage
 
@@ -13,17 +12,17 @@ Px-Vis-Parallel-Coordinates is a Predix UI component
 3. bower
 4. [webcomponents-lite.js polyfill](https://github.com/webcomponents/webcomponentsjs)
 
-Node, npm and bower are necessary to install the component and dependencies. webcomponents.js adds support for web components and custom elements to your application.
+Node, npm, and bower are necessary to install the component and dependencies. webcomponents.js adds support for web components and custom elements to your application.
 
 ## Getting Started
 
-First, install the component via bower on the command line.
+First, install the component via bower on the command line:
 
 ```
 bower install px-vis-parallel-coordinates --save
 ```
 
-Second, import the component to your application with the following tag in your head.
+Second, import the component in your application with the following tag in your head:
 
 ```
 <link rel="import" href="/bower_components/Px-Vis-Parallel-Coordinates/px-vis-parallel-coordinates.html"/>
@@ -38,7 +37,7 @@ Insert Your demo code here.
 <br />
 <hr />
 
-## documentation
+## Documentation
 
 Read the full API and view the demo [here](https://predixdev.github.io/px-vis-parallel-coordinates/px-vis-parallel-coordinates/).
 

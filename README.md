@@ -31,7 +31,7 @@ Second, import the component in your application with the following tag in your 
 Finally, use the component in your application:
 
 ```
-Insert Your demo code here.
+See demo page for example usage.
 ```
 
 <br />

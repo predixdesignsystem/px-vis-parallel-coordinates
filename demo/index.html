@@ -74,9 +74,6 @@
               categories='[[props.categories.value]]'
               brush-to-remove="[[props.brushToRemove.value]]"
               render-to-svg="[[props.renderToSvg.value]]"
-              progressive-rendering-points-per-frame="{{props.progressiveRenderingPointsPerFrame.value}}"
-              progressive-rendering-minimum-frames="{{props.progressiveRenderingMinFrames.value}}"
-              no-canvas-progressive-rendering="{{props.noCanvasProgressiveRendering.value}}"
               match-ticks="{{props.matchTicks.value}}"
               common-axis="[[props.commonAxis.value]]"
               hide-axis-register="[[props.hideAxisRegister.value]]"
@@ -87,8 +84,7 @@
               tooltip-config="[[props.tooltipConfig.value]]"
               dynamic-menu-config="[[props.dynamicMenuConfig.value]]"
               skip-keys="[[props.skipKeys.value]]"
-              generate-axes-from-data="[[props.generateAxesFromData.value]]"
-              start-color-index="{{props.startColorIndex.value}}"
+              generate-axes-from-data="[[props.generateAxesFromData.value]]"g
               displayed-values="{{props.displayedValues.value}}"
               debounce-resize-timing="{{props.debounceResizeTiming.value}}">
             </px-vis-parallel-coordinates>
@@ -378,28 +374,6 @@
         inputType: 'toggle'
       },
 
-            //we need inputDisabled: false to be able to dynamically turn it on
-      noCanvasProgressiveRendering: {
-        type: Boolean,
-        defaultValue: false,
-        inputDisabled: true,
-        inputType: 'toggle'
-      },
-
-      progressiveRenderingPointsPerFrame: {
-        type: Number,
-        defaultValue: 16000,
-        inputDisabled: true,
-        inputType: 'text'
-      },
-
-      progressiveRenderingMinFrames: {
-        type: Number,
-        defaultValue: 1,
-        inputDisabled: true,
-        inputType: 'text'
-      },
-
       chartHorizontalAlignment: {
         type: String,
         defaultValue: 'center',
@@ -538,17 +512,10 @@
         inputType: 'toggle'
       },
 
-      startColorIndex: {
-        type: Number,
-        defaultValue: 0,
-        inputType: 'text',
-        inputLabel: 'Start Color Index [not supposed to be dynamic, change seriesConfig to have it applied]'
-      },
-
       displayedValues: {
         type: Object,
         inputType: 'code:JSON',
-        inputLabel: 'Displayed Values [for read purposes, setting it has no effect]'
+        inputLabel: 'Displayed Values [read-only]'
       },
 
       dynamicMenuConfig: {

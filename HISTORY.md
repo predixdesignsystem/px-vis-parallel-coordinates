@@ -1,3 +1,7 @@
+v3.0.2
+==============
+* fix demo flex
+
 v3.0.1
 ==============
 * improved demo

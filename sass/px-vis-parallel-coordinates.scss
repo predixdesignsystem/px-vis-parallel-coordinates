@@ -19,9 +19,7 @@
 @import "px-flexbox-design/_base.flexbox.scss";
 
 // Component
-.wrapper {
-    height:100%;
-    width: 100%;
-}
+@import "px-vis/sass/_px-vis-chart-partial.scss";
+
 
 // Trumps

@@ -1,3 +1,8 @@
+v3.0.3
+==============
+* fix sarfari 9 flex bug causing registers to overlap if screen is too small
+* Add helpers design to get visually-hidden
+
 v3.0.2
 ==============
 * fix demo flex

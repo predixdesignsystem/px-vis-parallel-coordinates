@@ -110,10 +110,10 @@ Custom property | Description
 
 <dom-module id="px-vis-parallel-coordinates">
   <template>
-    <style include="px-vis-parallel-coordinates-styles"></style>
+    <style include="px-vis-parallel-coordinates-styles" is="custom-style"></style>
 
     <div id="wrapper" class$="{{_chartWrapperClass}}">
-      <div class="flex flex--col">
+      <div class="flex flex--col safari-flex-fix">
         <px-vis-register
           id="categoryRegister"
           x-axis-type="linear"

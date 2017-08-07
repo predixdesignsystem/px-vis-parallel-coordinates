@@ -19,7 +19,7 @@
 <link rel="import" href="../px-vis-parallel-coordinates.html"/>
 
 <!-- Demo DOM module -->
-<dom-module id="local-element-demo">
+<dom-module id="px-vis-parallel-coordinates-demo">
   <template>
     <style include="px-demo-styles" is="custom-style"></style>
 
@@ -94,9 +94,8 @@
       <px-demo-component-snippet
           element-properties="{{props}}"
           element-name="px-vis-parallel-coordinates"
-          links-includes="[[linksIncludes]]"
-          scripts-includes="[[scriptsIncludes]]"
-          polygit-includes="[[polygitIncludes]]">
+          codepen-link="https://glitch.com/edit/#!/px-vis-parallel-coordinates-demo"
+          suppress-property-values="[[suppressPropertyValues]]">
       </px-demo-component-snippet>
     </px-demo-interactive>
 
@@ -117,7 +116,7 @@
 </dom-module>
 <script>
   Polymer({
-    is: 'local-element-demo',
+    is: 'px-vis-parallel-coordinates-demo',
 
     properties: {
 
@@ -310,18 +309,9 @@
         }
       },
 
-      scriptsIncludes: {
+      suppressPropertyValues: {
         type: Array,
-        value: function() {
-          return ['https://cdn.rawgit.com/foretagsplatsen/numbro/1.7.1/numbro.js'];
-        }
-      },
-
-      linksIncludes: {
-        type: Array,
-        value: function() {
-          return ['px-vis/px-polygit-imports-vis.html', 'px-datetime-common/px-polygit-imports-datetime.html', 'numbro-element/numbro-element.html'];
-        }
+        value: function() { return ['chartData']; }
       },
 
       appliedWidth: {

@@ -1,5 +1,9 @@
 v3.1.0
 ==================
+* Fix doc format for static analyzer
+
+v3.1.0
+==================
 * Change CodePen to Glitch
 * Use updated demo snippet
 * Added PxVisBehavior.updateStylesOverride behavior

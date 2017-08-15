@@ -513,7 +513,7 @@
             "name": "Delete",
             "eventName": "delete",
             "icon": "px-vis:trash-series",
-            "action": 'function(data) {var newAxes = this.axes; newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1); this.set("axes", []); this.set("axes", newAxes);}'
+            "action": 'function(data) {var newAxes = JSON.parse(JSON.stringify(this.axes)); newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1); this.set("axes", []); this.set("axes", newAxes);}'
           }
         ],
         inputType: 'code:JSON'

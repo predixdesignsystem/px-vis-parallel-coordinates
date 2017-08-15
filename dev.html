@@ -249,7 +249,7 @@
             "actionContext": parall,
             "icon": "px-vis:trash-series",
             "action": function(itemConfig, additionalDetail) {
-              var newAxes = this.axes;
+              var newAxes = JSON.parse(JSON.stringify(this.axes));
               newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
               this.set("axes", []);
               this.set("axes", newAxes);

@@ -1,3 +1,7 @@
+v3.1.2
+==================
+* Updating demo dynamic menu config
+
 v3.1.0
 ==================
 * Fix doc format for static analyzer

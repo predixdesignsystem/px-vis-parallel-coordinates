@@ -432,7 +432,8 @@ Custom property | Description | Default
       PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData,
       Polymer.AppLocalizeBehavior,
-      PxVisBehavior.interactionSpaceConfigGeneric
+      PxVisBehavior.interactionSpaceConfigGeneric,
+      PxVisBehaviorChart.useCategoryInTooltip
     ],
 
     /**
@@ -1145,6 +1146,28 @@ Custom property | Description | Default
       this._updateAxisConfig(d.color);
 
       if(this.showTooltip) {
+
+        if(this.useCategoryInTooltip) {
+
+          //try to fetch category name
+          var key = Object.keys(d.tooltipConfig)[0],
+              cat = d.dataset[this.categoryKey],
+              title;
+
+          if(cat) {
+
+            // we have a category, use name if it has been defined,
+            // create one otherwise
+            if(this.completeSeriesConfig[cat] && this.completeSeriesConfig[cat].name.toString() !== cat) {
+              title = this.completeSeriesConfig[cat].name;
+            } else {
+              title = this.categoryKey + ' - ' + cat;
+            }
+
+            d.tooltipConfig[key].name = title;
+          }
+        }
+
         this.set('mousePosition', d.dataPos);
         this.set('_tooltipSeriesConfig', d.tooltipConfig);
       }

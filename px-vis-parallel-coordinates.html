@@ -158,7 +158,7 @@ Custom property | Description
               within-chart
               chart-margin="[[margin]]"
               show-tooltip="{{_internalShowTooltip}}"
-              config='{"axisBrush": true, "axisDrag": true, "tooltip": true}'>
+              config='{"axisMuteSeries": true, "axisDrag": true, "zoom": true, "pan": true, "tooltip": true }'>
             </px-vis-toolbar>
             <px-vis-svg-canvas
               id="svgCanvas"
@@ -247,13 +247,14 @@ Custom property | Description
             append-unit-in-title
             domain-changed="[[domainChanged]]"
             axis-groups="{{axisGroups}}"
+            brush-domains="[[brushDomains]]"
             brush-to-remove="[[brushToRemove]]"
             category-key="[[categoryKey]]"
             prevent-initial-drawing="[[preventInitialDrawing]]"
             action-config="[[actionConfig]]"
             interaction-space-config="[[interactionSpaceConfig]]">
           </px-vis-multi-axis>
-          <template is="dom-if" if="[[matchTicks]]">
+          <!--<template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
               svg="[[_calcGridSvg(domainChanged, svgLower)]]"
               tick-values="[[gridTicks]]"
@@ -273,7 +274,7 @@ Custom property | Description
               orientation="left"
               domain-changed="true">
             </px-vis-gridlines>
-          </template>
+          </template>-->
           <px-vis-tooltip
             id="tooltip"
             x-axis-type="linear"
@@ -405,7 +406,12 @@ Custom property | Description
       PxVisBehavior.interactionSpaceConfigGeneric,
       PxVisBehaviorRenderer.base,
       PxVisBehaviorChart.combineMutes,
-      PxVisBehavior.updateStylesOverride
+      PxVisBehavior.updateStylesOverride,
+      PxVisBehavior.timeDomain,
+      PxVisBehavior.axesDomain,
+      PxVisBehaviorChart.multiAxisMuting,
+      PxVisBehaviorChart.multiAxisZoom,
+      PxVisBehavior.brushDomains
     ],
 
     /**
@@ -568,23 +574,7 @@ Custom property | Description
         type: Number,
         value: 0
       },
-      /**
-      * Configuration used to define what actions happen on events. Each key represents an event,
-      * each value can be:
-      * - a predefined action found in px-vis-interaction-space `actionMapping`
-      * - a function which context will be bound to the chart. The function argument will be the mouse position on the chart
-      */
-      actionConfig: {
-        type: Object,
-        value: function() {
-          return {
-            'mousedown': 'callAxisBrush',
-            'mouseup': 'callAxisBrush',
-            'mouseout': 'resetTooltip',
-            'mousemove': 'calcTooltipData'
-          };
-        }
-      },
+
        /*
        * List of key/values to be included for translating this component
        */
@@ -623,8 +613,9 @@ Custom property | Description
       '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorList.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
-      '_selectedDomain(selectedDomain.x)',
+      '_setMutedSeriesDomain(timeDomain.x)',
       '_calcTitleLocation(svg, height, width, displayedValues.*)',
+
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
       '_highlighterConfigChanged(highlighterConfig.*)',
@@ -633,7 +624,10 @@ Custom property | Description
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing)',
       '_renderHighlight(domainChanged, canvasLayers.highlighter, completeSeriesConfig.*, preventInitialDrawing)',
-      '_mutedChanged(_combinedMutedSeries)'
+      '_mutedChanged(_combinedMutedSeries.*)',
+
+      // temporary shim to maintain backawards compatibility
+      '_setTimeDomain(selectedDomain.*)'
     ],
 
     listeners: {
@@ -913,8 +907,10 @@ Custom property | Description
      * Adds data to a muted series based on the selected domain
      *
      */
-    _selectedDomain: function(sd) {
-      this.debounce('selected_domain',function() {
+    _setMutedSeriesDomain: function(sd) {
+      this.debounce('muted_series_domain',function() {
+        if(!sd || !sd.length) { return; }
+
         if(this.chartData && this.chartData.length > 0) {
           var muted = {};
           for(var i = 0; i < this.chartData.length; i++) {
@@ -1114,6 +1110,26 @@ Custom property | Description
 
       //recreate X and Y in case d3 locale changed
       this.$.multiScale._recreateScales();
+    },
+
+    // shim to maintain backwards compatibility
+    // REMOVE on next Major
+    _setTimeDomain: function() {
+      if(this.selectedDomain && this.selectedDomain.x && this.selectedDomain.x.length) {
+        this.set('timeDomain', this.selectedDomain);
+      }
+    },
+
+    _setExtentsData: function(e) {
+      if(!e.detail.extents) { return; }
+
+      this.extentsAction = e.detail.action;
+
+      var extentsData = {};
+      extentsData.dimension = e.detail.dimension;
+      extentsData.extents = e.detail.extents;
+
+      this.set('extentsData', extentsData);
     }
   });
 </script>

@@ -53,7 +53,7 @@
         skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
         series-key="TimeStamp"
         match-ticks
-        selected-domain="{{selectedDomain}}"
+        time-domain="{{timeDomain}}"
         generate-axes-from-data
         tooltip-config='{
           "forceDateTimeDisplay": true,
@@ -103,7 +103,7 @@
                 "y":"TTXD1_1"
               }
             }'
-            selected-domain="{{selectedDomain}}"
+            selected-domain="{{timeDomain}}"
             gradient-overlay>
           </px-vis-chart-navigator>
         </div>

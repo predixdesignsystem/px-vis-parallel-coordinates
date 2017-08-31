@@ -231,7 +231,6 @@ Custom property | Description
             chart-data="[[chartData]]"
             dimensions="[[dimensions]]"
             axes="[[axes]]"
-            muted-series="{{mutedSeriesBrush}}"
             redraw-series="true"
             stroke-width="2"
             match-ticks="[[matchTicks]]"
@@ -637,7 +636,8 @@ Custom property | Description
       'px-vis-axis-interaction-space-crosshair-data': '_calcCrosshair',
       'px-vis-axis-interaction-space-reset-crosshair': '_hideCrosshair',
       'px-vis-muted-series-updated': '_muteUnmute',
-      "px-data-vis-colors-applied" : '_generateSeriesConfig'
+      "px-data-vis-colors-applied" : '_generateSeriesConfig',
+      'px-vis-axis-interaction-space-extents-data': '_setExtentsData'
     },
 
     detached: function() {

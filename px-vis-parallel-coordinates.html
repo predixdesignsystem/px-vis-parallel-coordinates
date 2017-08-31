@@ -622,12 +622,12 @@ Custom property | Description
       '_langChanged(language)',
 
       //renderer
-      '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing)',
+      '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToSvg, _combinedMutedSeries)',
       '_renderHighlight(domainChanged, canvasLayers.highlighter, completeSeriesConfig.*, preventInitialDrawing)',
-      '_mutedChanged(_combinedMutedSeries.*)',
 
       // temporary shim to maintain backawards compatibility
       '_setTimeDomain(selectedDomain.*)'
+
     ],
 
     listeners: {

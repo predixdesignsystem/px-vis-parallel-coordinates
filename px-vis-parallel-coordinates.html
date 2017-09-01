@@ -6,6 +6,7 @@
 <link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-line-svg.html"/>
 <link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
+<link rel="import" href="../px-vis/px-vis-clip-path.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-behavior-scale-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
@@ -166,6 +167,10 @@ Custom property | Description
               id="lineCanvas"
               gradient-line
               canvas-context="[[canvasContext]]"
+              clip-path
+              width="[[width]]"
+              height="[[height]]"
+              margin="[[margin]]"
               parallel-coordinates
               multi-path
               muted-opacity="0"
@@ -200,9 +205,19 @@ Custom property | Description
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
               muted-series="[[_combinedMutedSeries]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]">
+              prevent-initial-drawing="[[_preventInitialDrawing]]"
+              clip-path="[[seriesClipPath]]">
             </px-vis-line-svg>
           </template>
+          <px-vis-clip-path
+            svg="[[layer.0]]"
+            x="[[x]]"
+            y="[[y]]"
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]"
+            series-clip-path="{{seriesClipPath}}">
+          </px-vis-clip-path>
           <px-vis-multi-axis
             id="multiAxis"
             svg="[[layer.2]]"
@@ -313,7 +328,8 @@ Custom property | Description
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
               crosshair-data="[[crosshairData]]"
-              default-empty-data="{{defaultEmptyData}}">
+              default-empty-data="{{defaultEmptyData}}"
+              clip-path="[[seriesClipPath]]">
             </px-vis-highlight-line>
           </template>
 
@@ -334,7 +350,8 @@ Custom property | Description
             series-id="[[seriesKey]]"
             category-key="[[categoryKey]]"
             categories="[[categories]]"
-            tooltip-data="[[tooltipData.dataset]]">
+            tooltip-data="[[tooltipData.dataset]]"
+            clip-path="[[seriesClipPath]]">
           </px-vis-cursor-line>
         </div>
       </div>
@@ -612,8 +629,7 @@ Custom property | Description
       '_setXScale(width,margin)',
       '_setYScale(height,margin,axes)',
       '_setDomain(x, y, dataExtents)',
-      // '_currentDomain(x, y, chartExtents, _isAttached)',
-
+      '_updateDomain(axesDomain.*)',
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToSvg, _combinedMutedSeries)',
       '_renderHighlight(domainChanged, canvasLayers.highlighter, completeSeriesConfig.*, preventInitialDrawing)',
@@ -877,14 +893,13 @@ Custom property | Description
         ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
           //PERF: this Number hurts us a bit
           return Number(d[dimensions[i]]);
+        });
           //TODO: do we need this check anymore?
           // if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
           //   ext.y[dimensions[i]][1]++;
           // }
-        });
       }
 
-      // TODO dev set common extents?
       // if we want a common axis, find overall extents
       if(this.commonAxis) {
         var maxMin = d3.extent(d3.merge(d3.values(ext.y)));

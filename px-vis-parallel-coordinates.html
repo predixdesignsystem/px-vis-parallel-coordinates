@@ -7,7 +7,7 @@
 <link rel="import" href="../px-vis/px-vis-line-svg.html"/>
 <link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
-<link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
+<link rel="import" href="../px-vis/px-vis-behavior-scale-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../px-vis/px-vis-toolbar.html"/>
@@ -137,19 +137,6 @@ Custom property | Description
             type="vertical"
             height="[[_verticalRegisterHeight]]">
           </px-vis-register>
-          <px-vis-multi-scale
-            id="multiScale"
-            width="[[width]]"
-            height="[[height]]"
-            margin="[[margin]]"
-            axes="[[axes]]"
-            dimensions="[[dimensions]]"
-            chart-data="[[chartData]]"
-            chart-extents="[[chartExtents]]"
-            x="{{x}}"
-            y="{{y}}"
-            domain-changed="{{domainChanged}}">
-          </px-vis-multi-scale>
           <div class="flex flex--col">
             <px-vis-toolbar
               id="toolbar"
@@ -369,7 +356,9 @@ Custom property | Description
       PxVisBehavior.dataset,
       PxVisBehavior.dimensions,
       PxVisBehavior.commonMethods,
+      PxVisBehaviorScale.scaleMultiAxis,
       PxVisBehavior.chartExtents,
+      PxVisBehavior.dataExtents,
       PxVisBehavior.completeSeriesConfig,
       PxVisBehaviorD3.labelTypeSize,
       PxVisBehavior.mutedSeries,
@@ -608,7 +597,7 @@ Custom property | Description
     },
 
     observers: [
-      '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
+      '_generateDataExtents(dimensions, commonAxis, _haveChartData)',
       '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorList.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
@@ -619,6 +608,11 @@ Custom property | Description
       '_toolbarConfigChanged(toolbarConfig)',
       '_highlighterConfigChanged(highlighterConfig.*)',
       '_langChanged(language)',
+
+      '_setXScale(width,margin)',
+      '_setYScale(height,margin,axes)',
+      '_setDomain(x, y, dataExtents)',
+      // '_currentDomain(x, y, chartExtents, _isAttached)',
 
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToSvg, _combinedMutedSeries)',
@@ -872,7 +866,7 @@ Custom property | Description
      * Creates the chartExtents for each dimension
      *
      */
-    _generateChartExtents: function(dimensions) {
+    _generateDataExtents: function(dimensions) {
       var ext = {
               "x": dimensions,
               "y": {}
@@ -901,7 +895,7 @@ Custom property | Description
         }
       }
 
-      this.set('chartExtents',ext);
+      this.set('dataExtents',ext);
     },
     /**
      * Adds data to a muted series based on the selected domain
@@ -1109,7 +1103,7 @@ Custom property | Description
     _langChanged: function() {
 
       //recreate X and Y in case d3 locale changed
-      this.$.multiScale._recreateScales();
+      this._recreateScales();
     },
 
     // shim to maintain backwards compatibility

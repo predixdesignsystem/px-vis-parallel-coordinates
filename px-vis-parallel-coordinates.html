@@ -253,7 +253,7 @@ Custom property | Description
             action-config="[[actionConfig]]"
             interaction-space-config="[[interactionSpaceConfig]]">
           </px-vis-multi-axis>
-          <!--<template is="dom-if" if="[[matchTicks]]">
+          <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
               svg="[[_calcGridSvg(domainChanged, svgLower)]]"
               tick-values="[[gridTicks]]"
@@ -273,7 +273,7 @@ Custom property | Description
               orientation="left"
               domain-changed="true">
             </px-vis-gridlines>
-          </template>-->
+          </template>
           <px-vis-tooltip
             id="tooltip"
             x-axis-type="linear"
@@ -1074,8 +1074,8 @@ Custom property | Description
       this.set('crosshairData', evt.detail);
     },
 
-    _fakeGrids: function() {
-      var h = this.height - this.margin.top - this.margin.bottom;
+    _fakeGrids: function(height, margin) {
+      var h = height - margin.top - margin.bottom;
       return Px.d3.scaleLinear().nice().range([h, 0]);
     },
 

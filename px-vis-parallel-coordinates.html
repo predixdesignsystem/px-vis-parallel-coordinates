@@ -244,6 +244,7 @@ Custom property | Description
             title-type-size="12"
             prevent-series-bar
             truncation-length="[[truncationLength]]"
+            tick-values="[[tickVals]]"
             displayed-values="{{displayedValues}}"
             append-unit-in-title
             domain-changed="[[domainChanged]]"
@@ -610,6 +611,20 @@ Custom property | Description
       preventInitialDrawing: {
         type: Boolean,
         value: true
+      },
+
+      tickVals: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
+
+      _tickStack: {
+        type: Object,
+        value: function() {
+          return {};
+        }
       }
     },
 
@@ -631,6 +646,9 @@ Custom property | Description
       '_setYScale(height,margin,axes)',
       '_setDomain(x, y, dataExtents)',
       '_updateDomain(axesDomain.*)',
+      '_calcTickVals(domainChanged)',
+      '_updateTicks(axesDomain.*)',
+
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToSvg, _combinedMutedSeries)',
       '_renderHighlight(domainChanged, canvasLayers.highlighter, completeSeriesConfig.*, preventInitialDrawing)',
@@ -1106,6 +1124,66 @@ Custom property | Description
       extentsData.extents = e.detail.extents;
 
       this.set('extentsData', extentsData);
+    },
+
+    /**
+     * In order to make the ticks align, we iterate through and generate some round numbers for each axis
+     *
+     */
+    _calcTickVals: function() {
+      if(this._isObjEmpty(this.y) || this._doesObjHaveValues(this.axesDomain)) { return; }
+
+      var tickVals = {};
+
+      if(this.matchTicks && !this.singleDomain) {
+        var keys = Object.keys(this.y);
+
+        keys.forEach(function(key) {
+          var d = this.y[key].domain(),
+              min = Math.floor(d[0]/10)*10,
+              max = Math.ceil(d[1]/10)*10,
+              diff = (max - min) / 10,
+              vals = [];
+
+          for(var i = 0; i < 11; i++){
+            vals.push(min + diff * i);
+          }
+          tickVals[key] = vals;
+        }.bind(this));
+
+        this.set('gridTicks', tickVals[keys[0]]);
+        this.set('gridAxis', this.y[keys[0]]);
+      }
+
+      this.set('tickVals', tickVals);
+    },
+
+    _updateTicks: function(axesDomain) {
+      if(!this.matchTicks || this.commonAxis) { return; }
+
+      var dims = Object.keys(axesDomain.value);
+
+      // if a zoom and we have not stored ticks, store them
+      if(dims.length === 1 && !this._tickStack[dims[0]]) {
+        this._tickStack[dims[0]] = this.tickVals[dims[0]];
+        this.set('tickVals.' + dims[0], null);
+
+      // otherwise it is some kind of reset
+      } else {
+        // Hi David
+        dims.forEach(function(dim) {
+          if(this._tickStack[dim]) {
+            var d = this.y[dim].domain(),
+                l = this._tickStack[dim].length - 1;
+
+            if(this._tickStack[dim][0] === d[0] && this._tickStack[dim][l] === d[1]) {
+              this.tickVals[dim] = this._tickStack[dim];
+              delete this._tickStack[dim];
+            }
+          }
+        }.bind(this));
+      }
+
     }
   });
 </script>

@@ -145,7 +145,7 @@ Custom property | Description
             axes="[[axes]]"
             dimensions="[[dimensions]]"
             chart-data="[[chartData]]"
-            chart-extents="[[chartExtents]]"
+            chart-extents="[[dataExtents]]"
             x="{{x}}"
             y="{{y}}"
             domain-changed="{{domainChanged}}">
@@ -608,7 +608,8 @@ Custom property | Description
     },
 
     observers: [
-      '_generateChartExtents(dimensions, commonAxis, _haveChartData)',
+      '_generateDataExtents(dimensions, commonAxis, _haveChartData)',
+      '_setDomain(dataExtents, x, y)',
       '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorList.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
@@ -868,41 +869,6 @@ Custom property | Description
         }.bind(this), 20);
     },
 
-    /**
-     * Creates the chartExtents for each dimension
-     *
-     */
-    _generateChartExtents: function(dimensions) {
-      var ext = {
-              "x": dimensions,
-              "y": {}
-            };
-
-      // TODO Is there a smarter way of doing this?
-      for(var i = 0; i < dimensions.length; i++) {
-        ext.y[dimensions[i]] = d3.extent(this.chartData, function(d) {
-          //PERF: this Number hurts us a bit
-          return Number(d[dimensions[i]]);
-          //TODO: do we need this check anymore?
-          // if(ext.y[dimensions[i]][0] === ext.y[dimensions[i]][1]) {
-          //   ext.y[dimensions[i]][1]++;
-          // }
-        });
-      }
-
-      // TODO dev set common extents?
-      // if we want a common axis, find overall extents
-      if(this.commonAxis) {
-        var maxMin = d3.extent(d3.merge(d3.values(ext.y)));
-        for(var i = 0; i < dimensions.length; i++) {
-          // set each axis extent to max & min
-          // TODO this is not the most efficient strategy, but certainly is the easiest, especially to keep it dynamic. Better would be to use only a single scale instead of calculating a scale multiple times.
-          ext.y[dimensions[i]] = maxMin;
-        }
-      }
-
-      this.set('chartExtents',ext);
-    },
     /**
      * Adds data to a muted series based on the selected domain
      *

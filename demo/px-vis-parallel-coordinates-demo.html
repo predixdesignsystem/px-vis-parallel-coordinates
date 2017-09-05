@@ -277,10 +277,10 @@
         type: Array,
         value: function() {
           return [
-            "chartExtents",
             "completeSeriesConfig",
             "domainChanged",
             "layer",
+            "dataExtents",
             "mutedSeries",
             "pxSvgElem",
             "pxSvgElemLower"
@@ -305,6 +305,9 @@
           return [{
             "name": "xAxisType",
             "desc": "Sets the type of data for the x values\n\nValid entries are:\n\n* `time`: for time domains in UTC [default].\n\n* `timeLocal`: for local time domains."
+          },{
+            "name": "chartExtents",
+            "desc": 'Allows to set the extents for each individual axis. This will trump the `commonAxis` property. \n\nSetting this and not using "dynamic" will prevent the chart from having to parse the data to find the extents and therefore improve performance for initial rendering.\n\nIf not set the chart will automatically parse the data for extents.\n\n```\n\n  {\n\n      "Axis1": [0,100],\n\n      "Axis2": [5,50],\n\n      ...\n\n  }```\n\n\n\n To force the chart to calculate based on data, use "dynamic".\n\n```\n\n  {\n\n      "Axis1": [0,"dynamic"],\n\n      "Axis2": ["dynamic","dynamic"],\n\n  }\n\n```\n\n'
           }]
         }
       },

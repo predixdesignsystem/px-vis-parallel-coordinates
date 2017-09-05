@@ -45,6 +45,7 @@
             "forceDateTimeDisplay": true,
             "tooltipStyle": "light"
           }'
+          chart-extents='{"TTXD1_13":["0",20],"TTXD1_12":[-45.96881104,13.16546631],"TTXD1_11":[-33.92840576,7.653076172],"TTXD1_10":[-25.62115479,21.9498291],"TTXD1_17":[-95.79375458,15.96057129],"TTXD1_16":[-95.79375458,8.642944336],"TTXD1_15":[-1049.801758,114.1303101],"TTXD1_14":[-31.18463135,16.30126953],"TTXD1_19":[-6.005004883,16.79980469],"TTXD1_18":[-9.343383789,19.34313965],"TTXD1_26":[-26.74279785,7.468505859],"TTXD1_9":[-95.79375458,7.447998047],"TTXD1_8":[-95.79375458,11.30529785],"TTXD1_7":[-95.79375458,10.87634277],"TTXD1_6":[-95.79375458,13.30334473],"TTXD1_5":[-8.141723633,22.57092285],"TTXD1_4":[-16.99157715,6.598876953],"TTXD1_3":[-21.11291504,16.3963623],"TTXD1_2":[-4.628204346,38.35150146],"TTXD1_1":[-9.776123047,18.99798584],"DWATT":[-8.835100174,216.9765015],"TTXD1_27":[-5.315795898,40.04058838],"TTXD1_24":[-26.83306885,19.48937988],"TTXD1_25":[-58.4041748,1.543830872],"TTXD1_22":[-450.5784302,10.82189941],"TTXD1_23":[-8.329589844,27.51208496],"TTXD1_20":[-2.724113464,24.04833984],"TTXD1_21":[-3.206016541,20.49499512],"TTXD1_28":[-13.21807861,22.13677979],"TTXD1_29":[-14.32019043,14.46655273],"TTXD1_31":[-7.965698242,28.99249268],"TTXD1_30":[-9.743103027,38.30419922]}'
           series-config='{
               "TTXD1_1":{
                 "yAxisUnit": "Hz",
@@ -94,36 +95,6 @@
         ]
 
       parall.set('dynamicMenuConfig', menuConfig);
-
-       btn.addEventListener('click', function() {
-        var newDiv = document.createElement('div'),
-            newChart;
-
-        for(var i=0; i<1; i++) {
-          newDiv.classList.add('divwrapper');
-
-          newChart = document.createElement('px-vis-parallel-coordinates');
-          newChart.generateAxesFromData = true;
-          newChart.chartData = chart.chartData;
-          newChart.seriesConfig = chart.seriesConfig;
-          newChart.height = chart.height;
-          newChart.margin = chart.margin;
-          newChart.width = chart.width;
-          newChart.skipKeys = chart.skipKeys;
-          newChart.seriesKey = chart.seriesKey;
-          newChart.selectedDomain = chart.selectedDomain
-          Polymer.dom(newDiv).appendChild(newChart);
-        }
-
-        Polymer.dom(bigdiv).appendChild(newDiv);
-      });
-
-      btnR.addEventListener('click', function() {
-        var wrappers = document.getElementsByClassName('divwrapper');
-        Polymer.dom(bigdiv).removeChild(wrappers[wrappers.length - 1]);
-
-      });
-
     });
   </script>
  </body>

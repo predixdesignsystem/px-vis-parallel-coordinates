@@ -6,8 +6,9 @@
 <link rel="import" href="../px-vis/px-vis-svg-canvas.html"/>
 <link rel="import" href="../px-vis/px-vis-line-svg.html"/>
 <link rel="import" href="../px-vis/px-vis-line-canvas.html"/>
+<link rel="import" href="../px-vis/px-vis-clip-path.html"/>
 <link rel="import" href="../px-vis/px-vis-multi-axis.html"/>
-<link rel="import" href="../px-vis/px-vis-multi-scale.html"/>
+<link rel="import" href="../px-vis/px-vis-behavior-scale-multi-axis.html"/>
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../px-vis/px-vis-toolbar.html"/>
@@ -137,19 +138,6 @@ Custom property | Description
             type="vertical"
             height="[[_verticalRegisterHeight]]">
           </px-vis-register>
-          <px-vis-multi-scale
-            id="multiScale"
-            width="[[width]]"
-            height="[[height]]"
-            margin="[[margin]]"
-            axes="[[axes]]"
-            dimensions="[[dimensions]]"
-            chart-data="[[chartData]]"
-            chart-extents="[[dataExtents]]"
-            x="{{x}}"
-            y="{{y}}"
-            domain-changed="{{domainChanged}}">
-          </px-vis-multi-scale>
           <div class="flex flex--col">
             <px-vis-toolbar
               id="toolbar"
@@ -179,6 +167,10 @@ Custom property | Description
               id="lineCanvas"
               gradient-line
               canvas-context="[[canvasContext]]"
+              clip-path
+              width="[[width]]"
+              height="[[height]]"
+              margin="[[margin]]"
               parallel-coordinates
               multi-path
               muted-opacity="0"
@@ -213,9 +205,19 @@ Custom property | Description
               domain-changed="[[domainChanged]]"
               selected-domain="[[selectedDomain]]"
               muted-series="[[_combinedMutedSeries]]"
-              prevent-initial-drawing="[[_preventInitialDrawing]]">
+              prevent-initial-drawing="[[_preventInitialDrawing]]"
+              clip-path="[[seriesClipPath]]">
             </px-vis-line-svg>
           </template>
+          <px-vis-clip-path
+            svg="[[layer.0]]"
+            x="[[x]]"
+            y="[[y]]"
+            width="[[width]]"
+            height="[[height]]"
+            margin="[[margin]]"
+            series-clip-path="{{seriesClipPath}}">
+          </px-vis-clip-path>
           <px-vis-multi-axis
             id="multiAxis"
             svg="[[layer.2]]"
@@ -326,7 +328,8 @@ Custom property | Description
               chart-data="[[chartData]]"
               generating-crosshair-data="[[generatingCrosshairData]]"
               crosshair-data="[[crosshairData]]"
-              default-empty-data="{{defaultEmptyData}}">
+              default-empty-data="{{defaultEmptyData}}"
+              clip-path="[[seriesClipPath]]">
             </px-vis-highlight-line>
           </template>
 
@@ -347,7 +350,8 @@ Custom property | Description
             series-id="[[seriesKey]]"
             category-key="[[categoryKey]]"
             categories="[[categories]]"
-            tooltip-data="[[tooltipData.dataset]]">
+            tooltip-data="[[tooltipData.dataset]]"
+            clip-path="[[seriesClipPath]]">
           </px-vis-cursor-line>
         </div>
       </div>
@@ -369,7 +373,9 @@ Custom property | Description
       PxVisBehavior.dataset,
       PxVisBehavior.dimensions,
       PxVisBehavior.commonMethods,
+      PxVisBehaviorScale.scaleMultiAxis,
       PxVisBehavior.chartExtents,
+      PxVisBehavior.dataExtents,
       PxVisBehavior.completeSeriesConfig,
       PxVisBehaviorD3.labelTypeSize,
       PxVisBehavior.mutedSeries,
@@ -621,6 +627,10 @@ Custom property | Description
       '_highlighterConfigChanged(highlighterConfig.*)',
       '_langChanged(language)',
 
+      '_setXScale(width,margin)',
+      '_setYScale(height,margin,axes)',
+      '_setDomain(x, y, dataExtents)',
+      '_updateDomain(axesDomain.*)',
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToSvg, _combinedMutedSeries)',
       '_renderHighlight(domainChanged, canvasLayers.highlighter, completeSeriesConfig.*, preventInitialDrawing)',
@@ -1075,7 +1085,7 @@ Custom property | Description
     _langChanged: function() {
 
       //recreate X and Y in case d3 locale changed
-      this.$.multiScale._recreateScales();
+      this._recreateScales();
     },
 
     // shim to maintain backwards compatibility

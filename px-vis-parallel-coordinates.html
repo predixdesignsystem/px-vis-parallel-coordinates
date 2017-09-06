@@ -1131,25 +1131,34 @@ Custom property | Description
      *
      */
     _calcTickVals: function() {
-      if(this._isObjEmpty(this.y) || this._doesObjHaveValues(this.axesDomain)) { return; }
+      if(this._isObjEmpty(this.y) ||
+          this._doesObjHaveValues(this.axesDomain) ||
+          this.commonAxis) { return; }
 
       var tickVals = {};
 
       if(this.matchTicks && !this.singleDomain) {
-        var keys = Object.keys(this.y);
+        var keys = Object.keys(this.y),
+            vals = [],
+            d,
+            min,
+            max,
+            diff,
+            key;
 
-        keys.forEach(function(key) {
-          var d = this.y[key].domain(),
-              min = Math.floor(d[0]/10)*10,
-              max = Math.ceil(d[1]/10)*10,
-              diff = (max - min) / 10,
-              vals = [];
+        for(var i=0; i < keys.length; i++) {
+          key = keys[i];
+          d = this.y[key].domain();
+          min = Math.floor(d[0]/10)*10;
+          max = Math.ceil(d[1]/10)*10;
+          diff = (max - min) / 10;
+          vals = [];
 
-          for(var i = 0; i < 11; i++){
-            vals.push(min + diff * i);
+          for(var j = 0; j < 11; j++){
+            vals.push(min + diff * j);
           }
           tickVals[key] = vals;
-        }.bind(this));
+        }
 
         this.set('gridTicks', tickVals[keys[0]]);
         this.set('gridAxis', this.y[keys[0]]);
@@ -1165,25 +1174,32 @@ Custom property | Description
 
       // if a zoom and we have not stored ticks, store them
       if(dims.length === 1 && !this._tickStack[dims[0]]) {
-        this._tickStack[dims[0]] = this.tickVals[dims[0]];
-        this.set('tickVals.' + dims[0], null);
+        this._saveTicks(dims[0]);
 
       // otherwise it is some kind of reset
       } else {
-        // Hi David
-        dims.forEach(function(dim) {
-          if(this._tickStack[dim]) {
-            var d = this.y[dim].domain(),
-                l = this._tickStack[dim].length - 1;
-
-            if(this._tickStack[dim][0] === d[0] && this._tickStack[dim][l] === d[1]) {
-              this.tickVals[dim] = this._tickStack[dim];
-              delete this._tickStack[dim];
-            }
-          }
-        }.bind(this));
+        for(var i = 0; i < dims.length; i++) {
+          this._checkIfTickVals(dims[i]);
+        }
       }
+    },
 
+    _saveTicks: function(dim) {
+      this._tickStack[dim] = this.tickVals[dim];
+      this.set('tickVals.' + dim, null);
+    },
+
+    _checkIfTickVals: function(dim) {
+      if(this._tickStack[dim]) {
+        var d = this.y[dim].domain(),
+            l = this._tickStack[dim].length - 1;
+
+        // are we resetting?
+        if(this._tickStack[dim][0] === d[0] && this._tickStack[dim][l] === d[1]) {
+          this.set('tickVals.' + dim, this._tickStack[dim]);
+          delete this._tickStack[dim];
+        }
+      }
     }
   });
 </script>

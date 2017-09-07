@@ -630,7 +630,6 @@ Custom property | Description
 
     observers: [
       '_generateDataExtents(dimensions, commonAxis, _haveChartData)',
-      '_setDomain(dataExtents, x, y)',
       '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorList.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
@@ -1132,8 +1131,13 @@ Custom property | Description
      */
     _calcTickVals: function() {
       if(this._isObjEmpty(this.y) ||
-          this._doesObjHaveValues(this.axesDomain) ||
-          this.commonAxis) { return; }
+          this._doesObjHaveValues(this.axesDomain)) { return; }
+
+      if(this.commonAxis) {
+        var key = Object.keys(this.y)[0];
+        this.set('gridAxis', this.y[key]);
+        return;
+      }
 
       var tickVals = {};
 

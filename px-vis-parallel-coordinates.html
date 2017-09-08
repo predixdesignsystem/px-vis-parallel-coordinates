@@ -930,23 +930,29 @@ Custom property | Description
      */
     _onIronResize: function() {
       this.debounce('ironresize', function() {
-         if(!this.preventResize) {
+        if(!this.preventResize) {
           var wrapperRect = this.$.wrapper.getBoundingClientRect(),
               axisRegisterWidth = this.hideAxisRegister ? 0 : this.$.axisRegister.getBoundingClientRect().width,
               categoryRegisterHeight = this._hideCategoryRegister ? 0 : this.$.categoryRegister.getBoundingClientRect().height,
               toolbarRect = this.$.toolbar.getBoundingClientRect(),
               widthDeduct = 0,
-              heightDeduct = 0;
+              heightDeduct = 0,
+              w,h;
 
           heightDeduct += categoryRegisterHeight;
           heightDeduct += toolbarRect.height;
           widthDeduct += axisRegisterWidth;
 
-          this.set('preventInitialDrawing', true);
-          this.set('width', Math.max(wrapperRect.width - widthDeduct, 0));
-          this.set('height', Math.max(wrapperRect.height - heightDeduct, 0));
-          this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);
-         }
+          w = Math.max(wrapperRect.width - widthDeduct, 0);
+          h = Math.max(wrapperRect.height - heightDeduct, 0);
+
+          if(this.width !== w && this.height !== h) {
+            this.set('preventInitialDrawing', true);
+            this.set('width', w);
+            this.set('height', h);
+            this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);
+          }
+        }
       }, this.debounceResizeTiming);
     },
     /**

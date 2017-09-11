@@ -1,3 +1,7 @@
+v2.2.1
+==================
+* Ensure that when a category is muted it won't show up on hover
+
 v2.2.0
 ==================
 * Added useCategoryInTooltip so that if a series has a category it will display it instead of the axis name. The name can be configured through `name` for the appropriate category in `seriesConfig` or will be created

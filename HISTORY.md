@@ -1,3 +1,7 @@
+v2.2.2
+==================
+* Ensure that hovering over an axes without data with tooltip and use category in tooltip enabled doesn't thow error
+
 v2.2.1
 ==================
 * Ensure that when a category is muted it won't show up on hover

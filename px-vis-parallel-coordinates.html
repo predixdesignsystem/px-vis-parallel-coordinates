@@ -1148,11 +1148,10 @@ Custom property | Description | Default
 
       if(this.showTooltip) {
 
-        if(this.useCategoryInTooltip) {
+        if(this.useCategoryInTooltip && d.dataset) {
 
           //try to fetch category name
-          var key = Object.keys(d.tooltipConfig)[0],
-              cat = d.dataset[this.categoryKey],
+          var cat = d.dataset[this.categoryKey],
               title;
 
           if(cat) {
@@ -1165,7 +1164,7 @@ Custom property | Description | Default
               title = this.categoryKey + ' - ' + cat;
             }
 
-            d.tooltipConfig[key].name = title;
+            d.tooltipConfig[Object.keys(d.tooltipConfig)[0]].name = title;
           }
         }
 

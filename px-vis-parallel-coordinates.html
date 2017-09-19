@@ -629,7 +629,6 @@ Custom property | Description
     },
 
     observers: [
-      '_generateDataExtents(dimensions, commonAxis, _haveChartData)',
       '_generateSeriesConfig(dimensions, seriesConfig, categories.*, seriesKey, _haveChartData, seriesColorList.*)',
       '_computeAxes(chartData.*,skipKeys.*)',
       '_computeDimensions(axes.*, mutedAxes.*)',
@@ -643,6 +642,8 @@ Custom property | Description
 
       '_setXScale(width,margin)',
       '_setYScale(height,margin,axes)',
+      '_generateDataExtents(dimensions, commonAxis, _haveChartData)', //NOTE: can remove this obs in polymer 2 since chartExtents undefined will still fire the obs
+      '_generateDataExtents(dimensions, commonAxis, _haveChartData, chartExtents)',
       '_setDomain(x, y, dataExtents)',
       '_updateDomain(axesDomain.*)',
       '_calcTickVals(domainChanged)',

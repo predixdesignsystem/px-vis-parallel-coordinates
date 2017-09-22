@@ -262,7 +262,7 @@ Custom property | Description
               tick-values="[[gridTicks]]"
               axis="[[gridAxis]]"
               margin="[[margin]]"
-              length="[[_calcGridWidth(domainChanged, dimensions)]]"
+              length="[[_calcGridWidth(domainChanged)]]"
               orientation="left"
               domain-changed="[[domainChanged]]">
             </px-vis-gridlines>
@@ -290,6 +290,8 @@ Custom property | Description
           <template id="highlighterDomIf" is="dom-if" if="[[!renderToSvg]]" restamp>
             <px-vis-highlight-line-canvas
               id="highlighterCanvas"
+              width="[[width]]"
+              height="[[height]]"
               margin="[[margin]]"
               canvas-context="[[canvasLayers.highlighter]]"
               canvas-layers-config="{{canvasLayersConfig}}"
@@ -962,6 +964,7 @@ Custom property | Description
      */
     _calcGridWidth: function() {
       if(this.domainChanged !== null) {
+        debugger
         // overall width minus the inset for the axes
         return this.width - this.x(this.dimensions[0]) * 2;
       }

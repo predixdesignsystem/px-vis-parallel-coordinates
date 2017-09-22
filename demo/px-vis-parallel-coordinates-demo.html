@@ -529,7 +529,8 @@
       '_appliedHeightChanged(appliedHeight)',
       '_widthChanged(props.width.value)',
       '_heightChanged(props.height.value)',
-      '_renderToCanvasChanged(props.renderToSvg.value, props.noCanvasProgressiveRendering.value)'
+      '_renderToCanvasChanged(props.renderToSvg.value, props.noCanvasProgressiveRendering.value)',
+      '_triggerCategories(props.categoryKey.value)'
     ],
 
     _preventResizeChanged: function() {
@@ -557,6 +558,11 @@
 
       this.set('props.progressiveRenderingPointsPerFrame.inputDisabled', this.props.renderToSvg.value || this.props.noCanvasProgressiveRendering.value);
       this.set('props.progressiveRenderingMinFrames.inputDisabled', this.props.renderToSvg.value ||this.props.noCanvasProgressiveRendering.value);
+    },
+    _triggerCategories: function() {
+      var c = this.$['parallel-coordinates'].categories;
+      this.$['parallel-coordinates'].categories = undefined;
+      this.$['parallel-coordinates'].set('categories', c);
     }
   });
 </script>

@@ -963,7 +963,7 @@ Custom property | Description
      *
      */
     _calcGridWidth: function() {
-      if(this.domainChanged !== null) {
+      if(this.domainChanged !== null && this.domainChanged !== undefined) {
         // overall width minus the inset for the axes
         return this.width - this.x(this.dimensions[0]) * 2;
       }
@@ -1043,7 +1043,7 @@ Custom property | Description
       this._buildAxisTooltipData(d.dataset, d.time);
       this._updateAxisConfig(d.color);
 
-      if(this.showTooltip) {
+      if(this.showTooltip && d.tooltipConfig) {
         this.set('mousePosition', d.dataPos);
         this.set('_tooltipSeriesConfig', d.tooltipConfig);
       }
@@ -1145,6 +1145,9 @@ Custom property | Description
       if(this.commonAxis) {
         var key = Object.keys(this.y)[0];
         this.set('gridAxis', this.y[key]);
+        this.set('tickVals', null);
+        this.set('gridTicks', null);
+
         return;
       }
 

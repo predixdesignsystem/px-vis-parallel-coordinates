@@ -16,14 +16,29 @@
     <!-- px-theme is needed for WCT to run without errors -->
     <link rel="import" href="../../px-theme/px-theme-styles.html">
     <style include="px-theme-styles" is="custom-style"></style>
-    <!-- This script link will contain the generated script for basic wct test cases -->
-    <script src="px-vis-parallel-coordinates-base-tests.js"></script>
     <!-- This script link will contain the generated script stub for custom, developer-added test cases -->
     <script src="px-vis-parallel-coordinates-custom-tests.js"></script>
   </head>
 
   <body>
     <h3>Web Component Test : Fixture for px-vis-parallel-coordinates</h3>
-    <px-vis-parallel-coordinates id="px_vis_parallel_coordinates_1"></px-vis-parallel-coordinates>
+    <template is="dom-bind">
+    <div style="width: 900px; height:460px">
+      <px-vis-parallel-coordinates
+        id="basic"
+        prevent-resize>
+      </px-vis-parallel-coordinates>
+    </div>
+
+    <div style="width: 900px; height:460px">
+      <px-vis-parallel-coordinates
+        id="fromData"
+        generate-axes-from-data
+        prevent-resize
+        width="900"
+        height="460">
+      </px-vis-parallel-coordinates>
+    </div>
+    </template>
   </body>
 </html>

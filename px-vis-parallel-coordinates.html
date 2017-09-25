@@ -646,6 +646,7 @@ Custom property | Description
 
       '_setXScale(width,margin)',
       '_setYScale(height,margin,axes)',
+      // FIXME since this doesnt fire on chartData, chartData must be updated before axes or else it doesnt work...
       '_generateDataExtents(dimensions, commonAxis, _haveChartData)', //NOTE: can remove this obs in polymer 2 since chartExtents undefined will still fire the obs
       '_generateDataExtents(dimensions, commonAxis, _haveChartData, chartExtents)',
       '_setDomain(x, y, dataExtents)',

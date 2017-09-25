@@ -354,7 +354,8 @@ Custom property | Description
             category-key="[[categoryKey]]"
             categories="[[categories]]"
             tooltip-data="[[tooltipData.dataset]]"
-            clip-path="[[seriesClipPath]]">
+            clip-path="[[seriesClipPath]]"
+            muted-series="[[_combinedMutedSeries]]">
           </px-vis-cursor-line>
         </div>
       </div>
@@ -419,7 +420,8 @@ Custom property | Description
       PxVisBehavior.axesDomain,
       PxVisBehaviorChart.multiAxisMuting,
       PxVisBehaviorChart.multiAxisZoom,
-      PxVisBehavior.brushDomains
+      PxVisBehavior.brushDomains,
+      PxVisBehaviorChart.useCategoryInTooltip
     ],
 
     /**
@@ -1044,6 +1046,27 @@ Custom property | Description
       this._updateAxisConfig(d.color);
 
       if(this.showTooltip && d.tooltipConfig) {
+        if(this.useCategoryInTooltip) {
+
+          //try to fetch category name
+          var key = Object.keys(d.tooltipConfig)[0],
+              cat = d.dataset[this.categoryKey],
+              title;
+
+          if(cat) {
+
+            // we have a category, use name if it has been defined,
+            // create one otherwise
+            if(this.completeSeriesConfig[cat] && this.completeSeriesConfig[cat].name.toString() !== cat) {
+              title = this.completeSeriesConfig[cat].name;
+            } else {
+              title = this.categoryKey + ' - ' + cat;
+            }
+
+            d.tooltipConfig[key].name = title;
+          }
+        }
+
         this.set('mousePosition', d.dataPos);
         this.set('_tooltipSeriesConfig', d.tooltipConfig);
       }

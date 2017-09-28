@@ -1,3 +1,8 @@
+v3.2.0
+==================
+* Adding ability to zoom on axis
+  * zooming sets axesDomain
+
 v3.1.2
 ==================
 * Updating demo dynamic menu config

@@ -1,3 +1,7 @@
+v3.2.1
+==================
+* fix wrong condition on resize that could prevent drawing
+
 v3.2.0
 ==================
 * Adding ability to zoom on axis

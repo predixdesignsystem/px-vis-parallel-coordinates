@@ -952,7 +952,7 @@ Custom property | Description
           w = Math.max(wrapperRect.width - widthDeduct, 0);
           h = Math.max(wrapperRect.height - heightDeduct, 0);
 
-          if(this.width !== w && this.height !== h) {
+          if(this.width !== w || this.height !== h) {
             this.set('preventInitialDrawing', true);
             this.set('width', w);
             this.set('height', h);

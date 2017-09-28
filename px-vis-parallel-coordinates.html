@@ -649,12 +649,13 @@ Custom property | Description
       '_setXScale(width,margin)',
       '_setYScale(height,margin,axes)',
       // FIXME since this doesnt fire on chartData, chartData must be updated before axes or else it doesnt work...
-      '_generateDataExtents(dimensions, commonAxis, _haveChartData, mutedSeriesCategories.*)', //NOTE: can remove this obs in polymer 2 since chartExtents undefined will still fire the obs
-      '_generateDataExtents(dimensions, commonAxis, _haveChartData, chartExtents, mutedSeriesCategories.*)',
+      '_generateDataExtents(dimensions, commonAxis, _haveChartData)', //NOTE: can remove this obs in polymer 2 since chartExtents undefined will still fire the obs
+      '_generateDataExtents(dimensions, commonAxis, _haveChartData, chartExtents)',
       '_setDomain(x, y, dataExtents)',
       '_updateDomain(axesDomain.*)',
       '_calcTickVals(domainChanged)',
       '_updateTicks(axesDomain.*)',
+      '_mutedCategoriesChanged(mutedSeriesCategories.*, hardMute)',
 
       //renderer
       '_renderChartData(domainChanged, canvasContext, chartData.*, mutedSeries.*, completeSeriesConfig.*, preventInitialDrawing, renderToSvg, _combinedMutedSeries)',
@@ -954,7 +955,7 @@ Custom property | Description
           w = Math.max(wrapperRect.width - widthDeduct, 0);
           h = Math.max(wrapperRect.height - heightDeduct, 0);
 
-          if(this.width !== w && this.height !== h) {
+          if(this.width !== w || this.height !== h) {
             this.set('preventInitialDrawing', true);
             this.set('width', w);
             this.set('height', h);
@@ -1241,6 +1242,12 @@ Custom property | Description
           this.set('tickVals.' + dim, this._tickStack[dim]);
           delete this._tickStack[dim];
         }
+      }
+    },
+
+    _mutedCategoriesChanged: function() {
+      if(this.hardMute === true) {
+        this._generateDataExtents();
       }
     }
   });

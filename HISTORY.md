@@ -1,3 +1,7 @@
+v3.3.0
+==================
+* Added hard-mute
+
 v3.2.1
 ==================
 * fix wrong condition on resize that could prevent drawing

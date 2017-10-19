@@ -1,3 +1,7 @@
+v3.3.1
+==================
+* adjust default crosshair tooltip mouse pos from chart
+
 v3.3.0
 ==================
 * Added hard-mute

@@ -1045,11 +1045,11 @@ Custom property | Description
      },
 
      _calcTooltip: function(evt) {
+
        var d = evt.detail;
 
       //Our d.series only has one series since each axis only knows about itself.
       // So, to display in register, create a copy with data for the associated axes
-
       this._buildAxisTooltipData(d.dataset, d.time);
       this._updateAxisConfig(d.color);
 
@@ -1073,6 +1073,12 @@ Custom property | Description
 
             d.tooltipConfig[key].name = title;
           }
+        }
+
+        if(d.adjustPosition) {
+          var bound = this.renderToSvg ? this.svg.getBoundingClientRect() : this.canvasContext.canvas.getBoundingClientRect();
+          d.dataPos[0] += bound.left;
+          d.dataPos[1] += bound.top;
         }
 
         this.set('mousePosition', d.dataPos);

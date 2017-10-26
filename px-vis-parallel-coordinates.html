@@ -160,6 +160,16 @@ Custom property | Description
               width="[[width]]"
               height="[[height]]"
               margin="[[margin]]">
+                <px-vis-annotations
+                    slot="4"
+                    svg="[[svg]]"
+                    x="[[x]]"
+                    y="[[y]]"
+                    margin="[[margin]]"
+                    domain-changed="[[domainChanged]]"
+                    complete-series-config="[[completeSeriesConfig]]"
+                    annotation-data="[[annotationData]]">
+                </px-vis-annotations>
             </px-vis-svg-canvas>
           </div>
           <template is="dom-if" if="[[!renderToSvg]]" restamp>
@@ -428,7 +438,8 @@ Custom property | Description
       PxVisBehaviorChart.multiAxisMuting,
       PxVisBehaviorChart.multiAxisZoom,
       PxVisBehavior.brushDomains,
-      PxVisBehaviorChart.useCategoryInTooltip
+      PxVisBehaviorChart.useCategoryInTooltip,
+      PxVisBehavior.annotationData
     ],
 
     /**

@@ -1,3 +1,7 @@
+v3.3.2
+==================
+* add device flags
+
 v3.3.1
 ==================
 * adjust default crosshair tooltip mouse pos from chart

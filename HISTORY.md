@@ -1,3 +1,7 @@
+v3.3.3
+==================
+* enable clipPath on canvas highlighter
+
 v3.3.2
 ==================
 * add device flags

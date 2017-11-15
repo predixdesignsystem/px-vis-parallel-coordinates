@@ -845,6 +845,8 @@ Custom property | Description
         } else {
           this.set('dimensions',this.axes);
         }
+      } else if(this.dimensions && this.dimensions.length > 0) {
+        this.set('dimensions',[]);
       }
     },
 

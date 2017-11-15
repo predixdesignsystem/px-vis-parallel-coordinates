@@ -1,4 +1,4 @@
-
+v3.3.4
 ==================
 * Added check in dimensions for empty axes
 

@@ -1,3 +1,7 @@
+
+==================
+* Added check in dimensions for empty axes
+
 v3.3.3
 ==================
 * enable clipPath on canvas highlighter

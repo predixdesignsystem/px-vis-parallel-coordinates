@@ -479,7 +479,7 @@ function runCustomTests() {
       assert.deepEqual(basic.y.y1.domain(), [0,20]);
       assert.deepEqual(basic.y.y2.domain(), [0,28]);
       assert.deepEqual(basic.y.y3.domain(), [5,75]);
-      assert.deepEqual(basic.y.y4.domain(), [35,36]);
+      assert.deepEqual(basic.y.y4.domain(), [34.5,35.5]);
     });
 
     test('basic axisGroups', function() {
@@ -525,7 +525,7 @@ function runCustomTests() {
       assert.deepEqual(basic.y.y1.domain(), [0,20]);
       assert.deepEqual(basic.y.y2.domain(), [0,28]);
       assert.deepEqual(basic.y.y3.domain(), [5,75]);
-      assert.deepEqual(basic.y.y4.domain(), [35,36]);
+      assert.deepEqual(basic.y.y4.domain(), [34.5,35.5]);
     });
 
     test('basic axisGroups', function() {
@@ -573,7 +573,7 @@ function runCustomTests() {
       assert.deepEqual(basic.y.y1.domain(), [0,20]);
       assert.deepEqual(basic.y.y2.domain(), [0,28]);
       assert.deepEqual(basic.y.y3.domain(), [5,75]);
-      assert.deepEqual(basic.y.y4.domain(), [35,36]);
+      assert.deepEqual(basic.y.y4.domain(), [34.5,35.5]);
     });
 
     test('basic axisGroups', function() {
@@ -657,7 +657,7 @@ function runCustomTests() {
       assert.deepEqual(basic.y.y1.domain(), [0,20]);
       assert.isUndefined(basic.y.y2);
       assert.deepEqual(basic.y.y3.domain(), [5,75]);
-      assert.deepEqual(basic.y.y4.domain(), [35,36]);
+      assert.deepEqual(basic.y.y4.domain(), [34.5,35.5]);
     });
 
     test('basic axisGroups', function() {
@@ -886,7 +886,7 @@ function runCustomTests() {
       assert.deepEqual(fromData.y.y1.domain(), [0,20]);
       assert.deepEqual(fromData.y.y2.domain(), [0,28]);
       assert.deepEqual(fromData.y.y3.domain(), [5,75]);
-      assert.deepEqual(fromData.y.y4.domain(), [35,36]);
+      assert.deepEqual(fromData.y.y4.domain(), [34.5,35.5]);
     });
 
     test('fromData axisGroups', function() {
@@ -957,7 +957,7 @@ function runCustomTests() {
       assert.deepEqual(fromData.y.y1.domain(), [0,20]);
       assert.isUndefined(fromData.y.y2);
       assert.isUndefined(fromData.y.y3);
-      assert.deepEqual(fromData.y.y4.domain(), [35,36]);
+      assert.deepEqual(fromData.y.y4.domain(), [34.5,35.5]);
     });
 
     test('fromData axisGroups', function() {

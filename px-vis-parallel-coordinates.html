@@ -376,6 +376,7 @@ Custom property | Description
     is: 'px-vis-parallel-coordinates',
 
     behaviors: [
+      PxVisBehavior.observerCheck,
       PxVisBehavior.sizing,
       PxVisBehaviorD3.svg,
       PxVisBehaviorD3.svgLower,
@@ -712,17 +713,32 @@ Custom property | Description
     },
 
     _doWeHaveChartData: function(cD) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
       if(this.chartData && this.chartData.length > 0) {
         return true;
       }
     },
    _tooltipConfigChanged: function(conf) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
     },
     _toolbarConfigChanged: function(conf) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       this._applyConfigToElement(this.toolbarConfig, this.$.toolbar);
     },
     _highlighterConfigChanged: function(conf) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       var elem = this.renderToSvg ? this.$$('#highlighter') : this.$$('#highlighterCanvas');
       if(elem && this._doesObjHaveValues(this.highlighterConfig)) {
         this._applyConfigToElement(this.highlighterConfig, elem);
@@ -733,6 +749,10 @@ Custom property | Description
      *
      */
     _calcTitleLocation: function(svg, height, width, displayedValues) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       this.debounce('calcTitleLocation', function() {
 
         var textWidth = 0,
@@ -799,6 +819,10 @@ Custom property | Description
      *
      */
     _computeAxes: function(cD, sK) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       if(this._doesObjHaveValues(this.chartData)) {
         var axes;
         // add series and category key to skipKeys
@@ -835,6 +859,10 @@ Custom property | Description
      *
      */
     _computeDimensions: function(axes, muted) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       if(this._doesObjHaveValues(this.axes)) {
         if(this._doesObjHaveValues(this.mutedAxes)) {
           var dims = this.axes.filter(function(d) {
@@ -855,6 +883,9 @@ Custom property | Description
      *
      */
       _generateSeriesConfig: function() {
+        if(this.hasUndefinedArguments(arguments)) {
+          return;
+        }
 
         this.debounce('_generateSeriesConfig', function() {
 
@@ -917,6 +948,10 @@ Custom property | Description
      *
      */
     _setMutedSeriesDomain: function(sd) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       this.debounce('muted_series_domain',function() {
         if(!sd || !sd.length) { return; }
 
@@ -1122,6 +1157,9 @@ Custom property | Description
     },
 
     _calcShowFakeGrid: function() {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
       var draw = false;
       if(this._haveChartData && Object.keys(this.y).length > 0) {
         var k = Object.keys(this.y)[0];
@@ -1149,6 +1187,9 @@ Custom property | Description
       }
     },
     _langChanged: function() {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
 
       //recreate X and Y in case d3 locale changed
       this._recreateScales();
@@ -1157,6 +1198,9 @@ Custom property | Description
     // shim to maintain backwards compatibility
     // REMOVE on next Major
     _setTimeDomain: function() {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
       if(this.selectedDomain && this.selectedDomain.x && this.selectedDomain.x.length) {
         this.set('timeDomain', this.selectedDomain);
       }
@@ -1179,6 +1223,10 @@ Custom property | Description
      *
      */
     _calcTickVals: function() {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
       if(this._isObjEmpty(this.y) ||
           this._doesObjHaveValues(this.axesDomain)) { return; }
 
@@ -1224,6 +1272,9 @@ Custom property | Description
     },
 
     _updateTicks: function(axesDomain) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
       if(!this.matchTicks || this.commonAxis) { return; }
 
       var dims = Object.keys(axesDomain.value);
@@ -1259,6 +1310,9 @@ Custom property | Description
     },
 
     _mutedCategoriesChanged: function() {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
       if(this.hardMute === true) {
         this._generateDataExtents();
       }

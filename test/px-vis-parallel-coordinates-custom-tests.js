@@ -123,7 +123,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 4);
     });
 
@@ -236,7 +236,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 3);
     });
 
@@ -286,7 +286,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 4);
     });
 
@@ -331,7 +331,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 3);
     });
 
@@ -378,7 +378,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 4);
     });
 
@@ -483,7 +483,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 5);
     });
 
@@ -529,7 +529,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 3);
     });
 
@@ -577,7 +577,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 5);
     });
 
@@ -661,7 +661,7 @@ function runCustomTests() {
     });
 
     test('basic axisGroups', function() {
-      var ia = basic.querySelectorAll('px-vis-interactive-axis');
+      var ia =  Polymer.dom(Polymer.dom(basic.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 4);
     });
   }); //suite
@@ -802,7 +802,7 @@ function runCustomTests() {
     });
 
     test('fromData axisGroups', function() {
-      var ia = fromData.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(fromData.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 4);
     });
 
@@ -890,7 +890,7 @@ function runCustomTests() {
     });
 
     test('fromData axisGroups', function() {
-      var ia = fromData.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(fromData.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 5);
     });
   }); //suite
@@ -961,7 +961,7 @@ function runCustomTests() {
     });
 
     test('fromData axisGroups', function() {
-      var ia = fromData.querySelectorAll('px-vis-interactive-axis');
+      var ia = Polymer.dom(Polymer.dom(fromData.root).querySelector('px-vis-multi-axis').root).querySelectorAll('px-vis-interactive-axis');
       assert.equal(ia.length, 3);
     });
   }); //suite

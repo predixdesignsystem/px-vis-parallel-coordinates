@@ -21,8 +21,8 @@
     "*.png"
   ],
   "dependencies": {
-    "polymer": "^1.9.0",
-    "px-vis": "^4.0.0",
+    "polymer": "#1.9 - 2",
+    "px-vis": "#migrate",
     "iron-resizable-behavior": "^2.0.0",
     "app-localize-behavior": "^2.0.0"
   },
@@ -32,14 +32,28 @@
     "px-normalize-design": "^1.0.0",
     "px-box-sizing-design": "^1.0.0",
     "px-flexbox-design": "^1.0.0",
-    "px-demo": "^2.0.0",
+    "px-demo": "^3.0.0",
     "px-demo-data": "~0.0.20",
-    "px-rangepicker": "^2.0.0",
+
     "iron-ajax": "^2.0.0",
-    "promise-polyfill": "polymerlabs/promise-polyfill#^2.0.1"
+    "promise-polyfill": "polymerlabs/promise-polyfill#^2.0.1",
+    "web-component-tester": "^6.3.0"
   },
   "resolutions": {
-    "webcomponentsjs": "^0.7.24",
+    "webcomponentsjs": "^1.0.0",
     "promise-polyfill": "^2.0.0"
+  },
+  "variants": {
+    "1.x":{
+      "dependencies": {
+        "polymer": "^1.9.0"
+      },
+      "devDependencies": {
+        "web-component-tester": "^5.0.0"
+      },
+      "resolutions": {
+        "webcomponentsjs": "^0.7.24"
+      }
+    }
   }
 }

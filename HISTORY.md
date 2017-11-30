@@ -1,3 +1,7 @@
+==================
+* Moved tooltip position calculations to here instead of axis interaction space
+* Added scroll listeners to get sizing for said calculation in tooltipSizing behavior
+
 v3.4.0
 ==================
 * Polymer 1.x/2.x hybrid element support

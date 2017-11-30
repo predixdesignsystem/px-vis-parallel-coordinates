@@ -1,3 +1,7 @@
+==================
+* Moved tooltip position calculations to here instead of axis interaction space
+* Added scroll listeners to get sizing for said calculation in tooltipSizing behavior
+
 v3.3.4
 ==================
 * Added check in dimensions for empty axes

@@ -182,7 +182,7 @@ Custom property | Description
               x="[[x]]"
               y="[[y]]"
               domain-changed="[[domainChanged]]"
-              selected-domain="[[selectedDomain]]"
+              time-domain="[[timeDomain]]"
               muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-canvas>
@@ -203,7 +203,7 @@ Custom property | Description
               x="[[x]]"
               y="[[y]]"
               domain-changed="[[domainChanged]]"
-              selected-domain="[[selectedDomain]]"
+              time-domain="[[timeDomain]]"
               muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]"
               clip-path="[[seriesClipPath]]">
@@ -256,7 +256,8 @@ Custom property | Description
             category-key="[[categoryKey]]"
             prevent-initial-drawing="[[preventInitialDrawing]]"
             action-config="[[actionConfig]]"
-            interaction-space-config="[[interactionSpaceConfig]]">
+            interaction-space-config="[[interactionSpaceConfig]]"
+            time-domain="[[timeDomain]]">
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines

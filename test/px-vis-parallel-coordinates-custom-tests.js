@@ -44,20 +44,28 @@ function runCustomTests() {
         w = 500,
         h = 460;
 
-      basic = document.getElementById('basic');
+      async.until(
+        ()=> {
+          return basic = document.getElementById('basic');;
+        },
+        (callback)=> {
+          setTimeout(callback, 50);
+        },
+        ()=> {
+          var rendered = function() {
+            basic.removeEventListener('px-vis-chart-canvas-rendering-ended', rendered);
+            setTimeout(function() { done(); }, 2000);
+          };
 
-      var rendered = function() {
-        basic.removeEventListener('px-vis-chart-canvas-rendering-ended', rendered);
-        setTimeout(function() { done(); }, 2000);
-      };
+          basic.addEventListener('px-vis-chart-canvas-rendering-ended', rendered);
 
-      basic.addEventListener('px-vis-chart-canvas-rendering-ended', rendered);
-
-      basic.set('width',w);
-      basic.set('height',h);
-      basic.set('seriesKey',"x");
-      basic.set('axes',dim);
-      basic.set('chartData',d);
+          basic.set('width',w);
+          basic.set('height',h);
+          basic.set('seriesKey',"x");
+          basic.set('axes',dim);
+          basic.set('chartData',d);
+        }
+      );
     });
 
     test('basic fixture is created', function() {

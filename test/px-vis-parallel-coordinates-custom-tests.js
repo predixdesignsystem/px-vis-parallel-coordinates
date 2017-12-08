@@ -199,9 +199,9 @@ function runCustomTests() {
       var muted = {
         'y': true
       };
-
-      delete basic.seriesConfig.x;
       basic = document.getElementById('basic');
+      delete basic.seriesConfig.x;
+
       basic.set('mutedAxes',muted);
 
       setTimeout(function(){done()},250);

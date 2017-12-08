@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "polymer": "#1.9 - 2",
-    "px-vis": "^4.0.0",
+    "px-vis": "^4.5.0",
     "iron-resizable-behavior": "^2.0.0",
     "app-localize-behavior": "^2.0.0"
   },
@@ -33,7 +33,7 @@
     "px-box-sizing-design": "^1.0.0",
     "px-flexbox-design": "^1.0.0",
     "px-demo": "^3.0.0",
-    "px-demo-data": "~0.0.20",
+    "px-demo-data": "^1.0.0",
     "px-rangepicker": "^2.0.0",
     "iron-ajax": "^2.0.0",
     "promise-polyfill": "polymerlabs/promise-polyfill#^2.0.1",

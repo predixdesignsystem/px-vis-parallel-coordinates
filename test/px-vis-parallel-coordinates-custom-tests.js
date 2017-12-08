@@ -5,7 +5,7 @@ document.addEventListener("WebComponentsReady", function() {
 // This is the wrapper for custom tests, called upon web components ready state
 function runCustomTests() {
   suite('px-vis-parallel-coordindates basic setup works', function() {
-    var basic = document.getElementById('basic');
+    var basic;
 
     suiteSetup(function(done){
       var d = [{
@@ -43,6 +43,8 @@ function runCustomTests() {
         dim = ['y','y1','y2','y3'],
         w = 500,
         h = 460;
+
+      basic = document.getElementById('basic');
 
       var rendered = function() {
         basic.removeEventListener('px-vis-chart-canvas-rendering-ended', rendered);
@@ -134,7 +136,7 @@ function runCustomTests() {
   }); //suite
 
   suite('px-vis-parallel-coordindates with seriesConfig', function() {
-    var basic = document.getElementById('basic');
+    var basic;
 
     suiteSetup(function(done){
       var seriesConfig = {
@@ -153,7 +155,7 @@ function runCustomTests() {
             "yAxisUnit": "bofs"
           }
         };
-
+        basic = document.getElementById('basic');
       basic.set('seriesConfig',seriesConfig);
 
       setTimeout(function(){ done(); }, 500);
@@ -199,7 +201,7 @@ function runCustomTests() {
       };
 
       delete basic.seriesConfig.x;
-
+      basic = document.getElementById('basic');
       basic.set('mutedAxes',muted);
 
       setTimeout(function(){done()},250);
@@ -249,7 +251,7 @@ function runCustomTests() {
       var muted = {
         'y': false
       };
-
+      basic = document.getElementById('basic');
       basic.set('mutedAxes',muted);
 
       setTimeout(function(){done()},250);
@@ -296,6 +298,7 @@ function runCustomTests() {
     var basic = document.getElementById('basic');
 
     suiteSetup(function(done){
+      basic = document.getElementById('basic');
       basic.addToMutedAxes('y1');
       setTimeout(function(){done()},250);
     });
@@ -341,7 +344,7 @@ function runCustomTests() {
     var basic = document.getElementById('basic');
 
     suiteSetup(function(done){
-
+      basic = document.getElementById('basic');
       basic.removeFromMutedAxes('y1');
 
       setTimeout(function(){done()},250);
@@ -388,7 +391,7 @@ function runCustomTests() {
     var basic = document.getElementById('basic');
 
     suiteSetup(function(done){
-
+      basic = document.getElementById('basic');
       basic.set('chartExtents', {"y": [-20,50]});
 
       setTimeout(function(){done()},250);
@@ -448,6 +451,8 @@ function runCustomTests() {
         ],
         dim = ['y','y1','y2','y3','y4'];
 
+      basic = document.getElementById('basic');
+
       basic.set('chartData',d);
       basic.set('axes',dim);
 
@@ -493,6 +498,7 @@ function runCustomTests() {
     var basic = document.getElementById('basic');
 
     suiteSetup(function(done){
+      basic = document.getElementById('basic');
       basic.addToMutedAxes(['y1','y3']);
       setTimeout(function(){done()},250);
     });
@@ -539,7 +545,7 @@ function runCustomTests() {
     var basic = document.getElementById('basic');
 
     suiteSetup(function(done){
-
+      basic = document.getElementById('basic');
       basic.removeFromMutedAxes(['y1','y3']);
 
       setTimeout(function(){done()},250);
@@ -625,7 +631,7 @@ function runCustomTests() {
         basic.removeEventListener('px-vis-chart-canvas-rendering-ended', rendered);
         done();
       };
-
+      basic = document.getElementById('basic');
       basic.addEventListener('px-vis-chart-canvas-rendering-ended', rendered);
 
       basic.set('chartData',d);
@@ -728,6 +734,7 @@ function runCustomTests() {
         setTimeout(function() { done(); }, 2000);
 
       };
+      fromData = document.getElementById('fromData');
 
       fromData.addEventListener('px-vis-chart-canvas-rendering-ended', rendered);
 
@@ -855,6 +862,7 @@ function runCustomTests() {
         ],
         dim = ['y','y1','y2','y3','y4'];
 
+      fromData = document.getElementById('fromData');
       fromData.set('chartData',d);
 
       setTimeout(function(){done()}, 1000);
@@ -926,7 +934,7 @@ function runCustomTests() {
             'y4': 35
           }
         ];
-
+        fromData = document.getElementById('fromData');
       fromData.set('chartData',d);
 
       setTimeout(function() { done(); }, 1000);

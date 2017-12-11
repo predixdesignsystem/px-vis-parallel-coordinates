@@ -1,6 +1,6 @@
 <!-- Common imports -->
 <link rel="import" href="../../polymer/polymer.html" />
-<link rel="import" href="../../promise-polyfill/promise-polyfill-lite.html">
+<link rel="import" href="../../promise-polyfill/promise-polyfill-lite.html" />
 <link rel="import" href="../../px-icon-set/px-icon-set.html" />
 
 <!-- Common demo imports -->
@@ -13,7 +13,7 @@
 <link rel="import" href="../../px-demo/px-demo-component-snippet.html" />
 <link rel="import" href="../../px-demo/px-demo-code-editor.html" />
 <link rel="import" href="../../px-demo/css/px-demo-styles.html" />
-<link rel="import" href="../../px-theme/px-theme-styles.html">
+<link rel="import" href="../../px-theme/px-theme-styles.html" />
 <custom-style>
   <style include="px-theme-styles" is="custom-style"></style>
 </custom-style>
@@ -526,6 +526,10 @@
           }
         ],
         inputType: 'code:JSON'
+      },
+      noCanvasProgressiveRendering: {
+        type: Boolean,
+        defaultValue: false
       }
     },
 

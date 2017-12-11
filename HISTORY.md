@@ -1,3 +1,7 @@
+v3.4.0
+==================
+* Polymer 1.x/2.x hybrid element support
+
 v3.3.4
 ==================
 * Added check in dimensions for empty axes

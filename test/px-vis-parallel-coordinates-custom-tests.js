@@ -64,7 +64,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y2','y3']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y2','y3']);
@@ -161,7 +161,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(255,0,0)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(255,0,0)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y2','y3']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y2','y3']);
@@ -215,7 +215,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y1','y2','y3']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y1','y2','y3']);
@@ -265,7 +265,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y2','y3']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y2','y3']);
@@ -310,7 +310,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y2','y3']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y2','y3']);
@@ -357,7 +357,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y2','y3']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y2','y3']);
@@ -456,7 +456,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y2','y3','y4']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y2','y3','y4']);
@@ -507,7 +507,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y2','y4']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y2','y4']);
@@ -555,7 +555,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y2','y3','y4']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y2','y3','y4']);
@@ -634,7 +634,7 @@ function runCustomTests() {
 
     test('basic completeSeriesConfig', function() {
       assert.isObject(basic.completeSeriesConfig.x);
-      assert.equal(basic.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(basic.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(basic.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(basic.completeSeriesConfig.x.x, ['y','y1','y3','y4']);
       assert.deepEqual(basic.completeSeriesConfig.x.y, ['y','y1','y3','y4']);
@@ -743,7 +743,7 @@ function runCustomTests() {
 
     test('fromData completeSeriesConfig', function() {
       assert.isObject(fromData.completeSeriesConfig.x);
-      assert.equal(fromData.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(fromData.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(fromData.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(fromData.completeSeriesConfig.x.x, ['y','y1','y2','y3']);
       assert.deepEqual(fromData.completeSeriesConfig.x.y, ['y','y1','y2','y3']);
@@ -863,7 +863,7 @@ function runCustomTests() {
 
     test('fromData completeSeriesConfig', function() {
       assert.isObject(fromData.completeSeriesConfig.x);
-      assert.equal(fromData.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(fromData.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(fromData.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(fromData.completeSeriesConfig.x.x, ['y','y1','y2','y3','y4']);
       assert.deepEqual(fromData.completeSeriesConfig.x.y, ['y','y1','y2','y3','y4']);
@@ -934,7 +934,7 @@ function runCustomTests() {
 
     test('fromData completeSeriesConfig', function() {
       assert.isObject(fromData.completeSeriesConfig.x);
-      assert.equal(fromData.completeSeriesConfig.x.color, 'rgb(90,191,248)');
+      assert.equal(fromData.completeSeriesConfig.x.color.split(' ').join(''), 'rgb(90,191,248)');
       assert.equal(fromData.completeSeriesConfig.x.name, 'x');
       assert.deepEqual(fromData.completeSeriesConfig.x.x, ['y','y1','y4']);
       assert.deepEqual(fromData.completeSeriesConfig.x.y, ['y','y1','y4']);

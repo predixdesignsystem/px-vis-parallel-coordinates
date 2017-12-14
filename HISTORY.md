@@ -3,6 +3,7 @@
 * Added listeners to get sizing for said calculation in tooltipSizing behavior
 * Updated selectedDomain to timeDomain
 * Added timeDomain to multi axis
+* Added lasso functionality
 
 v3.4.0
 ==================

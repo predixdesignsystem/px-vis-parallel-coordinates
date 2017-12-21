@@ -160,6 +160,17 @@ Custom property | Description
               width="[[width]]"
               height="[[height]]"
               margin="[[margin]]">
+                <px-vis-annotations
+                    slot="4"
+                    svg="[[svg]]"
+                    x="[[x]]"
+                    y="[[y]]"
+                    margin="[[margin]]"
+                    domain-changed="[[domainChanged]]"
+                    complete-series-config="[[completeSeriesConfig]]"
+                    annotation-data="[[annotationData]]"
+                    show-strong-icon="[[showStrongIcon]]">
+                </px-vis-annotations>
             </px-vis-svg-canvas>
           </div>
           <template is="dom-if" if="[[!renderToSvg]]" restamp>
@@ -182,7 +193,7 @@ Custom property | Description
               x="[[x]]"
               y="[[y]]"
               domain-changed="[[domainChanged]]"
-              selected-domain="[[selectedDomain]]"
+              time-domain="[[timeDomain]]"
               muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]">
             </px-vis-line-canvas>
@@ -203,7 +214,7 @@ Custom property | Description
               x="[[x]]"
               y="[[y]]"
               domain-changed="[[domainChanged]]"
-              selected-domain="[[selectedDomain]]"
+              time-domain="[[timeDomain]]"
               muted-series="[[_combinedMutedSeries]]"
               prevent-initial-drawing="[[_preventInitialDrawing]]"
               clip-path="[[seriesClipPath]]">
@@ -256,7 +267,8 @@ Custom property | Description
             category-key="[[categoryKey]]"
             prevent-initial-drawing="[[preventInitialDrawing]]"
             action-config="[[actionConfig]]"
-            interaction-space-config="[[interactionSpaceConfig]]">
+            interaction-space-config="[[interactionSpaceConfig]]"
+            time-domain="[[timeDomain]]">
           </px-vis-multi-axis>
           <template is="dom-if" if="[[matchTicks]]">
             <px-vis-gridlines
@@ -413,7 +425,6 @@ Custom property | Description
       PxVisBehaviorChart.categoryAndAxisRegisterConfigs,
       PxVisBehavior.dynamicMenuConfig,
       PxVisBehaviorChart.actionRequest,
-      PxVisBehaviorChart.showTooltip,
       PxVisBehaviorChart.toolbarSubConfig,
       PxVisBehaviorChart.chartToolbarConfig,
       PxVisBehaviorChart.sizeVerticalRegister,
@@ -429,7 +440,11 @@ Custom property | Description
       PxVisBehaviorChart.multiAxisMuting,
       PxVisBehaviorChart.multiAxisZoom,
       PxVisBehavior.brushDomains,
-      PxVisBehaviorChart.useCategoryInTooltip
+      PxVisBehaviorChart.useCategoryInTooltip,
+      PxVisBehaviorChart.tooltipSizing,
+      PxVisBehavior.annotationData,
+      PxVisBehaviorChart.interactionSpaceConfig,
+      PxVisBehaviorChart.multiAxisLasso
     ],
 
     /**
@@ -689,7 +704,6 @@ Custom property | Description
     },
 
     attached: function() {
-
       // we need this in attached as well in case the chart is
       // moved in the dom or reused
       this.listen(this.$.highlighterDomIf, 'dom-change', '_highlighterConfigChanged');
@@ -697,7 +711,7 @@ Custom property | Description
       //we probably are re-attaching. if nothing has changed (neither series nor size) we might
       //still need to kick this in order for preventInitialDrawing to go false
       if(this.displayedValues) {
-        window.requestAnimationFrame(function(){
+        window.requestAnimationFrame(function() {
           this._calcTitleLocation();
         }.bind(this));
       }
@@ -1003,6 +1017,7 @@ Custom property | Description
         }
       }, this.debounceResizeTiming);
     },
+
     /**
      * Returns the width for the gridlines
      *
@@ -1089,35 +1104,7 @@ Custom property | Description
       this._updateAxisConfig(d.color);
 
       if(this.showTooltip && d.tooltipConfig) {
-        if(this.useCategoryInTooltip) {
-
-          //try to fetch category name
-          var key = Object.keys(d.tooltipConfig)[0],
-              cat = d.dataset[this.categoryKey],
-              title;
-
-          if(cat) {
-
-            // we have a category, use name if it has been defined,
-            // create one otherwise
-            if(this.completeSeriesConfig[cat] && this.completeSeriesConfig[cat].name.toString() !== cat) {
-              title = this.completeSeriesConfig[cat].name;
-            } else {
-              title = this.categoryKey + ' - ' + cat;
-            }
-
-            d.tooltipConfig[key].name = title;
-          }
-        }
-
-        if(d.adjustPosition) {
-          var bound = this.renderToSvg ? this.svg.getBoundingClientRect() : this.canvasContext.canvas.getBoundingClientRect();
-          d.dataPos[0] += bound.left;
-          d.dataPos[1] += bound.top;
-        }
-
-        this.set('mousePosition', d.dataPos);
-        this.set('_tooltipSeriesConfig', d.tooltipConfig);
+        this._doTooltipCalcs(d);
       }
 
       this.set('tooltipData', d);
@@ -1131,11 +1118,49 @@ Custom property | Description
 
       //hide tooltip
       this.set('tooltipData', evt.detail);
-      this.set('mousePosition', evt.detail.dataPos);
+      this.set('mousePosition', [-1000,-1000]);
 
       //clear axis register
       this._buildAxisTooltipData();
       this._updateAxisConfig();
+    },
+
+    _doTooltipCalcs: function(d) {
+      if(this.useCategoryInTooltip) {
+        //try to fetch category name
+        var key = Object.keys(d.tooltipConfig)[0],
+            cat = d.dataset[this.categoryKey],
+            title;
+
+        if(cat) {
+          // we have a category, use name if it has been defined,
+          // create one otherwise
+          if(this.completeSeriesConfig[cat] && this.completeSeriesConfig[cat].name.toString() !== cat) {
+            title = this.completeSeriesConfig[cat].name;
+          } else {
+            title = this.categoryKey + ' - ' + cat;
+          }
+
+          d.tooltipConfig[key].name = title;
+        }
+      }
+
+      if(!this._svgClientRect || !this._canvasClientRect) {
+        this._getImmediateSizing();
+      }
+
+      //calc the screen positions for the tooltip
+      var screenX = this.x(d.axis) + this._svgClientRect.left + this._winX + 15,
+          screenY = this.y[d.axis](d.yVal) + this.margin.top + this._svgClientRect.top + this._winY;
+
+      if(d.adjustPosition) {
+        var bound = this.renderToSvg ? this._svgClientRect : this._canvasClientRect;
+        screenX += bound.left;
+        screenY += bound.top;
+      }
+
+      this.set('mousePosition', [screenX, screenY]);
+      this.set('_tooltipSeriesConfig', d.tooltipConfig);
     },
 
     _calcCrosshair: function(evt) {

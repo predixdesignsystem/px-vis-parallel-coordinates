@@ -136,7 +136,9 @@ Custom property | Description
             complete-series-config="[[_axisRegisterConfig]]"
             muted-series="[[mutedAxes]]"
             type="vertical"
-            height="[[_verticalRegisterHeight]]">
+            height="[[_verticalRegisterHeight]]"
+            display-y-values-only
+            icon-color="[[_axisRegisterIconColor]]">
           </px-vis-register>
           <div class="flex flex--col">
             <px-vis-toolbar
@@ -652,6 +654,11 @@ Custom property | Description
         value: function() {
           return {};
         }
+      },
+
+      _axisRegisterIconColor: {
+        type: String,
+        value: 'transparent'
       }
     },
 
@@ -1094,7 +1101,7 @@ Custom property | Description
       //Our d.series only has one series since each axis only knows about itself.
       // So, to display in register, create a copy with data for the associated axes
       this._buildAxisTooltipData(d.dataset, d.time);
-      this._updateAxisConfig(d.color);
+      this.set('_axisRegisterIconColor', d.color);
 
       if(this.showTooltip && d.tooltipConfig) {
         this._doTooltipCalcs(d);
@@ -1115,7 +1122,8 @@ Custom property | Description
 
       //clear axis register
       this._buildAxisTooltipData();
-      this._updateAxisConfig();
+      this.set('_axisRegisterIconColor', 'transparent');
+
     },
 
     _doTooltipCalcs: function(d) {

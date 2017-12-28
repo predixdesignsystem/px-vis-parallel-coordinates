@@ -138,7 +138,10 @@ Custom property | Description
             type="vertical"
             height="[[_verticalRegisterHeight]]"
             display-y-values-only
-            icon-color="[[_axisRegisterIconColor]]">
+            icon-color="[[_axisRegisterIconColor]]"
+            current-page="[[_registerCurrentPage]]"
+            total-pages="[[_registerTotalPages]]"
+            display-page-arrows="[[_registerDisplayPageArrows]]">
           </px-vis-register>
           <div class="flex flex--col">
             <px-vis-toolbar
@@ -163,15 +166,15 @@ Custom property | Description
               height="[[height]]"
               margin="[[margin]]">
                 <px-vis-annotations
-                    slot="4"
-                    svg="[[svg]]"
-                    x="[[x]]"
-                    y="[[y]]"
-                    margin="[[margin]]"
-                    domain-changed="[[domainChanged]]"
-                    complete-series-config="[[completeSeriesConfig]]"
-                    annotation-data="[[annotationData]]"
-                    show-strong-icon="[[showStrongIcon]]">
+                  slot="4"
+                  svg="[[svg]]"
+                  x="[[x]]"
+                  y="[[y]]"
+                  margin="[[margin]]"
+                  domain-changed="[[domainChanged]]"
+                  complete-series-config="[[completeSeriesConfig]]"
+                  annotation-data="[[annotationData]]"
+                  show-strong-icon="[[showStrongIcon]]">
                 </px-vis-annotations>
             </px-vis-svg-canvas>
           </div>
@@ -446,7 +449,9 @@ Custom property | Description
       PxVisBehaviorChart.tooltipSizing,
       PxVisBehavior.annotationData,
       PxVisBehaviorChart.interactionSpaceConfig,
-      PxVisBehaviorChart.multiAxisLasso
+      PxVisBehaviorChart.multiAxisLasso,
+      PxVisBehaviorChart.registerConfigs,
+      PxVisBehaviorChart.registerPagnationMultiAxis
     ],
 
     /**
@@ -669,6 +674,7 @@ Custom property | Description
       '_setMutedSeriesDomain(timeDomain.x)',
       '_calcTitleLocation(svg, height, width, displayedValues.*)',
 
+      '_registerConfigChanged(registerConfig)',
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
       '_highlighterConfigChanged(highlighterConfig.*)',
@@ -740,6 +746,13 @@ Custom property | Description
       }
 
       this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
+    },
+    _registerConfigChanged: function(conf) {
+      if(this.hasUndefinedArguments(arguments)) {
+        return;
+      }
+
+      this._applyConfigToElement(this.registerConfig, this.$.axisRegister);
     },
     _toolbarConfigChanged: function(conf) {
       if(this.hasUndefinedArguments(arguments)) {
@@ -1096,7 +1109,7 @@ Custom property | Description
 
      _calcTooltip: function(evt) {
 
-       var d = evt.detail;
+      var d = evt.detail;
 
       //Our d.series only has one series since each axis only knows about itself.
       // So, to display in register, create a copy with data for the associated axes
@@ -1108,6 +1121,7 @@ Custom property | Description
       }
 
       this.set('tooltipData', d);
+      this._resetPages();
     },
 
     _hideTooltip: function(evt) {
@@ -1124,6 +1138,7 @@ Custom property | Description
       this._buildAxisTooltipData();
       this.set('_axisRegisterIconColor', 'transparent');
 
+      this._resetPages();
     },
 
     _doTooltipCalcs: function(d) {

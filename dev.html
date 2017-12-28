@@ -62,6 +62,9 @@
           "forceDateTimeDisplay": true,
           "tooltipStyle": "light"
         }'
+        register-config='{
+          "forceDateTimeDisplay": true
+        }'
         series-config='{
             "TTXD1_1":{
               "yAxisUnit": "Hz",
@@ -123,7 +126,7 @@
         <br />
         <br />
         <br />
-        <div id="wrap" style="height:300px">
+        <!-- <div id="wrap" style="height:300px">
           <px-vis-parallel-coordinates
             id="chart"
             width="1300"
@@ -222,7 +225,7 @@
         skip-keys='{"TimeStamp":true}'
         series-key="TimeStamp"
         axes='["TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5"]'
-      ></px-vis-parallel-coordinates>
+      ></px-vis-parallel-coordinates> -->
 
       <iron-ajax
         url="../px-demo-data/demo-data/apm/timeseries_demo.json"

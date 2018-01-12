@@ -1,3 +1,7 @@
+v3.5.1
+==================
+* fix demo code editor
+
 v3.5.0
 ==================
 * Moved tooltip position calculations to here instead of axis interaction space

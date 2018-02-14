@@ -1,3 +1,7 @@
+v3.5.2
+==================
+* Fix demo for IE
+
 v3.5.1
 ==================
 * fix demo code editor

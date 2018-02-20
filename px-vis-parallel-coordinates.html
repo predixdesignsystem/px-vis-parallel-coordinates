@@ -450,7 +450,6 @@ Custom property | Description
       PxVisBehavior.annotationData,
       PxVisBehaviorChart.interactionSpaceConfig,
       PxVisBehaviorChart.multiAxisLasso,
-      PxVisBehaviorChart.registerConfigs,
       PxVisBehaviorChart.registerPagnationMultiAxis
     ],
 
@@ -674,7 +673,6 @@ Custom property | Description
       '_setMutedSeriesDomain(timeDomain.x)',
       '_calcTitleLocation(svg, height, width, displayedValues.*)',
 
-      '_registerConfigChanged(registerConfig)',
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
       '_highlighterConfigChanged(highlighterConfig.*)',
@@ -746,13 +744,6 @@ Custom property | Description
       }
 
       this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
-    },
-    _registerConfigChanged: function(conf) {
-      if(this.hasUndefinedArguments(arguments)) {
-        return;
-      }
-
-      this._applyConfigToElement(this.registerConfig, this.$.axisRegister);
     },
     _toolbarConfigChanged: function(conf) {
       if(this.hasUndefinedArguments(arguments)) {

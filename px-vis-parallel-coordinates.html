@@ -303,7 +303,8 @@ Custom property | Description
             mouse-position="[[mousePosition]]"
             chart-data="[[chartData]]"
             tooltip-data="[[tooltipData]]"
-            complete-series-config="[[_tooltipSeriesConfig]]">
+            complete-series-config="[[_tooltipSeriesConfig]]"
+            display-y-values-only>
           </px-vis-tooltip>
 
           <template id="highlighterDomIf" is="dom-if" if="[[!renderToSvg]]" restamp on-dom-change="_highlighterConfigChanged">

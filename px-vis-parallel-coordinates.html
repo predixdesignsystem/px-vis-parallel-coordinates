@@ -123,6 +123,7 @@ Custom property | Description
           tooltip-data="[[_categoryRegisterTooltipData]]"
           complete-series-config="[[_categoryRegisterConfig]]"
           muted-series="{{mutedSeriesCategories}}"
+          hide-pagination-controls
           type="horizontal">
         </px-vis-register>
         <div class="flex flex--row--rev">
@@ -136,7 +137,6 @@ Custom property | Description
             complete-series-config="[[_axisRegisterConfig]]"
             muted-series="[[mutedAxes]]"
             type="vertical"
-            height="[[_verticalRegisterHeight]]"
             display-y-values-only
             icon-color="[[_axisRegisterIconColor]]"
             current-page="[[_registerCurrentPage]]"
@@ -432,7 +432,6 @@ Custom property | Description
       PxVisBehaviorChart.actionRequest,
       PxVisBehaviorChart.toolbarSubConfig,
       PxVisBehaviorChart.chartToolbarConfig,
-      PxVisBehaviorChart.sizeVerticalRegister,
       PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData,
       Polymer.AppLocalizeBehavior,
@@ -726,8 +725,6 @@ Custom property | Description
 
     ready: function() {
       this.set('numberOfLayers', 3);
-      this.set('_verticalRegisterDrawingCanvasId', 'svgCanvas');
-      this.set('_verticalRegisterHeightDeductions', ['toolbar']);
     },
 
     _doWeHaveChartData: function(cD) {
@@ -1016,7 +1013,6 @@ Custom property | Description
             this.set('preventInitialDrawing', true);
             this.set('width', w);
             this.set('height', h);
-            this._computeVerticalRegisterHeight([toolbarRect.height]);
           }
         }
       }, this.debounceResizeTiming);
@@ -1037,7 +1033,7 @@ Custom property | Description
      *
      */
     _calcGridSvg: function() {
-      if(this.domainChanged !== null) {
+      if(this.domainChanged !== null && this.svgLower) {
         // create a g and move it so it lines up with the first axis
         var currentG = this.svgLower.select('.gridGroup');
 

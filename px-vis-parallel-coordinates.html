@@ -1024,7 +1024,7 @@ Custom property | Description
      *
      */
     _calcGridWidth: function() {
-      if(this.domainChanged && this.domainChanged) {
+      if(this.domainChanged) {
         // overall width minus the inset for the axes
         return this.width - this.x(this.dimensions[0]) * 2;
       }
@@ -1034,7 +1034,7 @@ Custom property | Description
      *
      */
     _calcGridSvg: function() {
-      if(this.domainChanged !== null && this.svgLower) {
+      if(this.domainChanged && this.svgLower) {
         // create a g and move it so it lines up with the first axis
         var currentG = this.svgLower.select('.gridGroup');
 

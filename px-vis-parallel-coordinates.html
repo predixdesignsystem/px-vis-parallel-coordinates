@@ -123,6 +123,7 @@ Custom property | Description
           tooltip-data="[[_categoryRegisterTooltipData]]"
           complete-series-config="[[_categoryRegisterConfig]]"
           muted-series="{{mutedSeriesCategories}}"
+          hide-pagination-controls
           type="horizontal">
         </px-vis-register>
         <div class="flex flex--row--rev">
@@ -136,7 +137,6 @@ Custom property | Description
             complete-series-config="[[_axisRegisterConfig]]"
             muted-series="[[mutedAxes]]"
             type="vertical"
-            height="[[_verticalRegisterHeight]]"
             display-y-values-only
             icon-color="[[_axisRegisterIconColor]]"
             current-page="[[_registerCurrentPage]]"
@@ -303,7 +303,8 @@ Custom property | Description
             mouse-position="[[mousePosition]]"
             chart-data="[[chartData]]"
             tooltip-data="[[tooltipData]]"
-            complete-series-config="[[_tooltipSeriesConfig]]">
+            complete-series-config="[[_tooltipSeriesConfig]]"
+            display-y-values-only>
           </px-vis-tooltip>
 
           <template id="highlighterDomIf" is="dom-if" if="[[!renderToSvg]]" restamp on-dom-change="_highlighterConfigChanged">
@@ -432,7 +433,6 @@ Custom property | Description
       PxVisBehaviorChart.actionRequest,
       PxVisBehaviorChart.toolbarSubConfig,
       PxVisBehaviorChart.chartToolbarConfig,
-      PxVisBehaviorChart.sizeVerticalRegister,
       PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData,
       Polymer.AppLocalizeBehavior,
@@ -450,7 +450,6 @@ Custom property | Description
       PxVisBehavior.annotationData,
       PxVisBehaviorChart.interactionSpaceConfig,
       PxVisBehaviorChart.multiAxisLasso,
-      PxVisBehaviorChart.registerConfigs,
       PxVisBehaviorChart.registerPagnationMultiAxis
     ],
 
@@ -674,7 +673,6 @@ Custom property | Description
       '_setMutedSeriesDomain(timeDomain.x)',
       '_calcTitleLocation(svg, height, width, displayedValues.*)',
 
-      '_registerConfigChanged(registerConfig)',
       '_tooltipConfigChanged(tooltipConfig)',
       '_toolbarConfigChanged(toolbarConfig)',
       '_highlighterConfigChanged(highlighterConfig.*)',
@@ -728,8 +726,6 @@ Custom property | Description
 
     ready: function() {
       this.set('numberOfLayers', 3);
-      this.set('_verticalRegisterDrawingCanvasId', 'svgCanvas');
-      this.set('_verticalRegisterHeightDeductions', ['toolbar']);
     },
 
     _doWeHaveChartData: function(cD) {
@@ -746,13 +742,6 @@ Custom property | Description
       }
 
       this._applyConfigToElement(this.tooltipConfig, this.$.tooltip);
-    },
-    _registerConfigChanged: function(conf) {
-      if(this.hasUndefinedArguments(arguments)) {
-        return;
-      }
-
-      this._applyConfigToElement(this.registerConfig, this.$.axisRegister);
     },
     _toolbarConfigChanged: function(conf) {
       if(this.hasUndefinedArguments(arguments)) {
@@ -1025,7 +1014,6 @@ Custom property | Description
             this.set('preventInitialDrawing', true);
             this.set('width', w);
             this.set('height', h);
-            this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);
           }
         }
       }, this.debounceResizeTiming);
@@ -1046,7 +1034,7 @@ Custom property | Description
      *
      */
     _calcGridSvg: function() {
-      if(this.domainChanged) {
+      if(this.domainChanged !== null && this.svgLower) {
         // create a g and move it so it lines up with the first axis
         var currentG = this.svgLower.select('.gridGroup');
 

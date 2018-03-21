@@ -16,6 +16,9 @@
 <link rel="import" href="../px-vis/px-vis-cursor-line.html"/>
 <link rel="import" href="../px-vis/px-vis-highlight-line.html"/>
 <link rel="import" href="../px-vis/px-vis-highlight-line-canvas.html"/>
+<link rel="import" href="../px-vis/px-vis-central-tooltip-content.html"/>
+<link rel="import" href="../px-tooltip/px-tooltip.html"/>
+
 <link rel="import" href="css/px-vis-parallel-coordinates-styles.html">
 
 <!--
@@ -385,6 +388,23 @@ Custom property | Description
         </div>
       </div>
     </div>
+
+    <px-tooltip
+      id="centralTooltip"
+      smart-orientation
+      ignore-target-events
+      orientation="[[tooltipOrientation]]">
+      <px-vis-central-tooltip-content
+        resources="[[resources]]"
+        use-key-if-missing="[[useKeyIfMissing]]"
+        language="[[language]]"
+        first-date-time-format="[[firstDateTimeFormat]]"
+        second-date-time-format="[[secondDateTimeFormat]]"
+        separator="[[separator]]"
+        timezone="[[timezone]]">
+      </px-vis-central-tooltip-content>
+    </px-tooltip>
+
   </template>
 </dom-module>
 
@@ -451,7 +471,9 @@ Custom property | Description
       PxVisBehaviorChart.interactionSpaceConfig,
       PxVisBehaviorChart.multiAxisLasso,
       PxVisBehaviorChart.sizeVerticalRegister,
-      PxVisBehaviorChart.registerPagnationMultiAxis
+      PxVisBehaviorChart.registerPagnationMultiAxis,
+      PxVisBehaviorChart.centralTooltip
+
     ],
 
     /**

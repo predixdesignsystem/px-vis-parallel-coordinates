@@ -169,6 +169,7 @@ Custom property | Description
               height="[[height]]"
               margin="[[margin]]">
                 <px-vis-annotations
+                  id="annotations"
                   slot="4"
                   svg="[[svg]]"
                   x="[[x]]"
@@ -730,7 +731,8 @@ Custom property | Description
       'px-vis-axis-interaction-space-reset-crosshair': '_hideCrosshair',
       'px-vis-muted-series-updated': '_muteUnmute',
       "px-data-vis-colors-applied" : '_generateSeriesConfig',
-      'px-vis-axis-interaction-space-extents-data': '_setExtentsData'
+      'px-vis-axis-interaction-space-extents-data': '_setExtentsData',
+      'px-vis-drag-dimension-swapped' : '_axisDragged'
     },
 
     detached: function() {
@@ -1372,6 +1374,10 @@ Custom property | Description
       if(this.hardMute === true) {
         this._generateDataExtents();
       }
-    }
+    },
+
+    _axisDragged: function() {
+      this.$.annotations.set('forceRecalc', !this.$.annotations.forceRecalc);
+    },
   });
 </script>

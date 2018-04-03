@@ -62,27 +62,20 @@
           "forceDateTimeDisplay": true,
           "tooltipStyle": "light"
         }'
+        axis-register-config='{
+          "forceDateTimeDisplay": true
+        }'
         series-config='{
-            "TTXD1_1":{
-              "yAxisUnit": "Hz",
-              "title": "verylongdfsdfname"
-            },
-            "TTXD1_12":{
-              "yAxisUnit": "F",
-              "title": "stodfsdfsdfsdfut"
-            },
-            "TTXD1_11":{
-              "yAxisUnit": "F",
-              "title": "stodfsdfssadsddfsdfut"
+            "TimeStamp": {
+              "color": ["red","blue"]
             }
           }'
       ></px-vis-parallel-coordinates>
       <div style="height:100px">
         <px-vis-chart-navigator
             id="navigator"
-            prevent-resize
+            color-gradient='["red", "blue"]'
             render-to-canvas
-            width="1280"
             height="100"
             x-axis-type="time"
             y-axis-type="linear"
@@ -112,7 +105,7 @@
         </div>
 
 
-        <br />
+        <!-- <br />
         <br />
         <br />
         <h3>Parallel Coordinates demonstrating responsive behavior</h3>
@@ -222,7 +215,7 @@
         skip-keys='{"TimeStamp":true}'
         series-key="TimeStamp"
         axes='["TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5"]'
-      ></px-vis-parallel-coordinates>
+      ></px-vis-parallel-coordinates> -->
 
       <iron-ajax
         url="../px-demo-data/demo-data/apm/timeseries_demo.json"

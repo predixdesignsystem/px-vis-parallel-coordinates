@@ -12,11 +12,13 @@
 <link rel="import" href="../px-vis/px-vis-gridlines.html"/>
 <link rel="import" href="../px-vis/px-vis-tooltip.html"/>
 <link rel="import" href="../px-vis/px-vis-toolbar.html"/>
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
 <link rel="import" href="../app-localize-behavior/app-localize-behavior.html"/>
 <link rel="import" href="../px-vis/px-vis-cursor-line.html"/>
 <link rel="import" href="../px-vis/px-vis-highlight-line.html"/>
 <link rel="import" href="../px-vis/px-vis-highlight-line-canvas.html"/>
+<link rel="import" href="../px-vis/px-vis-central-tooltip-content.html"/>
+<link rel="import" href="../px-tooltip/px-tooltip.html"/>
+
 <link rel="import" href="css/px-vis-parallel-coordinates-styles.html">
 
 <!--
@@ -123,6 +125,7 @@ Custom property | Description
           tooltip-data="[[_categoryRegisterTooltipData]]"
           complete-series-config="[[_categoryRegisterConfig]]"
           muted-series="{{mutedSeriesCategories}}"
+          hide-pagination-controls
           type="horizontal">
         </px-vis-register>
         <div class="flex flex--row--rev">
@@ -136,7 +139,12 @@ Custom property | Description
             complete-series-config="[[_axisRegisterConfig]]"
             muted-series="[[mutedAxes]]"
             type="vertical"
-            height="[[_verticalRegisterHeight]]">
+            height="[[_registerHeight]]"
+            display-y-values-only
+            icon-color="[[_axisRegisterIconColor]]"
+            current-page="[[_registerCurrentPage]]"
+            total-pages="[[_registerTotalPages]]"
+            display-page-arrows="[[_registerDisplayPageArrows]]">
           </px-vis-register>
           <div class="flex flex--col">
             <px-vis-toolbar
@@ -161,15 +169,16 @@ Custom property | Description
               height="[[height]]"
               margin="[[margin]]">
                 <px-vis-annotations
-                    slot="4"
-                    svg="[[svg]]"
-                    x="[[x]]"
-                    y="[[y]]"
-                    margin="[[margin]]"
-                    domain-changed="[[domainChanged]]"
-                    complete-series-config="[[completeSeriesConfig]]"
-                    annotation-data="[[annotationData]]"
-                    show-strong-icon="[[showStrongIcon]]">
+                  id="annotations"
+                  slot="4"
+                  svg="[[svg]]"
+                  x="[[x]]"
+                  y="[[y]]"
+                  margin="[[margin]]"
+                  domain-changed="[[domainChanged]]"
+                  complete-series-config="[[completeSeriesConfig]]"
+                  annotation-data="[[annotationData]]"
+                  show-strong-icon="[[showStrongIcon]]">
                 </px-vis-annotations>
             </px-vis-svg-canvas>
           </div>
@@ -298,7 +307,8 @@ Custom property | Description
             mouse-position="[[mousePosition]]"
             chart-data="[[chartData]]"
             tooltip-data="[[tooltipData]]"
-            complete-series-config="[[_tooltipSeriesConfig]]">
+            complete-series-config="[[_tooltipSeriesConfig]]"
+            display-y-values-only>
           </px-vis-tooltip>
 
           <template id="highlighterDomIf" is="dom-if" if="[[!renderToSvg]]" restamp on-dom-change="_highlighterConfigChanged">
@@ -367,18 +377,36 @@ Custom property | Description
             parallel-coordinates
             dimensions="[[dimensions]]"
             domain-changed="[[domainChanged]]"
-            time-data="[[seriesKey]]"
+            series-id="[[seriesKey]]"
+            time-domain="[[timeDomain]]"
             complete-series-config="[[completeSeriesConfig]]"
             series-id="[[seriesKey]]"
             category-key="[[categoryKey]]"
             categories="[[categories]]"
-            tooltip-data="[[tooltipData.dataset]]"
+            tooltip-data="[[_axisRegisterTooltipData.dataset]]"
             clip-path="[[seriesClipPath]]"
             muted-series="[[_combinedMutedSeries]]">
           </px-vis-cursor-line>
         </div>
       </div>
     </div>
+
+    <px-tooltip
+      id="centralTooltip"
+      smart-orientation
+      ignore-target-events
+      orientation="[[tooltipOrientation]]">
+      <px-vis-central-tooltip-content
+        resources="[[resources]]"
+        use-key-if-missing="[[useKeyIfMissing]]"
+        language="[[language]]"
+        first-date-time-format="[[firstDateTimeFormat]]"
+        second-date-time-format="[[secondDateTimeFormat]]"
+        separator="[[separator]]"
+        timezone="[[timezone]]">
+      </px-vis-central-tooltip-content>
+    </px-tooltip>
+
   </template>
 </dom-module>
 
@@ -427,7 +455,6 @@ Custom property | Description
       PxVisBehaviorChart.actionRequest,
       PxVisBehaviorChart.toolbarSubConfig,
       PxVisBehaviorChart.chartToolbarConfig,
-      PxVisBehaviorChart.sizeVerticalRegister,
       PxVisBehaviorChart.highlighterConfigs,
       PxVisBehavior.crosshairData,
       Polymer.AppLocalizeBehavior,
@@ -444,7 +471,11 @@ Custom property | Description
       PxVisBehaviorChart.tooltipSizing,
       PxVisBehavior.annotationData,
       PxVisBehaviorChart.interactionSpaceConfig,
-      PxVisBehaviorChart.multiAxisLasso
+      PxVisBehaviorChart.multiAxisLasso,
+      PxVisBehaviorChart.sizeVerticalRegister,
+      PxVisBehaviorChart.registerPagnationMultiAxis,
+      PxVisBehaviorChart.centralTooltip
+
     ],
 
     /**
@@ -652,6 +683,11 @@ Custom property | Description
         value: function() {
           return {};
         }
+      },
+
+      _axisRegisterIconColor: {
+        type: String,
+        value: 'transparent'
       }
     },
 
@@ -683,19 +719,20 @@ Custom property | Description
       '_renderHighlight(domainChanged, canvasLayers.highlighter, completeSeriesConfig.*, preventInitialDrawing)',
 
       // temporary shim to maintain backawards compatibility
-      '_setTimeDomain(selectedDomain.*)'
-
+      '_setTimeDomain(selectedDomain.*)',
+      //similar but not temporary
+      '_setTimeKey(seriesKey)'
     ],
 
     listeners: {
-      'iron-resize': '_onIronResize',
       'px-vis-axis-interaction-space-tooltip-data': '_calcTooltip',
       'px-vis-axis-interaction-space-reset-tooltip': '_hideTooltip',
       'px-vis-axis-interaction-space-crosshair-data': '_calcCrosshair',
       'px-vis-axis-interaction-space-reset-crosshair': '_hideCrosshair',
       'px-vis-muted-series-updated': '_muteUnmute',
       "px-data-vis-colors-applied" : '_generateSeriesConfig',
-      'px-vis-axis-interaction-space-extents-data': '_setExtentsData'
+      'px-vis-axis-interaction-space-extents-data': '_setExtentsData',
+      'px-vis-drag-dimension-swapped' : '_axisDragged'
     },
 
     detached: function() {
@@ -983,32 +1020,32 @@ Custom property | Description
      *
      * Can also be called manually to force a chart resize to container.
      */
-    _onIronResize: function() {
-      this.debounce('ironresize', function() {
-        if(!this.preventResize) {
-          var wrapperRect = this.$.wrapper.getBoundingClientRect(),
-              axisRegisterWidth = this.hideAxisRegister ? 0 : this.$.axisRegister.getBoundingClientRect().width,
-              categoryRegisterHeight = this._hideCategoryRegister ? 0 : this.$.categoryRegister.getBoundingClientRect().height,
-              toolbarRect = this.$.toolbar.getBoundingClientRect(),
-              widthDeduct = 0,
-              heightDeduct = 0,
-              w,h;
+    _resizeCalculations: function() {
 
-          heightDeduct += categoryRegisterHeight;
-          heightDeduct += toolbarRect.height;
-          widthDeduct += axisRegisterWidth;
+      var wrapperRect = this.$.wrapper.getBoundingClientRect(),
+          axisRegisterWidth = this.hideAxisRegister ? 0 : this.$.axisRegister.getBoundingClientRect().width,
+          categoryRegisterHeight = this._hideCategoryRegister ? 0 : this.$.categoryRegister.getBoundingClientRect().height,
+          toolbarRect = this.$.toolbar.getBoundingClientRect(),
+          widthDeduct = 0,
+          heightDeduct = 0,
+          w,h;
 
-          w = Math.max(wrapperRect.width - widthDeduct, 0);
-          h = Math.max(wrapperRect.height - heightDeduct, 0);
+      heightDeduct += categoryRegisterHeight;
+      heightDeduct += toolbarRect.height;
+      widthDeduct += axisRegisterWidth;
 
-          if(this.width !== w || this.height !== h) {
-            this.set('preventInitialDrawing', true);
-            this.set('width', w);
-            this.set('height', h);
-            this._computeVerticalRegisterHeight([toolbarRect.height, categoryRegisterHeight]);
-          }
-        }
-      }, this.debounceResizeTiming);
+      w = Math.max(wrapperRect.width - widthDeduct, 0);
+      h = Math.max(wrapperRect.height - heightDeduct, 0);
+
+      if(this.width !== w) {
+        this.set('preventInitialDrawing', true);
+        this.set('width', w);
+      }
+      if(this.height !== h) {
+        this.set('preventInitialDrawing', true);
+        this.set('height', h);
+        this._computeVerticalRegisterHeight([toolbarRect.height]);
+      }
     },
 
     /**
@@ -1016,7 +1053,7 @@ Custom property | Description
      *
      */
     _calcGridWidth: function() {
-      if(this.domainChanged !== null && this.domainChanged !== undefined) {
+      if(this.domainChanged) {
         // overall width minus the inset for the axes
         return this.width - this.x(this.dimensions[0]) * 2;
       }
@@ -1026,7 +1063,7 @@ Custom property | Description
      *
      */
     _calcGridSvg: function() {
-      if(this.domainChanged !== null) {
+      if(this.domainChanged && this.svgLower) {
         // create a g and move it so it lines up with the first axis
         var currentG = this.svgLower.select('.gridGroup');
 
@@ -1089,18 +1126,19 @@ Custom property | Description
 
      _calcTooltip: function(evt) {
 
-       var d = evt.detail;
+      var d = evt.detail;
 
       //Our d.series only has one series since each axis only knows about itself.
       // So, to display in register, create a copy with data for the associated axes
       this._buildAxisTooltipData(d.dataset, d.time);
-      this._updateAxisConfig(d.color);
+      this.set('_axisRegisterIconColor', d.color);
 
       if(this.showTooltip && d.tooltipConfig) {
         this._doTooltipCalcs(d);
       }
 
       this.set('tooltipData', d);
+      this._resetPages();
     },
 
     _hideTooltip: function(evt) {
@@ -1115,7 +1153,9 @@ Custom property | Description
 
       //clear axis register
       this._buildAxisTooltipData();
-      this._updateAxisConfig();
+      this.set('_axisRegisterIconColor', 'transparent');
+
+      this._resetPages();
     },
 
     _doTooltipCalcs: function(d) {
@@ -1207,11 +1247,14 @@ Custom property | Description
     // shim to maintain backwards compatibility
     // REMOVE on next Major
     _setTimeDomain: function() {
-      if(this.hasUndefinedArguments(arguments)) {
-        return;
-      }
       if(this.selectedDomain && this.selectedDomain.x && this.selectedDomain.x.length) {
         this.set('timeDomain', this.selectedDomain);
+      }
+    },
+
+    _setTimeKey: function() {
+      if(this.seriesKey) {
+        this.set('timeKey', this.seriesKey);
       }
     },
 
@@ -1325,6 +1368,10 @@ Custom property | Description
       if(this.hardMute === true) {
         this._generateDataExtents();
       }
-    }
+    },
+
+    _axisDragged: function() {
+      this.$.annotations.set('forceRecalc', !this.$.annotations.forceRecalc);
+    },
   });
 </script>

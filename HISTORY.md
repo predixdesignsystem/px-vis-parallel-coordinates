@@ -1,3 +1,9 @@
+v4.0.0
+==================
+* Upgrade to px-vis v5
+* Added central tooltip
+* Breaking changes: See px-vis for list of potential breaking changes
+
 v3.5.2
 ==================
 * Fix demo for IE

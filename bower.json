@@ -1,6 +1,6 @@
 {
   "name": "px-vis-parallel-coordinates",
-  "version": "3.5.2",
+  "version": "4.0.0",
   "main": [
     "px-vis-parallel-coordinates.html"
   ],
@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "polymer": "#1.9 - 2",
-    "px-vis": "^4.7.4",
+    "px-vis": "^5.0.0",
     "iron-resizable-behavior": "^2.0.0",
     "app-localize-behavior": "^2.0.0"
   },

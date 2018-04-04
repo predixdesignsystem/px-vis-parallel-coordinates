@@ -7,7 +7,7 @@
   "extName": null,
   "repository": {
     "type": "git",
-    "url": "https://github.com/PredixDev/px-vis-parallel-coordinates.git"
+    "url": "https://github.com/predixdesignsystem/px-vis-parallel-coordinates.git"
   },
   "homepage": "https://www.predix-ui.com/",
   "devDependencies": {

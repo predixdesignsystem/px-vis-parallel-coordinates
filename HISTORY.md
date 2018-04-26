@@ -1,3 +1,7 @@
+v4.0.1
+==================
+* Manually clone seriesConfig to avoid loosing functions
+
 v4.0.0
 ==================
 * Upgrade to px-vis v5

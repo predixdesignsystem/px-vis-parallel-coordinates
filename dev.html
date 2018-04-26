@@ -65,16 +65,12 @@
         axis-register-config='{
           "forceDateTimeDisplay": true
         }'
-        series-config='{
-            "TimeStamp": {
-              "color": ["red","blue"]
-            }
-          }'
+
       ></px-vis-parallel-coordinates>
       <div style="height:100px">
         <px-vis-chart-navigator
             id="navigator"
-            gradient-colors='["red", "blue"]'
+
             render-to-canvas
             height="100"
             x-axis-type="time"
@@ -237,10 +233,39 @@
           chart = document.getElementById('chart'),
           rangepicker = document.getElementById('rangepicker'),
           btnSnap = document.getElementById('btnSnap'),
+          navigator = document.getElementById('navigator'),
           parall = document.getElementById('parall'),
-          navigator = document.getElementById('navigator');
+          gradient;
 
       rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
+
+
+      gradient = function(val) {
+
+        //re normalize value for a bucket so that it's between 0 and 1 to take advantage of the full range of the gradient
+        normalizeVal = function(val, min, max) {
+          return (val - min) * 1/(max - min);
+        }
+
+        if(val < 0.3) {
+
+          return Px.d3.interpolateRgb('rgb(255, 179, 179)', 'rgb(230, 0, 0)')(normalizeVal(val, 0, 0.3));
+        } else if(val < 0.7) {
+
+          return Px.d3.interpolateRgb('rgb(153, 255, 102)', 'rgb(0, 51, 0)')(normalizeVal(val, 0.3, 0.7));
+        } else {
+
+          return Px.d3.interpolateRgb('rgb(153, 194, 255)', 'rgb(0, 0, 128)')(normalizeVal(val, 0.7 ,1));
+        }
+      };
+
+
+      navigator.set('gradientColors', gradient);
+      parall.set('seriesConfig', {
+        'TimeStamp': {
+          'color': gradient
+        }
+      });
 
       var menuConfig = [
           {

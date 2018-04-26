@@ -932,7 +932,7 @@ Custom property | Description
 
           //wait for colors design to have finished processing...
           if(this.seriesColorList.length && this._haveChartData && this._doesObjHaveValues(this.dimensions)) {
-            var config = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {};
+            var config = (this.seriesConfig) ? this.clone(this.seriesConfig) : {};
 
             // add a seriesConfig with seriesKey as default
             if(!config[this.seriesKey]) {

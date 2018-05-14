@@ -842,7 +842,7 @@ Custom property | Description
         textWidth += 10;
 
         var isVertical = this.width / values.length < textWidth,
-            newRotation = isVertical ? 'vertical' : 'horizontal';
+            newRotation = isVertical ? 'vertical' : 'horizontal',
             newBottomMargin = isVertical ? textWidth : (this.labelTypeSize + 10),
             rotation = isVertical ? '-90' : '0',
             yPos = isVertical ? (this.height - newBottomMargin) : this.height + 10 - newBottomMargin,

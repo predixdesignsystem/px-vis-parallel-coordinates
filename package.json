@@ -2,7 +2,7 @@
   "name": "px-vis-parallel-coordinates",
   "author": "General Electric",
   "description": "A Px visualization parallel coordinates chart",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": false,
   "extName": null,
   "repository": {

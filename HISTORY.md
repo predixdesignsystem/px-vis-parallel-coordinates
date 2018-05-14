@@ -1,3 +1,7 @@
+v4.0.2
+==================
+* Ensure we respect strict mode
+
 v4.0.1
 ==================
 * Manually clone seriesConfig to avoid loosing functions

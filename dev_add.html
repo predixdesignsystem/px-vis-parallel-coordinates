@@ -24,98 +24,127 @@ limitations under the License.
     <title>
       px-vis-parallel-coordinates Demo</title>
     <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
-    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
-    <link rel="import" href="../px-theme/px-theme-styles.html">
+    <script type="module" src="../px-theme/px-theme-styles.js"></script>
     <!-- <link rel="import" href="../px-dark-theme/px-dark-theme-styles.html"> -->
 
-    <custom-style>
+    <!-- FIXME(polymer-modulizer):
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+        -->
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<custom-style>
       <style include="px-theme-styles" is="custom-style"></style>
-    </custom-style>
+    </custom-style>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
 
     <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
-    <link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">
-    <link rel="import" href="../iron-ajax/iron-ajax.html"/>
+    <script type="module" src="../@polymer/promise-polyfill/promise-polyfill-lite.js"></script>('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../iron-ajax/iron-ajax.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>jax.js"></script>
 
-    <link rel="import" href="../px-vis/px-vis-chart-navigator.html" />
-    <link rel="import" href="../px-rangepicker/px-rangepicker.html" />
-    <link rel="import" href="px-vis-parallel-coordinates.html" />
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../px-vis/px-vis-chart-navigator.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>script>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../px-rangepicker/px-rangepicker.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="px-vis-parallel-coordinates.html">`;
+document.body.appendChild($_documentContainer.content);
+</script></script>
   </head>
 
   <!-- <body style="padding:30px; background-color: rgb(27,42,51);"> -->
   <body>
 
-    <h3>Parallel Coordinates</h3>
-    <dom-bind>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<h3>Parallel Coordinates</h3>`;
+document.body.appendChild($_documentContainer.content);
+</script>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<dom-bind>
     <template is="dom-bind">
       <h3>Parallel Coordinates linked with a rangepicker and navigator</h3>
       <div id="bigdiv">
-        <px-vis-parallel-coordinates
-          id="parall"
-          width="1300"
-          height="500"
-          chart-data="[[chartData]]"
-          skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
-          series-key="TimeStamp"
-          match-ticks
-          selected-domain="{{selectedDomain}}"
-          generate-axes-from-data
-          tooltip-config='{
-            "forceDateTimeDisplay": true,
-            "tooltipStyle": "light"
-          }'
-          chart-extents='{"TTXD1_13":["0",20],"TTXD1_12":[-45.96881104,13.16546631],"TTXD1_11":[-33.92840576,7.653076172],"TTXD1_10":[-25.62115479,21.9498291],"TTXD1_17":[-95.79375458,15.96057129],"TTXD1_16":[-95.79375458,8.642944336],"TTXD1_15":[-1049.801758,114.1303101],"TTXD1_14":[-31.18463135,16.30126953],"TTXD1_19":[-6.005004883,16.79980469],"TTXD1_18":[-9.343383789,19.34313965],"TTXD1_26":[-26.74279785,7.468505859],"TTXD1_9":[-95.79375458,7.447998047],"TTXD1_8":[-95.79375458,11.30529785],"TTXD1_7":[-95.79375458,10.87634277],"TTXD1_6":[-95.79375458,13.30334473],"TTXD1_5":[-8.141723633,22.57092285],"TTXD1_4":[-16.99157715,6.598876953],"TTXD1_3":[-21.11291504,16.3963623],"TTXD1_2":[-4.628204346,38.35150146],"TTXD1_1":[-9.776123047,18.99798584],"DWATT":[-8.835100174,216.9765015],"TTXD1_27":[-5.315795898,40.04058838],"TTXD1_24":[-26.83306885,19.48937988],"TTXD1_25":[-58.4041748,1.543830872],"TTXD1_22":[-450.5784302,10.82189941],"TTXD1_23":[-8.329589844,27.51208496],"TTXD1_20":[-2.724113464,24.04833984],"TTXD1_21":[-3.206016541,20.49499512],"TTXD1_28":[-13.21807861,22.13677979],"TTXD1_29":[-14.32019043,14.46655273],"TTXD1_31":[-7.965698242,28.99249268],"TTXD1_30":[-9.743103027,38.30419922]}'
-          series-config='{
-              "TTXD1_1":{
-                "yAxisUnit": "Hz",
-                "title": "verylongname"
+        <px-vis-parallel-coordinates id="parall" width="1300" height="500" chart-data="[[chartData]]" skip-keys="{&quot;UnitNumber&quot;:true,&quot;DLN_MODE&quot;:true}" series-key="TimeStamp" match-ticks="" selected-domain="{{selectedDomain}}" generate-axes-from-data="" tooltip-config="{
+            &quot;forceDateTimeDisplay&quot;: true,
+            &quot;tooltipStyle&quot;: &quot;light&quot;
+          }" chart-extents="{&quot;TTXD1_13&quot;:[&quot;0&quot;,20],&quot;TTXD1_12&quot;:[-45.96881104,13.16546631],&quot;TTXD1_11&quot;:[-33.92840576,7.653076172],&quot;TTXD1_10&quot;:[-25.62115479,21.9498291],&quot;TTXD1_17&quot;:[-95.79375458,15.96057129],&quot;TTXD1_16&quot;:[-95.79375458,8.642944336],&quot;TTXD1_15&quot;:[-1049.801758,114.1303101],&quot;TTXD1_14&quot;:[-31.18463135,16.30126953],&quot;TTXD1_19&quot;:[-6.005004883,16.79980469],&quot;TTXD1_18&quot;:[-9.343383789,19.34313965],&quot;TTXD1_26&quot;:[-26.74279785,7.468505859],&quot;TTXD1_9&quot;:[-95.79375458,7.447998047],&quot;TTXD1_8&quot;:[-95.79375458,11.30529785],&quot;TTXD1_7&quot;:[-95.79375458,10.87634277],&quot;TTXD1_6&quot;:[-95.79375458,13.30334473],&quot;TTXD1_5&quot;:[-8.141723633,22.57092285],&quot;TTXD1_4&quot;:[-16.99157715,6.598876953],&quot;TTXD1_3&quot;:[-21.11291504,16.3963623],&quot;TTXD1_2&quot;:[-4.628204346,38.35150146],&quot;TTXD1_1&quot;:[-9.776123047,18.99798584],&quot;DWATT&quot;:[-8.835100174,216.9765015],&quot;TTXD1_27&quot;:[-5.315795898,40.04058838],&quot;TTXD1_24&quot;:[-26.83306885,19.48937988],&quot;TTXD1_25&quot;:[-58.4041748,1.543830872],&quot;TTXD1_22&quot;:[-450.5784302,10.82189941],&quot;TTXD1_23&quot;:[-8.329589844,27.51208496],&quot;TTXD1_20&quot;:[-2.724113464,24.04833984],&quot;TTXD1_21&quot;:[-3.206016541,20.49499512],&quot;TTXD1_28&quot;:[-13.21807861,22.13677979],&quot;TTXD1_29&quot;:[-14.32019043,14.46655273],&quot;TTXD1_31&quot;:[-7.965698242,28.99249268],&quot;TTXD1_30&quot;:[-9.743103027,38.30419922]}" series-config="{
+              &quot;TTXD1_1&quot;:{
+                &quot;yAxisUnit&quot;: &quot;Hz&quot;,
+                &quot;title&quot;: &quot;verylongname&quot;
               },
-              "TTXD1_12":{
-                "yAxisUnit": "F",
-                "title": "stout"
+              &quot;TTXD1_12&quot;:{
+                &quot;yAxisUnit&quot;: &quot;F&quot;,
+                &quot;title&quot;: &quot;stout&quot;
               }
-            }'
-        ></px-vis-parallel-coordinates>
-        <iron-ajax
-          url="../px-demo-data/demo-data/apm/timeseries.json"
-          handle-as="json"
-          auto
-          last-response="{{chartData}}">
+            }"></px-vis-parallel-coordinates>
+        <iron-ajax url="../px-demo-data/demo-data/apm/timeseries.json" handle-as="json" auto="" last-response="{{chartData}}">
         </iron-ajax>
       </div>
     </template>
-   </dom-bind>
+   </dom-bind>`;
 
-  <script>
-    document.addEventListener('WebComponentsReady', function() {
-      var chart = document.getElementById('parall'),
-          rangepicker = document.getElementById('rangepicker'),
-          btnSnap = document.getElementById('btnSnap'),
-          parall = document.getElementById('parall'),
-          navigator = document.getElementById('navigator'),
-          btn = document.getElementById('btn'),
-          btnR = document.getElementById('btnR'),
-          bigdiv = document.getElementById('bigdiv');
+document.body.appendChild($_documentContainer.content);
+</script>
 
-    //  rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
+  <script type="module">
+import 'px-theme/px-theme-styles.js';
+import '@polymer/promise-polyfill/promise-polyfill-lite.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import 'px-vis/px-vis-chart-navigator.js';
+import './px-vis-parallel-coordinates.js';
+var chart = document.getElementById('parall'),
+    rangepicker = document.getElementById('rangepicker'),
+    btnSnap = document.getElementById('btnSnap'),
+    parall = document.getElementById('parall'),
+    navigator = document.getElementById('navigator'),
+    btn = document.getElementById('btn'),
+    btnR = document.getElementById('btnR'),
+    bigdiv = document.getElementById('bigdiv');
 
-      var menuConfig = [
-          {
-            "name": "Delete",
-            "eventName": "delete",
-            "actionContext": parall,
-            "icon": "px-vis:trash-series",
-            "action": function(data) {
-              var newAxes = this.axes;
-              newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1);
-              this.set("axes", []);
-              this.set("axes", newAxes);
-            }
-          }
-        ]
+//  rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
 
-      parall.set('dynamicMenuConfig', menuConfig);
-    });
-  </script>
+var menuConfig = [
+    {
+      "name": "Delete",
+      "eventName": "delete",
+      "actionContext": parall,
+      "icon": "px-vis:trash-series",
+      "action": function(data) {
+        var newAxes = this.axes;
+        newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1);
+        this.set("axes", []);
+        this.set("axes", newAxes);
+      }
+    }
+  ]
+
+parall.set('dynamicMenuConfig', menuConfig);
+</script>
  </body>
 </html>

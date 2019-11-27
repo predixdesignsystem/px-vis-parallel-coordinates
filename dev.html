@@ -24,95 +24,98 @@ limitations under the License.
     <title>
       px-vis-parallel-coordinates Demo</title>
     <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
-    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
-    <link rel="import" href="../px-theme/px-theme-styles.html">
+    <script type="module" src="../px-theme/px-theme-styles.js"></script>
     <!-- <link rel="import" href="../px-dark-theme/px-dark-theme-styles.html"> -->
 
-    <custom-style>
+    <!-- FIXME(polymer-modulizer):
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+        -->
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<custom-style>
       <style include="px-theme-styles" is="custom-style"></style>
-    </custom-style>
+    </custom-style>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
 
     <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
-    <link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">
-    <link rel="import" href="../iron-ajax/iron-ajax.html"/>
+    <script type="module" src="../@polymer/promise-polyfill/promise-polyfill-lite.js"></script>('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../iron-ajax/iron-ajax.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>jax.js"></script>
 
-    <link rel="import" href="../px-vis/px-vis-chart-navigator.html" />
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="../px-vis/px-vis-chart-navigator.html">`;
+document.body.appendChild($_documentContainer.content);
+</script>script>
     <!-- <link rel="import" href="../px-rangepicker/px-rangepicker.html" /> -->
-    <link rel="import" href="px-vis-parallel-coordinates.html" />
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<link rel="import" href="px-vis-parallel-coordinates.html">`;
+document.body.appendChild($_documentContainer.content);
+</script></script>
   </head>
 
   <!-- <body style="padding:30px; background-color: rgb(27,42,51);"> -->
   <body>
 
-    <h3>Parallel Coordinates</h3>
-    <dom-bind>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `<h3>Parallel Coordinates</h3>`;
+document.body.appendChild($_documentContainer.content);
+</script>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<dom-bind>
     <template is="dom-bind">
       <h3>Parallel Coordinates linked with a rangepicker and navigator</h3>
-      <px-rangepicker
-        id="rangepicker"
-        range="{{range}}"
-        date-format="YYYY/MM/DD"
-        time-format="hh:mm:ss A"
-        show-buttons="true"
-        show-time-zone="text">
+      <px-rangepicker id="rangepicker" range="{{range}}" date-format="YYYY/MM/DD" time-format="hh:mm:ss A" show-buttons="true" show-time-zone="text">
       </px-rangepicker>
-      <br />
+      <br>
       <span>Open new tab with snapshot of parallel chart with its navigator</span>
       <button id="btnSnap">Smile!</button>
-      <br />
-      <br />
-      <br />
-      <px-vis-parallel-coordinates
-        id="parall"
-        width="1300"
-        height="500"
-        show-tooltip
-        chart-data="[[chartData]]"
-        skip-keys='{"UnitNumber":true,"DLN_MODE":true}'
-        series-key="TimeStamp"
-        match-ticks
-        time-domain="{{timeDomain}}"
-        generate-axes-from-data
-        tooltip-config='{
-          "forceDateTimeDisplay": true,
-          "tooltipStyle": "light"
-        }'
-        axis-register-config='{
-          "forceDateTimeDisplay": true
-        }'
-
-      ></px-vis-parallel-coordinates>
+      <br>
+      <br>
+      <br>
+      <px-vis-parallel-coordinates id="parall" width="1300" height="500" show-tooltip="" chart-data="[[chartData]]" skip-keys="{&quot;UnitNumber&quot;:true,&quot;DLN_MODE&quot;:true}" series-key="TimeStamp" match-ticks="" time-domain="{{timeDomain}}" generate-axes-from-data="" tooltip-config="{
+          &quot;forceDateTimeDisplay&quot;: true,
+          &quot;tooltipStyle&quot;: &quot;light&quot;
+        }" axis-register-config="{
+          &quot;forceDateTimeDisplay&quot;: true
+        }"></px-vis-parallel-coordinates>
       <div style="height:100px">
-        <px-vis-chart-navigator
-            id="navigator"
-
-            render-to-canvas
-            height="100"
-            x-axis-type="time"
-            y-axis-type="linear"
-            range="[[range]]"
-            margin='{
-              "top": 5,
-              "right": 10,
-              "bottom": 20,
-              "left": 10
-            }'
-            chart-extents='{
-                            "x":["dynamic","dynamic"],
-                            "y":["dynamic","dynamic"]
-                          }'
-            chart-data="[[chartData]]"
-            series-config='{
-              "TTXD1_1":{
-                "type": "line",
-                "name": "TTXD1_1",
-                "x":"TimeStamp",
-                "y":"TTXD1_1"
+        <px-vis-chart-navigator id="navigator" render-to-canvas="" height="100" x-axis-type="time" y-axis-type="linear" range="[[range]]" margin="{
+              &quot;top&quot;: 5,
+              &quot;right&quot;: 10,
+              &quot;bottom&quot;: 20,
+              &quot;left&quot;: 10
+            }" chart-extents="{
+                            &quot;x&quot;:[&quot;dynamic&quot;,&quot;dynamic&quot;],
+                            &quot;y&quot;:[&quot;dynamic&quot;,&quot;dynamic&quot;]
+                          }" chart-data="[[chartData]]" series-config="{
+              &quot;TTXD1_1&quot;:{
+                &quot;type&quot;: &quot;line&quot;,
+                &quot;name&quot;: &quot;TTXD1_1&quot;,
+                &quot;x&quot;:&quot;TimeStamp&quot;,
+                &quot;y&quot;:&quot;TTXD1_1&quot;
               }
-            }'
-            selected-domain="{{timeDomain}}"
-            gradient-overlay>
+            }" selected-domain="{{timeDomain}}" gradient-overlay="">
           </px-vis-chart-navigator>
         </div>
 
@@ -229,117 +232,118 @@ limitations under the License.
         axes='["TTXD1_1", "TTXD1_2", "TTXD1_3", "TTXD1_4", "TTXD1_5"]'
       ></px-vis-parallel-coordinates> -->
 
-      <iron-ajax
-        url="../px-demo-data/demo-data/apm/timeseries_demo.json"
-        handle-as="json"
-        auto
-        last-response="{{chartData}}">
+      <iron-ajax url="../px-demo-data/demo-data/apm/timeseries_demo.json" handle-as="json" auto="" last-response="{{chartData}}">
       </iron-ajax>
 
     </template>
-    </dom-bind>
+    </dom-bind>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
   </body>
-  <script>
-    document.addEventListener('WebComponentsReady', function() {
-      var btnInc = document.getElementById('btnInc'),
-          btnDec = document.getElementById('btnDec'),
-          btnIH = document.getElementById('btnIH'),
-          btnDH = document.getElementById('btnDH'),
-          wrap = document.getElementById('wrap'),
-          chart = document.getElementById('chart'),
-          rangepicker = document.getElementById('rangepicker'),
-          btnSnap = document.getElementById('btnSnap'),
-          navigator = document.getElementById('navigator'),
-          parall = document.getElementById('parall'),
-          gradient;
+  <script type="module">
+import 'px-theme/px-theme-styles.js';
+import '@polymer/promise-polyfill/promise-polyfill-lite.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import 'px-vis/px-vis-chart-navigator.js';
+import './px-vis-parallel-coordinates.js';
+var btnInc = document.getElementById('btnInc'),
+    btnDec = document.getElementById('btnDec'),
+    btnIH = document.getElementById('btnIH'),
+    btnDH = document.getElementById('btnDH'),
+    wrap = document.getElementById('wrap'),
+    chart = document.getElementById('chart'),
+    rangepicker = document.getElementById('rangepicker'),
+    btnSnap = document.getElementById('btnSnap'),
+    navigator = document.getElementById('navigator'),
+    parall = document.getElementById('parall'),
+    gradient;
 
-      rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
-
-
-      gradient = function(val) {
-
-        //re normalize value for a bucket so that it's between 0 and 1 to take advantage of the full range of the gradient
-        normalizeVal = function(val, min, max) {
-          return (val - min) * 1/(max - min);
-        }
-
-        if(val < 0.3) {
-
-          return Px.d3.interpolateRgb('rgb(255, 179, 179)', 'rgb(230, 0, 0)')(normalizeVal(val, 0, 0.3));
-        } else if(val < 0.7) {
-
-          return Px.d3.interpolateRgb('rgb(153, 255, 102)', 'rgb(0, 51, 0)')(normalizeVal(val, 0.3, 0.7));
-        } else {
-
-          return Px.d3.interpolateRgb('rgb(153, 194, 255)', 'rgb(0, 0, 128)')(normalizeVal(val, 0.7 ,1));
-        }
-      };
+rangepicker.range = {"from":"2016-06-22T15:08:00Z","to":"2016-06-22T20:08:00.000Z"};
 
 
-      navigator.set('gradientColors', gradient);
-      parall.set('seriesConfig', {
-        'TimeStamp': {
-          'color': gradient
-        }
-      });
+gradient = function(val) {
 
-      var menuConfig = [
-          {
-            "name": "Delete",
-            "eventName": "delete",
-            "actionContext": parall,
-            "icon": "px-vis:trash-series",
-            "action": function(itemConfig, additionalDetail) {
-              var newAxes = JSON.parse(JSON.stringify(this.axes));
-              newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
-              this.set("axes", []);
-              this.set("axes", newAxes);
-            }
-          }
-        ]
+  //re normalize value for a bucket so that it's between 0 and 1 to take advantage of the full range of the gradient
+  normalizeVal = function(val, min, max) {
+    return (val - min) * 1/(max - min);
+  }
 
-      parall.set('dynamicMenuConfig', menuConfig);
+  if(val < 0.3) {
 
-      btnSnap.addEventListener('click', function() {
+    return Px.d3.interpolateRgb('rgb(255, 179, 179)', 'rgb(230, 0, 0)')(normalizeVal(val, 0, 0.3));
+  } else if(val < 0.7) {
 
-       parall.getImage(function(result) {
-          var img = document.createElement('img');
-          img.src= result.image;
-          document.body.appendChild(img);
-        //   window.open().location = result.image;
-        }, true);
-      });
+    return Px.d3.interpolateRgb('rgb(153, 255, 102)', 'rgb(0, 51, 0)')(normalizeVal(val, 0.3, 0.7));
+  } else {
 
-      btnInc.addEventListener('click', function() {
-        var width = window.getComputedStyle(wrap).getPropertyValue("width");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['width'] = Number(cur) + 150 + 'px';
-        chart.notifyResize();
-      });
+    return Px.d3.interpolateRgb('rgb(153, 194, 255)', 'rgb(0, 0, 128)')(normalizeVal(val, 0.7 ,1));
+  }
+};
 
-      btnDec.addEventListener('click', function() {
-        var width = window.getComputedStyle(wrap).getPropertyValue("width");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['width'] = Number(cur) - 150 + 'px';
-        chart.notifyResize();
-      });
 
-      btnIH.addEventListener('click', function() {
+navigator.set('gradientColors', gradient);
+parall.set('seriesConfig', {
+  'TimeStamp': {
+    'color': gradient
+  }
+});
 
-        var width = window.getComputedStyle(wrap).getPropertyValue("height");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['height'] = Number(cur) + 150 + 'px';
-        chart.notifyResize();
-      });
+var menuConfig = [
+    {
+      "name": "Delete",
+      "eventName": "delete",
+      "actionContext": parall,
+      "icon": "px-vis:trash-series",
+      "action": function(itemConfig, additionalDetail) {
+        var newAxes = JSON.parse(JSON.stringify(this.axes));
+        newAxes.splice(newAxes.indexOf(additionalDetail.name),1);
+        this.set("axes", []);
+        this.set("axes", newAxes);
+      }
+    }
+  ]
 
-      btnDH.addEventListener('click', function() {
-        var width = window.getComputedStyle(wrap).getPropertyValue("height");
-        var cur = width.substr(0, width.length-2);
-        wrap.style['height'] = Number(cur) - 150 + 'px';
-        chart.notifyResize();
-      });
+parall.set('dynamicMenuConfig', menuConfig);
 
-    });
-  </script>
+btnSnap.addEventListener('click', function() {
+
+ parall.getImage(function(result) {
+    var img = document.createElement('img');
+    img.src= result.image;
+    document.body.appendChild(img);
+  //   window.open().location = result.image;
+  }, true);
+});
+
+btnInc.addEventListener('click', function() {
+  var width = window.getComputedStyle(wrap).getPropertyValue("width");
+  var cur = width.substr(0, width.length-2);
+  wrap.style['width'] = Number(cur) + 150 + 'px';
+  chart.notifyResize();
+});
+
+btnDec.addEventListener('click', function() {
+  var width = window.getComputedStyle(wrap).getPropertyValue("width");
+  var cur = width.substr(0, width.length-2);
+  wrap.style['width'] = Number(cur) - 150 + 'px';
+  chart.notifyResize();
+});
+
+btnIH.addEventListener('click', function() {
+
+  var width = window.getComputedStyle(wrap).getPropertyValue("height");
+  var cur = width.substr(0, width.length-2);
+  wrap.style['height'] = Number(cur) + 150 + 'px';
+  chart.notifyResize();
+});
+
+btnDH.addEventListener('click', function() {
+  var width = window.getComputedStyle(wrap).getPropertyValue("height");
+  var cur = width.substr(0, width.length-2);
+  wrap.style['height'] = Number(cur) - 150 + 'px';
+  chart.notifyResize();
+});
+</script>
 
 </html>

@@ -1,0 +1,559 @@
+/*
+Copyright (c) 2018, General Electric
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+/* Common imports */
+/* Common demo imports */
+/* Imports for this component */
+/* Demo DOM module */
+/*
+  FIXME(polymer-modulizer): the above comments were extracted
+  from HTML and may be out of place here. Review them and
+  then delete this comment!
+*/
+import '@polymer/polymer/polymer-legacy.js';
+
+import '@polymer/promise-polyfill/promise-polyfill-lite.js';
+import 'px-icon-set/px-icon-set.js';
+import 'px-demo/px-demo-header.js';
+import 'px-demo/px-demo-api-viewer.js';
+import 'px-demo/px-demo-footer.js';
+import 'px-demo/px-demo-configs.js';
+import 'px-demo/px-demo-props.js';
+import 'px-demo/px-demo-interactive.js';
+import 'px-demo/px-demo-component-snippet.js';
+import 'px-demo/px-demo-code-editor.js';
+import 'px-theme/px-theme-styles.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '../px-vis-parallel-coordinates.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<custom-style>
+  <style include="px-theme-styles" is="custom-style"></style>
+</custom-style>`;
+
+document.head.appendChild($_documentContainer.content);
+Polymer({
+  _template: html`
+    <!-- Header -->
+    <px-demo-header module-name="px-vis-parallel-coordinates" description="The px-vis-parallel-coordinates component allows you to draw a parallel coordinates chart. Initial height and width can be set, but the component will try to fill its parent container on resize. It can be manually notified to recalculate its size by using notifyResize(). The chart is built off px-vis components which utilize d3.js 4.0+." desktop="">
+    </px-demo-header>
+
+    <!-- Interactive -->
+    <px-demo-interactive>
+      <!-- Configs -->
+      <px-demo-configs slot="px-demo-configs" configs="[[configs]]" props="{{props}}" chosen-config="{{chosenConfig}}"></px-demo-configs>
+
+      <!-- Props -->
+      <px-demo-props slot="px-demo-props" props="{{props}}" config="[[chosenConfig]]"></px-demo-props>
+
+      <!-- Code Editor -->
+      <px-demo-code-editor slot="px-demo-code-editor" props="{{props}}"></px-demo-code-editor>
+
+      <!-- Component ---------------------------------------------------------->
+      <px-demo-component slot="px-demo-component" class="flex" style="width:100%;">
+        <!-- <iron-ajax
+          url="../../px-demo-data/demo_data.json"
+          handle-as="json"
+          last-response="{{data}}" auto></iron-ajax>
+        <iron-ajax
+          url="demo_data_ordinal.json"
+          handle-as="json"
+          last-response="{{dataOrdinal}}" auto></iron-ajax>
+        <iron-ajax
+            url="events.json"
+            handle-as="json"
+            last-response="{{eventData}}" auto></iron-ajax> -->
+
+          <div class="flex--column" style="width:100%;">
+            <px-vis-parallel-coordinates id="parallel-coordinates" prevent-resize="{{props.preventResize.value}}" width="{{appliedWidth}}" height="{{appliedHeight}}" chart-horizontal-alignment="{{props.chartHorizontalAlignment.value}}" chart-vertical-alignment="{{props.chartVerticalAlignment.value}}" margin="[[props.margin.value]]" chart-data="[[props.chartData.value]]" series-key="[[props.seriesKey.value]]" series-config="[[props.seriesConfig.value]]" axes="[[props.axes.value]]" category-key="[[props.categoryKey.value]]" categories="[[props.categories.value]]" brush-to-remove="[[props.brushToRemove.value]]" render-to-svg="[[props.renderToSvg.value]]" match-ticks="{{props.matchTicks.value}}" common-axis="[[props.commonAxis.value]]" hide-axis-register="[[props.hideAxisRegister.value]]" axis-register-config="{{props.axisRegisterConfig.value}}" hide-category-register="[[props.hideCategoryRegister.value]]" category-register-config="{{props.categoryRegisterConfig.value}}" show-tooltip="[[props.showTooltip.value]]" tooltip-config="[[props.tooltipConfig.value]]" dynamic-menu-config="[[props.dynamicMenuConfig.value]]" skip-keys="[[props.skipKeys.value]]" generate-axes-from-data="[[props.generateAxesFromData.value]]" g="" displayed-values="{{props.displayedValues.value}}" debounce-resize-timing="{{props.debounceResizeTiming.value}}">
+            </px-vis-parallel-coordinates>
+          </div>
+
+      </px-demo-component>
+      <!-- END Component ------------------------------------------------------>
+
+      <px-demo-component-snippet slot="px-demo-component-snippet" element-properties="{{props}}" element-name="px-vis-parallel-coordinates" codepen-link="https://glitch.com/edit/#!/px-vis-parallel-coordinates-demo" suppress-property-values="[[suppressPropertyValues]]">
+      </px-demo-component-snippet>
+    </px-demo-interactive>
+
+    <!-- API Viewer -->
+    <px-demo-api-viewer source="px-vis-parallel-coordinates" hide="[[apiHide]]" mark-private="[[apiMarkPrivate]]" mark-read-only="[[apliMarkReadOnly]]" change-description="[[apiChangeDescription]]">
+    </px-demo-api-viewer>
+
+    <!-- Footer -->
+    <px-demo-footer></px-demo-footer>
+`,
+
+  is: 'px-vis-parallel-coordinates-demo',
+
+  properties: {
+
+    /**
+     * Note: The actual data/values for `props` are placed in `this.demoProps`
+     * to create a static reference that Polymer shouldn't overwrite.
+     *
+     * On object containing all the properties the user can configure for this
+     * demo. Usually a pretty similar copy of the component's `properties` block
+     * with some additional sugar added to describe what kind of input the
+     * user will be shown and how that input should be configured.
+     *
+     * Note that `value` for each property is the default that will be set
+     * unless a config from `configs` is applied by default.
+     *
+     * @example
+     *
+     * `demoProps` is an object containing multipe objects. Each sub-object has
+     * should have a key with the name of the configurable property, and a set
+     * of values that describe that property. At a high level, you might have:
+     *
+     * ```
+     *     {
+     *       preventRangeSelection: { ... },
+     *       displayMode: { ... },
+     *       blockDatesBefore: { ... }
+     *     }
+     * ```
+     *
+     * Each sub-object should contain information about the configurable property's
+     * `type` (a reference to the JavaScript literal), a default value, and a set
+     * of additional keys that describe the input it can be changed with.
+     * The following inputs types are currently available:
+     *
+     * - 'toggle' - A toggle switch input to set Boolean values
+     * - 'text' - A simple single-line text input to set String or stringified Array/Object values
+     * - 'dropdown' - A dropdown picker that can be used to select any kind of value from a list of available options
+     *
+     * Full examples for each input:
+     *
+     * ```
+     *     {
+     *       preventRangeSelection: {
+     *         type: Boolean,
+     *         value: false,
+     *         inputType: 'toggle'
+     *       },
+     *       displayMode: {
+     *         type: String,
+     *         value: 'day',
+     *         inputType: 'dropdown',
+     *         inputChoices: ['day', 'month', 'year']
+     *       },
+     *       blockDatesBefore: {
+     *         type: String,
+     *         value: '2016-10-10T00:00:00.000Z',
+     *         inputType: 'text',
+     *         inputPlaceholder: 'ISO 8601 String'
+     *       }
+     *     }
+     * ```
+     *
+     * By default, the configurable property names are converted from camelCase
+     * to Title Case and used as input labels (e.g. 'displayMode' -> 'Display Mode').
+     * Labels can be set manually through the key `inputLabel`:
+     *
+     * ```
+     *     {
+     *       preventRangeSelection: {
+     *         type: Boolean,
+     *         value: false,
+     *         inputType: 'toggle',
+     *         inputLabel: "Stop range selection"
+     *       }
+     *     }
+     * ```
+     *
+     * @property demoProps
+     * @type {Object}
+     */
+    props: {
+      type: Object,
+      value: function(){ return this.demoProps; }
+    },
+
+    /**
+     * An array of pre-configured `props` that can be used to provide the user
+     * with a set of common examples. These configs will be made available
+     * as a set of tabs the user can click that will automatically change
+     * the `props` to specific values.
+     *
+     * @example
+     *
+     * Each config is an object. Its keys should be the names of the configurable
+     * properties defined in your `demoProps` above. Each key's value should
+     * be the new prop value for the configuration. You can also include these
+     * optional keys:
+     *
+     * - `configName` - a String value that will be used for the title of the tab
+     * - `configReset` - a Boolean, if `true` resets all props (even those not specified in the config) when this config is selected. Defaults to `false`.
+     *
+     * Example of two configs:
+     *
+     * ```
+     *     [
+     *       {
+     *         configName: "Basic",
+     *         preventRangeSelection: true,
+     *         displayMode: 'year',
+     *         blockDatesBefore: '2016-10-10T00:00:00.000Z'
+     *       },
+     *       {
+     *         configName: "Advanced",
+     *         preventRangeSelection: false,
+     *         displayMode: 'day',
+     *         blockDatesBefore: '2010-10-10T00:00:00.000Z'
+     *       }
+     *     ]
+     * ```
+     *
+     * @property demoProps
+     * @type {Array}
+     */
+    configs: {
+      type: Array,
+      value: function(){
+        return [
+          { configName: "Default",
+            width: 700,
+            height: 400 }
+        ]
+      }
+    },
+
+    apiHide: {
+      type: Array,
+      value: function() {
+        return [
+          "displayedValues",
+          "dynamicRedraw", //not currently enabled
+          "generateLayers",
+          "labelTypeSize",
+          "numberOfLayers",
+          "offset",
+          "range",
+          "redrawElems",
+          "redrawSeries",
+          "svg",
+          "svgLower",
+          "truncationLength",
+          "assignParentResizable",
+          "cloneSVGElem",
+          "generateRandomID"
+        ]
+      }
+    },
+    apiMarkPrivate: {
+      type: Array,
+      value: function() {
+        return [
+          "completeSeriesConfig",
+          "domainChanged",
+          "layer",
+          "dataExtents",
+          "mutedSeries",
+          "pxSvgElem",
+          "pxSvgElemLower"
+        ]
+      }
+    },
+    apliMarkReadOnly: {
+      type: Array,
+      value: function() {
+        return [
+          "canvasContext",
+          "drawnTickValues",
+          "tooltipData",
+          "x",
+          "y"
+        ]
+      }
+    },
+    apiChangeDescription: {
+      type: Array,
+      value: function() {
+        return [{
+          "name": "xAxisType",
+          "desc": "Sets the type of data for the x values\n\nValid entries are:\n\n* `time`: for time domains in UTC [default].\n\n* `timeLocal`: for local time domains."
+        },{
+          "name": "chartExtents",
+          "desc": 'Allows to set the extents for each individual axis. \n\nSetting this and not using "dynamic" will prevent the chart from having to parse the data to find the extents and therefore improve performance for initial rendering.\n\nIf not set the chart will automatically parse the data for extents.\n\n Each missing axis in chartExtents will automatically be treated as ["dynamic", "dynamic"]```\n\n  {\n\n      "Axis1": [0,100],\n\n      "Axis2": [5,50],\n\n      ...\n\n  }```\n\n\n\n To force the chart to calculate based on data, use "dynamic".\n\n```\n\n  {\n\n      "Axis1": [0,"dynamic"],\n\n      "Axis2": ["dynamic","dynamic"],\n\n  }\n\n```\n\n'
+        }]
+      }
+    },
+
+    suppressPropertyValues: {
+      type: Array,
+      value: function() { return ['chartData']; }
+    },
+
+    appliedWidth: {
+      type: Number
+    },
+
+    appliedHeight: {
+      type: Number
+    },
+  },
+
+  /**
+   * A reference for `this.props`. Read the documentation there.
+   */
+  demoProps: {
+
+    preventResize: {
+      type: Boolean,
+      defaultValue: true,
+      inputType: 'toggle'
+    },
+
+    debounceResizeTiming: {
+      type: Number,
+      defaultValue: 250,
+      inputType: 'text'
+    },
+
+    //we need inputDisabled: false to be able to dynamically turn it on
+    width: {
+      type: Number,
+      defaultValue: 800,
+      inputDisabled: false,
+      inputType: 'text'
+    },
+
+    //we need inputDisabled: false to be able to dynamically turn it on
+    height: {
+      type: Number,
+      defaultValue: 500,
+      inputDisabled: false,
+      inputType: 'text'
+    },
+
+    renderToSvg: {
+      type: Boolean,
+      defaultValue: false,
+      inputType: 'toggle'
+    },
+
+    chartHorizontalAlignment: {
+      type: String,
+      defaultValue: 'center',
+      inputType: 'dropdown',
+      inputChoices: ['left', 'center', 'right']
+    },
+
+    chartVerticalAlignment: {
+      type: String,
+      defaultValue: 'top',
+      inputType: 'dropdown',
+      inputChoices: ['top', 'center', 'bottom']
+    },
+
+    margin: {
+      type: Object,
+      defaultValue: { "top": 10, "bottom": 10, "left": 10, "right": 10 },
+      inputType: 'code:JSON'
+    },
+
+    hideAxisRegister: {
+      type: Boolean,
+      defaultValue: false,
+      inputType: 'toggle'
+    },
+
+    axisRegisterConfig: {
+      type: Object,
+      defaultValue: {},
+      inputType: 'code:JSON'
+    },
+
+    hideCategoryRegister: {
+      type: Boolean,
+      defaultValue: false,
+      inputType: 'toggle'
+    },
+
+    categoryRegisterConfig: {
+      type: Object,
+      defaultValue: {},
+      inputType: 'code:JSON'
+    },
+
+    showTooltip: {
+      type: Boolean,
+      defaultValue: false,
+      inputType: 'toggle'
+    },
+
+    tooltipConfig: {
+      type: Object,
+      defaultValue: { "forceDateTimeDisplay" : true },
+      inputType: 'code:JSON'
+    },
+
+    chartData: {
+      type: Array,
+      defaultValue: [
+        {"TimeStamp":1465416480000, "axis1":"11", "axis2":"7", "axis3":"6", "axis4":"15", "axis5":"7", "category":"a"},
+        {"TimeStamp":1465416540000, "axis1":"13", "axis2":"7", "axis3":"7", "axis4":"22", "axis5":"6", "category":"d"},
+        {"TimeStamp":1465416600000, "axis1":"14", "axis2":"6", "axis3":"7", "axis4":"26", "axis5":"7", "category":"b"},
+        {"TimeStamp":1465416660000, "axis1":"16", "axis2":"7", "axis3":"7", "axis4":"26", "axis5":"6", "category":"b"},
+        {"TimeStamp":1465416720000, "axis1":"18", "axis2":"6", "axis3":"6", "axis4":"28", "axis5":"7", "category":"c"},
+        {"TimeStamp":1465416780000, "axis1":"19", "axis2":"6", "axis3":"8", "axis4":"27", "axis5":"8", "category":"c"},
+        {"TimeStamp":1465416840000, "axis1":"10", "axis2":"5", "axis3":"7", "axis4":"25", "axis5":"6", "category":"a"},
+        {"TimeStamp":1465416900000, "axis1":"17", "axis2":"6", "axis3":"7", "axis4":"21", "axis5":"7", "category":"b"},
+        {"TimeStamp":1465416960000, "axis1":"15", "axis2":"7", "axis3":"6", "axis4":"19", "axis5":"6", "category":"a"},
+        {"TimeStamp":1465417020000, "axis1":"12", "axis2":"8", "axis3":"6", "axis4":"21", "axis5":"6", "category":"c"}
+      ],
+      inputType: 'code:JSON'
+    },
+
+    seriesKey: {
+      type: String,
+      defaultValue: 'TimeStamp',
+      inputType: 'text',
+      inputPlaceholder: 'Dataset series key'
+    },
+
+    skipKeys: {
+      type: Object,
+      defaultValue: {},
+      inputType: 'code:JSON'
+    },
+
+    seriesConfig: {
+      type: Object,
+      defaultValue: {
+        "axis1":{
+          "yAxisUnit": "Hz",
+          "title": "Axis 1"
+        },
+        "axis2":{
+          "yAxisUnit": "F",
+          "title": "Axis 2"
+        }
+      },
+      inputType: 'code:JSON'
+    },
+
+    axes: {
+      type: Array,
+      defaultValue: ["axis1", "axis2", "axis3", "axis4", "axis5"],
+      inputType: 'code:JSON'
+    },
+
+    categoryKey: {
+      type: String,
+      defaultValue: null,
+      inputType: 'text',
+      inputPlaceholder: 'Dataset category key'
+    },
+
+    categories: {
+      type: Array,
+      defaultValue: ['a','b','c','d'],
+      inputType: 'code:JSON'
+    },
+
+    brushToRemove: {
+      type: Boolean,
+      defaultValue: false,
+      inputType: 'toggle'
+    },
+
+    matchTicks: {
+      type: Boolean,
+      defaultValue: true,
+      inputType: 'toggle'
+    },
+
+    commonAxis: {
+      type: Boolean,
+      defaultValue: false,
+      inputType: 'toggle'
+    },
+
+    displayedValues: {
+      type: Object,
+      inputType: 'code:JSON',
+      inputLabel: 'Displayed Values [read-only]'
+    },
+
+    dynamicMenuConfig: {
+      type: Array,
+      defaultValue: [
+        {
+          "name": "Delete",
+          "eventName": "delete",
+          "icon": "px-vis:trash-series",
+          "action": 'function(data) {var newAxes = JSON.parse(JSON.stringify(this.axes)); newAxes.splice(newAxes.indexOf(data.additionalDetail.name),1); this.set("axes", []); this.set("axes", newAxes);}'
+        }
+      ],
+      inputType: 'code:JSON'
+    },
+    noCanvasProgressiveRendering: {
+      type: Boolean,
+      defaultValue: false
+    }
+  },
+
+  observers: [
+    '_preventResizeChanged(props.preventResize.value)',
+    '_appliedWidthChanged(appliedWidth)',
+    '_appliedHeightChanged(appliedHeight)',
+    '_widthChanged(props.width.value)',
+    '_heightChanged(props.height.value)',
+    '_renderToCanvasChanged(props.renderToSvg.value, props.noCanvasProgressiveRendering.value)',
+    '_triggerCategories(props.categoryKey.value)'
+  ],
+
+  _preventResizeChanged: function() {
+    this.set('props.width.inputDisabled', !this.props.preventResize.value);
+    this.set('props.height.inputDisabled', !this.props.preventResize.value);
+  },
+
+  _widthChanged: function() {
+    if(this.props.preventResize.value) {
+     this.set('appliedWidth', this.props.width.value);
+    }
+  },
+
+  _heightChanged: function() {
+    if(this.props.preventResize.value) {
+     this.set('appliedHeight', this.props.height.value);
+    }
+  },
+
+  _appliedWidthChanged: function() {
+    this.set('props.width.value', this.appliedWidth);
+  },
+
+  _appliedHeightChanged: function() {
+    this.set('props.height.value', this.appliedHeight);
+  },
+
+  _renderToCanvasChanged: function() {
+    this.set('props.noCanvasProgressiveRendering.inputDisabled', this.props.renderToSvg.value);
+
+    this.set('props.progressiveRenderingPointsPerFrame.inputDisabled', this.props.renderToSvg.value || this.props.noCanvasProgressiveRendering.value);
+    this.set('props.progressiveRenderingMinFrames.inputDisabled', this.props.renderToSvg.value ||this.props.noCanvasProgressiveRendering.value);
+  },
+
+  _triggerCategories: function() {
+    var c = this.$['parallel-coordinates'].categories;
+    this.$['parallel-coordinates'].categories = undefined;
+    this.$['parallel-coordinates'].set('categories', c);
+  }
+});
